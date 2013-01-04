@@ -12,7 +12,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'C:\\Users\\Jonas\\eclipse\\juno\\workspace\\home\\fursten\\src\\sqlite.db',                      # Or path to database file if using sqlite3.
+        'NAME': 'C:\\Users\\Jonas\\git\\Fursten\\fursten\\src\\sqlite.db',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -64,7 +64,8 @@ STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    'C:/Users/Jonas/eclipse/juno/workspace/home/fursten/static/',
+    'C:/Users/Jonas/git/Fursten/fursten/static/',
+    #'C:/Users/Jonas/eclipse/juno/workspace/home/fursten/static/',
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -115,7 +116,8 @@ ROOT_URLCONF = 'fursten.urls'
 WSGI_APPLICATION = 'fursten.wsgi.application'
 
 TEMPLATE_DIRS = (
-    'C:/Users/Jonas/eclipse/juno/workspace/home/fursten/templates',
+    'C:/Users/Jonas/git/Fursten/fursten/templates',
+    #'C:/Users/Jonas/eclipse/juno/workspace/home/fursten/templates',
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.

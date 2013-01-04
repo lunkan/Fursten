@@ -17,8 +17,9 @@ var ResourceModule = (function () {
 		var resourceList = new ResourceCollection();
 		
 		//MESSAGES
-		/*fursten.msg.newResource = new signals.Signal();
-		fursten.msg.extendResource = new signals.Signal();
+		fursten.msg.newResource = new signals.Signal();
+		
+		/*fursten.msg.extendResource = new signals.Signal();
 		fursten.msg.editResource = new signals.Signal();
 		fursten.msg.deleteResource = new signals.Signal();
 		fursten.msg.editResourceIcon = new signals.Signal();
@@ -110,9 +111,9 @@ var ResourceModule = (function () {
 			    }
 			})*/
 			
-			var resourceListView = new Views.ResourceListView({
+			var resourceListView = new recourceViews.ResourceListView({
 				collection: resourceList,
-				el: $('#resource-list-block')
+				el: $('#resource-list-block .block-content')
 			});
 			
 			var user = new User();
@@ -179,15 +180,27 @@ var ResourceModule = (function () {
 	    		$("#menu-option-edit .extend-resource").addClass('disabled');
 	    		fursten.modules.mainMenu.disableMenuItem(["edit-resource-icon","extend-resource","delete-resource","edit-resource","edit-resource-style"]);
 	    	}
-	    };
+	    };*/
 	    
 		this.onNewResource = function() {
-			var element = $("<div class='popup' id='resourceform'></div>");
-			var url = '/ajax/resource-form.json?method=10&key=0';
-			ResourceForm("New Resource", url, element);
+			
+			var resourceForm = new ResourceForm();
+			var formView = new Backbone.Form({
+			    model: resourceForm
+			});
+			
+			resourceForm.on('sync', function() {
+				formView.render();
+				fursten.openModal("New resource", formView.el);
+			}, this);
+			resourceForm.fetch();
+			
+			//Commit to model.
+			formView.commit()
+			resourceForm.save();
 		};
 		
-		this.onExtendResource = function() {
+		/*this.onExtendResource = function() {
 			if(that.selectedResource) {
 				var element = $("<div class='popup' id='resourceform'></div>");
 				var url = '/ajax/resource-form.json?method=10&key=' + that.selectedResource;
@@ -338,8 +351,9 @@ var ResourceModule = (function () {
 		//SUBSCRIBE TO MESSAGES
 		fursten.msg.jQueryReady.add(this.onJQueryReady);
 		fursten.msg.initialized.add(this.onInitialized);
-		/*fursten.msg.newResource.add(this.onNewResource);
-		fursten.msg.extendResource.add(this.onExtendResource);
+		
+		fursten.msg.newResource.add(this.onNewResource);
+		/*fursten.msg.extendResource.add(this.onExtendResource);
 		fursten.msg.editResource.add(this.onEditResource);
 		fursten.msg.deleteResource.add(this.onDeletedResource);
 		fursten.msg.selectedResourceChanged.add(this.onSelectedResourceChanged);

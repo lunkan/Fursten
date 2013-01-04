@@ -6,4 +6,5 @@ from django.conf.urls import patterns, include, url
 
 urlpatterns = patterns('',
     url(r'^$', 'fursten.resources.views.index', name='index'),
+    url(r'^new', 'fursten.resources.views.new', name='new'),
 )
