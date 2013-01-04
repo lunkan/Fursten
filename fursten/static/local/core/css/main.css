@@ -1,0 +1,86 @@
+body, html {
+	height:100%;
+	overflow:hidden;
+}
+
+.bb {
+	box-sizing: border-box; /* css3 rec */
+	-moz-box-sizing: border-box; /* ff2 */
+	-ms-box-sizing: border-box; /* ie8 */
+	-webkit-box-sizing: border-box; /* safari3 */
+	-khtml-box-sizing: border-box; /* konqueror */
+}
+
+.strech12 {
+	height:100%;
+}
+.strech11 {
+	height:91.667%;
+}
+.strech10 {
+	height:83.333%;
+}
+.strech2 {
+	height:16.666%;
+}
+.strech1 {
+	height:8.332%;
+}
+
+.navbar-static-top {
+	position:absolute;
+	width:100%;	
+}
+.nav-tabs {
+	font-size:12px;
+}
+.nav-tabs a {
+	padding:8px !important;
+}
+.container-fluid {
+	padding-left:10px;
+	padding-right:10px;
+}
+
+.main-view {
+	padding-top:50px;
+}
+.content {
+	position:relative;
+	padding-bottom:10px;
+}
+
+.sidebar {
+	padding-bottom:10px;
+}
+.sidebar .nav-tabs {
+	margin-bottom:0;
+}
+
+.sidebar-block {
+	margin:5px 0;
+}
+.block-header {
+	padding:3px 10px;
+	font-weight: bold;
+	font-size:12px;
+	border-bottom:#000 solid 2px;
+}
+
+.map {
+	width:100%;
+	height:100%;
+	background-color:#0000ff;
+}
+.map-toolbar {
+	position:absolute;
+	right:10px;
+	top:10px;
+	z-index: 100;
+}
+
+.map-toolbar .btn-group {
+	clear:both;
+	float:right;
+	margin-bottom:10px;
+}
