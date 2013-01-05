@@ -28,7 +28,7 @@ var Fursten = (function () {
 			$('#myModal .modal-header h3').html(title);
 			$('#myModal .modal-body').append(bodyElement);
 			
-			$.each([{action:'onClick="save()"', label:"Save"}, {action:'onClick="cancel()"', label:"Cancel"}], function(index, control) { 
+			$.each(controls, function(index, control) { 
 				  if(index == 0)
 					  $('#myModal .modal-footer').append('<a class="btn btn-primary" href="#" ' + control.action + ' >' + control.label + '</a>');
 				  else
@@ -37,16 +37,20 @@ var Fursten = (function () {
 			
 			$('#myModal').modal('show');
 		};
+		
+		this.closeModal = function() {
+			$('#myModal').modal('hide');
+		}
 	}
 	
 	return fursten;
 })();
 
-var fursten = new Fursten();
+var fu = new Fursten();
 
 $(function(){
 	
 	jQuery(document).ready(function($) {
-		fursten.init();
+		fu.init();
 	});
 });

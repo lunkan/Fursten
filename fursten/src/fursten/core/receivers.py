@@ -18,6 +18,7 @@ def handle_post_viewed(sender, **kwargs):
     page['head'].addJs('backbone', 'contrib/backbone/js/backbone-min-0.9.9.js')
     page['head'].addJs('backbone', 'contrib/backbone/js/backbone-forms.min.js')
     page['head'].addJs('backbone', 'contrib/backbone/js/list.min.js')
+    page['head'].addJs('backbone', 'contrib/backbone/js/backbone-custom-sync.js')
     
     page['head'].addJs('fursten-signals', 'contrib/signals/js/signals.min.js')
     page['head'].addJs('fursten-core', 'local/core/js/core.js')

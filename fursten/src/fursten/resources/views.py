@@ -1,25 +1,44 @@
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
+from django.views.decorators.csrf import csrf_protect
 from django.utils import simplejson
+import datetime
+from fursten.resources.forms import ResourceForm
+from fursten.resources.models import Resource 
 
 def index(request):
-    to_json = [
-        {"id":"res0", "value": "reource0", "label": "res0"},
-        {"id":"res1", "value": "reource1", "label": "res1"},
-        {"id":"res2", "value": "recouce2", "label": "res2"}
-    ]
+    resource_list = Resource.objects.order_by('-pub_date')
+    
+    to_json = []
+    for resource in resource_list:
+        to_json.append({"name":resource.name});
+    
     return HttpResponse(simplejson.dumps(to_json), mimetype='application/json')
 
+@csrf_protect
 def new(request):
+    
     if request.method == 'GET':
-        print "get"
         to_json = {
-            'title': 'Mrs',
-            'name': 'Muulle Moroo',
-            'password': 'cool'
+            'name': 'New Resource'
         }
         return HttpResponse(simplejson.dumps(to_json), mimetype='application/json')
+    
     elif request.method == 'POST':
-        print "post"
+        #No nice solution, but my json from backbone does not work directly with djsango forms
+        json_data = simplejson.loads(request.raw_post_data)
+        form = ResourceForm(json_data)
+        
+        #latest_poll_list = Poll.objects.order_by('-pub_date')[:5]
+        #output = ', '.join([p.question for p in latest_poll_list])
+        
+        if not form.is_valid():
+            return HttpResponseBadRequest(simplejson.dumps(form.errors), mimetype='application/json')
+        else:
+            cd = form.cleaned_data
+            res = Resource(name=cd['name'], pub_date=datetime.datetime.now())
+            res.save();
+            return HttpResponse(status=200)
+        
     elif request.method == 'PUT':
         print "put"
     

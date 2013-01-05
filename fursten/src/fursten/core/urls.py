@@ -5,5 +5,5 @@ from django.conf.urls import patterns, include, url
 # admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^resource', 'fursten.core.views.index', name='index'),
+    url(r'^$', 'fursten.core.views.index', name='index'),
 )
