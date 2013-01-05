@@ -1,38 +1,29 @@
  
-
-var Views = {}
+var recourceViews = {}
 jQuery(document).ready(function($) {
 	
-	Views.ResourceListView = Backbone.View.extend({
+	recourceViews.ResourceListView = Backbone.View.extend({
     
-		template: _.template($('#table').html()),
+		template: _.template($('#tpl-table').html()),
+		itemTemplate: _.template($('#tpl-table-row').html()),
 	
 	    initialize: function () {
-	    	alert("a" + this.collection.length);
-	    	_.bindAll(this, 'render');
-	    	this.collection.bind('change', this.render);
-	    	
-	    	//this.model.bind('change', this.render, this);
-	    	//this.render();
+	    	this.collection.on('sync', this.render, this);
 	    },
 	    render : function() {
 	    	
-	    	alert("b" + this.collection.length);
-	    	
 	    	var that = this;
 	        $(this.el).empty();
-	        $(this.el).html(this.template({id:'id'}));
+	        var renderedTable = $(this.template({id:'id'}));
+	        var tableHeadEl = $(renderedTable).find('thead');
+	        var tableBodyEl = $(renderedTable).find('tbody');
 	        
-	        /*_(this.collection.models).each(function(item){ // in case collection is not empty
-	            self.appendItem(item);
-	        }, this);*/
+	        _(this.collection.models).each(function(item){
+	        	var renderedItem = this.itemTemplate(item.toJSON());
+	        	$(tableBodyEl).append(renderedItem);
+	        }, this);
 	        
-	        // Render each sub-view and append it to the parent view's element.
-	       /* _(this._donutViews).each(function(dv) {
-	          $(that.el).append(dv.render().el);
-	        });*/
+	        $(this.el).html(renderedTable);
 	    }
 	});
 });
-
-//var test = new ResourceListView({});

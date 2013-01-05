@@ -10,7 +10,7 @@ class Block:
       self.request = request
     
     def toHtml(self):
-        print self.data
+        #print self.data
         self.template_file = loader.get_template(self.template)
         context = RequestContext(self.request, self.data)
         return self.template_file.render(context)
@@ -54,7 +54,7 @@ class Header(Block):
             if(item not in current_item):
                 current_item[item] = {}
             current_item = current_item[item]
-            
+        
         current_item['action'] = action
         
 class Sidebar(Block):
