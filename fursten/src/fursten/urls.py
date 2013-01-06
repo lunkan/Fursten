@@ -9,6 +9,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Examples:
     url(r'^core/', include('fursten.core.urls', namespace='core')),
+    url(r'^world/', include('fursten.world.urls', namespace='world')),
     url(r'^resource/', include('fursten.resources.urls', namespace='resources')),
     
     #url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_DOC_ROOT}),

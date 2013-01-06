@@ -9,6 +9,7 @@ from django.core.urlresolvers import reverse
 from fursten.core import signals, receivers
 from fursten.core.blocks import *
 from fursten.resources import receivers
+from fursten.world import receivers
 
 def index(request):
     head = Head('core/head.html', request)
