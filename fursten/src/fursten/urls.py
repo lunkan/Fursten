@@ -8,7 +8,8 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
-    url(r'^core/', include('fursten.core.urls', namespace='core')),
+    url(r'^$', 'fursten.views.index', name='index'),
+    url(r'^dashboard/', include('fursten.dashboard.urls', namespace='dashboard')),
     url(r'^world/', include('fursten.world.urls', namespace='world')),
     url(r'^resource/', include('fursten.resources.urls', namespace='resources')),
     

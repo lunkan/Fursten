@@ -1,6 +1,6 @@
 from django.dispatch import receiver
-from fursten.core.signals import *
-from fursten.core.blocks import *
+from fursten.dashboard.signals import *
+from fursten.dashboard.blocks import *
 
 @receiver(initialize)
 def handle_post_viewed(sender, **kwargs):
