@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.dispatch import receiver
 from fursten.dashboard.signals import *
 from fursten.dashboard.blocks import *
@@ -23,5 +24,5 @@ def handle_post_viewed(sender, **kwargs):
     page['head'].addJs('fursten-signals', 'contrib/signals/js/signals.min.js')
     page['head'].addJs('fursten-core', 'local/dashboard/js/main.js')
     
-    page['header'].addUserMenuItem('user/general/login', 'login')
-    page['header'].addUserMenuItem('user/general/settings', 'change_profile')
+    page['header'].addUserMenuItem(user.username +'/general/logout', 'href', '/logout')
+    page['header'].addUserMenuItem(user.username +'/general/settings', 'href', '/change_profile')

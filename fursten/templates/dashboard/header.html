@@ -2,7 +2,7 @@
 <div class="navbar navbar-static-top">
  	<div class="navbar-inner">
  		<div class="container-fluid">
- 			<a class="brand" href="#">Fursten</a>
+ 			<a class="brand" href="/">Fursten</a>
  			<div class="nav-collapse collapse navbar-responsive-collapse">
  				<ul class="nav">
  				
@@ -13,12 +13,12 @@
  						<ul class="dropdown-menu">
  						{% for menu_group_name, menu_group in main_menu_item.items %}
  							<li class="nav-header">{{ menu_group_name|label }}</li>
-                      		{% for menu_item_name, menu_item in menu_group.items %}
- 							<li><a href="#" {{ menu_item.action|safe }}>{{ menu_item_name|label }}</a></li>
-                      		{% endfor %}
+ 							{% for menu_item_name, menu_item in menu_group.items %}
+ 							<li><a {{ menu_item.action|safe }}>{{ menu_item_name|label }}</a></li>
                       		{% if forloop.last|is_false %}
                         	<li class="divider"></li>
                       		{% endif %}
+                      		{% endfor %}
  						{% endfor %}
 						</ul>
  					</li>
@@ -35,7 +35,7 @@
  						{% for menu_group_name, menu_group in user_menu_item.items %}
  							<li class="nav-header">{{ menu_group_name|label }}</li>
                       		{% for menu_item_name, menu_item in menu_group.items %}
- 							<li><a href="#">{{ menu_item_name|label }}</a></li>
+ 							<li><a {{ menu_item.action|safe }}>{{ menu_item_name|label }}</a></li>
                       		{% endfor %}
                       		{% if forloop.last|is_false %}
                         	<li class="divider"></li>

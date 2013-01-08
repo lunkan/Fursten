@@ -9,6 +9,9 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'fursten.views.index', name='index'),
+    url(r'^index$', 'fursten.views.index', name='index'),
+    url(r'^login$', 'fursten.views.login', name='login'),
+    url(r'^logout$', 'fursten.views.logout', name='logout'),
     url(r'^dashboard/', include('fursten.dashboard.urls', namespace='dashboard')),
     url(r'^world/', include('fursten.world.urls', namespace='world')),
     url(r'^resource/', include('fursten.resources.urls', namespace='resources')),

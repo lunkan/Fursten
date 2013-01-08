@@ -37,7 +37,7 @@ class Header(Block):
         self.data['main_menu'] = {}
         self.data['user_menu'] = {}
         
-    def addMainMenuItem(self, path, action):
+    def addMainMenuItem(self, path, type, arg):
         current_item = self.data['main_menu']
         
         for item in path.split('/'):
@@ -45,9 +45,9 @@ class Header(Block):
                 current_item[item] = {}
             current_item = current_item[item]
             
-        current_item['action'] = action
+        current_item['action'] = type + '="' + arg + '"'
         
-    def addUserMenuItem(self, path, action):
+    def addUserMenuItem(self, path, type, arg):
         current_item = self.data['user_menu']
         
         for item in path.split('/'):
@@ -55,7 +55,8 @@ class Header(Block):
                 current_item[item] = {}
             current_item = current_item[item]
         
-        current_item['action'] = action
+        current_item['action'] = type + '="' + arg + '"'
+            
         
 class Sidebar(Block):
     

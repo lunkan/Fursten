@@ -28,9 +28,6 @@ def new(request):
         json_data = simplejson.loads(request.raw_post_data)
         form = ResourceForm(json_data)
         
-        #latest_poll_list = Poll.objects.order_by('-pub_date')[:5]
-        #output = ', '.join([p.question for p in latest_poll_list])
-        
         if not form.is_valid():
             return HttpResponseBadRequest(simplejson.dumps(form.errors), mimetype='application/json')
         else:
