@@ -10,8 +10,6 @@ var WorldModule = (function () {
 		
 		//MESSAGES
 		fu.msg.newWorld = new signals.Signal();
-		fu.msg.newWorldConfirmed = new signals.Signal();
-		fu.msg.newWorldCompleted = new signals.Signal();
 		fu.msg.worldChanged = new signals.Signal();
 		
 		this.onJQueryReady = function() {
@@ -31,7 +29,7 @@ var WorldModule = (function () {
 			
 			currentWorldForm.on('sync', function() {
 				currentWorldFormView.render();
-				var controls = [{action:'onClick="fu.msg.newWorldConfirmed.dispatch()"', label:"Confirm"}];
+				var controls = [{callback:fu.models['world'].onNewWorldConfirmed, label:"Confirm"}];
 				fu.openModal("New world", currentWorldFormView.el, controls);
 			}, this);
 			currentWorldForm.fetch();
@@ -44,7 +42,7 @@ var WorldModule = (function () {
 			var errors = currentWorldFormView.commit();
 			if(!errors) {
 				currentWorldForm.on('sync', function() {
-					fu.msg.newWorldCompleted.dispatch();
+					fu.models['world'].onNewWorldCompleted();
 				});
 				currentWorldForm.save();	
 			}
@@ -59,9 +57,6 @@ var WorldModule = (function () {
 		
 		//SUBSCRIBE TO MESSAGES
 		fu.msg.newWorld.add(this.onNewWorld);
-		fu.msg.newWorldConfirmed.add(this.onNewWorldConfirmed);
-		fu.msg.newWorldCompleted.add(this.onNewWorldCompleted);
-		//fu.msg.worldChanged.add();
 	}
 	
 	return worldModule;

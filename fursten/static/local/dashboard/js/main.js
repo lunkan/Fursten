@@ -28,11 +28,14 @@ var Fursten = (function () {
 			$('#myModal .modal-header h3').html(title);
 			$('#myModal .modal-body').append(bodyElement);
 			
-			$.each(controls, function(index, control) { 
-				  if(index == 0)
-					  $('#myModal .modal-footer').append('<a class="btn btn-primary" href="#" ' + control.action + ' >' + control.label + '</a>');
-				  else
-					  $('#myModal .modal-footer').append('<a class="btn" href="#" ' + control.action + ' >' + control.label + '</a>');
+			$.each(controls, function(index, control) {
+				var classes = "btn";
+				if(index == 0)
+					classes += " btn-primary";
+				
+				var btnElm = $('<a class="' + classes + '" href="#">' + control.label + '</a>');
+				$(btnElm).click(control.callback);
+				$('#myModal .modal-footer').append(btnElm);
 			});
 			
 			$('#myModal').modal('show');

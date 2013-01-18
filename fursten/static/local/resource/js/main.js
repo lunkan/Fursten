@@ -11,9 +11,7 @@ var ResourceModule = (function () {
 		
 		//MESSAGES
 		fu.msg.newResource = new signals.Signal();
-		fu.msg.saveResource = new signals.Signal();
 		fu.msg.resourceChange = new signals.Signal();
-		fu.msg.resourceSaveComplete = new signals.Signal();
 		
 		this.onJQueryReady = function() {
 			
@@ -36,7 +34,7 @@ var ResourceModule = (function () {
 			
 			currentResourceForm.on('sync', function() {
 				currentResourceFormView.render();
-				var controls = [{action:'onClick="fu.msg.saveResource.dispatch()"', label:"Save"}];
+				var controls = [{callback:fu.models['resource'].onSaveResource, label:"Save"}];
 				fu.openModal("New resource", currentResourceFormView.el, controls);
 			}, this);
 			currentResourceForm.fetch();
@@ -47,9 +45,10 @@ var ResourceModule = (function () {
 			var currForm = currentResourceForm;
 			var currFormView = currentResourceFormView;
 			var errors = currentResourceFormView.commit();
+			
 			if(!errors) {
 				currentResourceForm.on('sync', function() {
-					fu.msg.resourceSaveComplete.dispatch();
+					fu.models['resource'].onResourceSaveComplete();
 				});
 				currentResourceForm.save();	
 			}
@@ -71,9 +70,7 @@ var ResourceModule = (function () {
 		fu.msg.jQueryReady.add(this.onJQueryReady);
 		fu.msg.initialized.add(this.onInitialized);
 		fu.msg.newResource.add(this.onNewResource);
-		fu.msg.saveResource.add(this.onSaveResource);
 		fu.msg.resourceChange.add(this.onResourceChange);
-		fu.msg.resourceSaveComplete.add(this.onResourceSaveComplete);
 	}
 	
 	return resourceModule;

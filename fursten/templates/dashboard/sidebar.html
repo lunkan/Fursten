@@ -7,7 +7,7 @@
 	</ul>
 	<div class="tab-content bb">
 		{% for tab_name, tab_content in blocks.items %}
-		<div class="tab-pane active" id="tab{{ forloop.counter	}}">
+		<div class="tab-pane {% if forloop.first %}active{% endif %}" id="tab{{ forloop.counter	}}">
 			{% for block_key, block_content in tab_content.items %}
 				<div id="{{ block_content.id }}" class="block sidebar-block">
 				
