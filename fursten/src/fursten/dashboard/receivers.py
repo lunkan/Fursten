@@ -9,12 +9,15 @@ def handle_post_viewed(sender, **kwargs):
     request = kwargs.get("request")
     user = kwargs.get("user")
     
+    page['head'].addCss('jquery', 'contrib/jquery/css/ui-lightness/jquery-ui-1.10.0.custom.css')
+    
     page['head'].addCss('bootstrap-responsive','contrib/bootstrap/css/bootstrap-responsive.css')
     page['head'].addCss('bootstrap', 'contrib/bootstrap/css/bootstrap.min.css')
     page['head'].addCss('fursten-main', 'local/dashboard/css/main.css')
     
     page['head'].addJs('jquery', 'contrib/jquery/js/jquery-1.8.3.min.js')
-    page['head'].addJs('jquery', 'contrib/ajaxchosen/js/ajax-chosen.js')
+    page['head'].addJs('jquery', 'contrib/jquery/js/jquery-ui-1.10.0.custom.autocomplete.js')
+    #page['head'].addJs('jquery', 'contrib/ajaxchosen/js/ajax-chosen.js')
     
     page['head'].addJs('backbone', 'contrib/backbone/js/underscore-1.4.3.js')
     page['head'].addJs('backbone', 'contrib/bootstrap/js/bootstrap.min.js')

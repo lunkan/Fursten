@@ -7,5 +7,5 @@ from django.conf.urls import patterns, include, url
 urlpatterns = patterns('',
     url(r'^$', 'fursten.resources.views.index', name='index'),
     url(r'^new', 'fursten.resources.views.new', name='new'),
-    url(r'^names', 'fursten.resources.views.names', name='names'),
+    url(r'^search', 'fursten.resources.views.search', name='search'),
 )

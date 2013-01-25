@@ -16,15 +16,25 @@ var ResourceWeight = Backbone.Model.extend({
 		group : 1
     },
     schema: {
-    	resource: 'Number',
-        value: 'Number',
+    	resource: { type: 'Number' },
+        value: { type: 'Number' },
         group: { type: 'Select', options: ['1', '2', '3'] }
     }
 });
 
-function testToString(object) {
-    return "Hej";
-}
+var ResourceWeightGroup = Backbone.Model.extend({
+	defaults: {
+		weights : []
+    },
+    schema: {
+    	weights: {
+        	type: 'Repeater',
+        	layout: 'table',
+        	itemType: 'InlineNestedModel',
+        	model: ResourceWeight
+        },
+    }
+});
 
 var ResourceOffspring = Backbone.Model.extend({
 	defaults: {
@@ -43,21 +53,19 @@ var ResourceForm = Backbone.Model.extend({
     	name : 'default name',
     	threshold : 123,
     	offsprings : [],
-    	weights: []
+    	weightgroups: []
     },
     schema: {
-    	atomat: { type: 'Autocomplete', options: {
-    		schema: {queryUrl: '/resource/names/', itemToString: testToString }
-    	}},
+    	atomat: { type: 'Autocomplete', options: {url:'/resource/search'}},
         name: 'Text',
         threshold: 'Number',
-        weights: {
-        	type: 'List',
+        weightgroups: {
+        	type: 'Repeater',
         	itemType: 'InlineNestedModel',
-        	model: ResourceWeight
+        	model: ResourceWeightGroup
         },
         offsprings: {
-        	type: 'List',
+        	type: 'Repeater',
         	itemType: 'InlineNestedModel',
         	model: ResourceOffspring
         }

@@ -14,10 +14,17 @@ def index(request):
     
     return HttpResponse(simplejson.dumps(to_json), mimetype='application/json')
 
-def names(request):
+def search(request):
     
-    to_json = {['Resource1', 'Resource2', 'Res3']}
-    return HttpResponse(simplejson.dumps(to_json), mimetype='application/json')
+    response = []
+    term = request.GET.get('term', '').lower()
+    resource_list = Resource.objects.order_by('-pub_date')
+    for resource in resource_list:
+        if resource.name.lower().find(term) != -1:
+            response.append(resource.name)
+    
+    response.sort()
+    return HttpResponse(simplejson.dumps(response), mimetype='application/json')
     
 @csrf_protect
 def new(request):
@@ -38,9 +45,11 @@ def new(request):
             'name': 'New Resourcing',
             'threshold': 100,
             'offsprings': [{'resource':14,'value':1}],
-            'weights': [{'resource':15,'value':9,'group':2},{'resource':1,'value':2,'group':3}]
+            'weightgroups': [{'weights':[{'resource':12,'value':35,'group':1},{'resource':11,'value':37,'group':2}]},{'weights':[{'resource':12,'value':35,'group':1}]}]
         }
         
+        #'weights': [{'resource':15,'value':9,'group':2},{'resource':1,'value':2,'group':3}]
+            
         return HttpResponse(simplejson.dumps(to_json), mimetype='application/json')
     
     elif request.method == 'POST':
