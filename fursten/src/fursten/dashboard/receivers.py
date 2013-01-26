@@ -25,6 +25,8 @@ def handle_post_viewed(sender, **kwargs):
     page['head'].addJs('backbone', 'contrib/backbone/js/backbone-forms-extensions.js')
     page['head'].addJs('backbone', 'contrib/backbone/js/backbone-custom-sync.js')
     
+    page['head'].addJs('d3js', 'contrib/d3js/js/d3.v3.js')
+    
     page['head'].addJs('fursten-signals', 'contrib/signals/js/signals.min.js')
     page['head'].addJs('fursten-core', 'local/dashboard/js/main.js')
     

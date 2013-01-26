@@ -2,7 +2,6 @@
 var ResourceModule = (function () {
 	
 	var resourceModule = function() {
-	
 		var that = this;
 		var resourceList = new ResourceCollection();
 		
@@ -75,5 +74,4 @@ var ResourceModule = (function () {
 	
 	return resourceModule;
 })();
-
 fu.models['resource'] = new ResourceModule();

@@ -15,6 +15,7 @@ urlpatterns = patterns('',
     url(r'^dashboard/', include('fursten.dashboard.urls', namespace='dashboard')),
     url(r'^world/', include('fursten.world.urls', namespace='world')),
     url(r'^resource/', include('fursten.resources.urls', namespace='resources')),
+    url(r'^diagram/', include('fursten.diagram.urls', namespace='diagram')),
     
     #url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_DOC_ROOT}),
     #url(r'^$', 'fursten.views.index', name='index'),
