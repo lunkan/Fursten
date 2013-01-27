@@ -134,6 +134,7 @@ INSTALLED_APPS = (
     'fursten.resources',
     'fursten.world',
     'fursten',
+    'fursten.diagram',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin'
     # Uncomment the next line to enable admin documentation:

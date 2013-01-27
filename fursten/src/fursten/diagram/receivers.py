@@ -10,19 +10,9 @@ def handle_post_viewed(sender, **kwargs):
     if user.groups.filter(name="admin").count():
         print "in group!: "
     
-#    page['header'].addMainMenuItem('resource/general/add_resource', 'onClick', 'fu.msg.newResource.dispatch()')
-#    
-#    page['left_sidebar'].addBlock('resource/resource_list', '/resource', 'resource-list-block')
-    
-    #Mitt
-    
+    page['header'].addMainMenuItem('diagram/general/connect', 'onClick', 'fu.msg.connectToSimulator.dispatch()')    
     page['left_sidebar'].addBlock('diagram/diagram_list', '/diagram', 'diagram-list-block')
-    
-    #Slut mitt
-    
-#    page['head'].addJs('fursten-resource-list', 'local/resource/js/models.js')
     page['head'].addJs('fursten-diagram', 'local/diagram/js/views.js')
     page['head'].addJs('fursten-diagram', 'local/diagram/js/main.js')
     page['head'].addJs('fursten-diagram', 'local/diagram/js/mouse.js')
-    
-    #finns oxo addCss
+    page['head'].addJs('fursten-diagram', 'local/diagram/js/models.js')

@@ -43,13 +43,16 @@ var map_view = {
 	};
 
 var DiagramModule = (function () {
-	console.log('DiagramModule');
 	var diagramModule = function() {
-		console.log('diagramModule');
+		
+		var currentConnectForm = null;
+		var currentConnectFormView = null;
+		
 		//MESSAGES
-		fu.msg.testSignal = new signals.Signal();
-		this.onTestSignal = function() {
-			console.log('onTestSignal');
+		fu.msg.drawMap = new signals.Signal();
+		fu.msg.connectToSimulator = new signals.Signal();
+		
+		this.ondrawMap = function() {
 			$.getJSON('/diagram/getsvgjson', function(data) {
 				console.log(data);
 				draw_map(data.paths);
@@ -89,10 +92,50 @@ var DiagramModule = (function () {
 
 			});
 		};
+		
+		this.onConnectToSimulator = function() {
+			currentConnectForm = new ConnectForm();
+			currentConnectFormView = new Backbone.Form({
+			    model: currentConnectForm
+			});
+			
+			currentConnectForm.on('sync', function() {
+				currentConnectFormView.render();
+				var controls = [{callback:fu.models['diagram'].onInitiateConnection, label:"Connect"}];
+				fu.openModal("Connect To Simulator", currentConnectFormView.el, controls);
+			}, this);
+			currentConnectForm.fetch();
+		}
+		
+		this.onInitiateConnection = function() {
+			
+//			var currForm = currentResourceForm;
+//			var currFormView = currentResourceFormView;
+			var errors = currentConnectFormView.commit();
+			
+			if(!errors) {
+				currentConnectForm.on('sync', function() {
+					fu.models['diagram'].onInitiateConnectionComplete();
+				});
+				currentConnectForm.save();	
+			}
+		}
+		
+		this.onInitiateConnectionComplete = function() {
+			currentConnectForm = null;
+			currentConnectFormView = null;
+			fu.closeModal();
+			$.getJSON("/diagram/getcss", 
+					function(data) {
+					$("#node_style").html(data.css);
+			});
+			fu.msg.drawMap.dispatch();
+		}
+		
 		//SUBSCRIBE TO MESSAGES
-		fu.msg.testSignal.add(this.onTestSignal);
+		fu.msg.drawMap.add(this.ondrawMap);
+		fu.msg.connectToSimulator.add(this.onConnectToSimulator);
 	};
 	return diagramModule;
 })();
-console.log('main');
 fu.models['diagram'] = new DiagramModule();
