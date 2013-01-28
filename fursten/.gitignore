@@ -1,1 +1,3 @@
-src/fursten/settings.py
+*.pyc
+*.pyo
+settings.py
