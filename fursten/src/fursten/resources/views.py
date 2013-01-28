@@ -3,7 +3,9 @@ from django.views.decorators.csrf import csrf_protect
 from django.utils import simplejson
 import datetime
 from fursten.resources.forms import ResourceForm
-from fursten.resources.models import Resource 
+from fursten.resources.models import Resource
+import urllib2
+import urllib
 
 def index(request):
     resource_list = Resource.objects.order_by('-pub_date')
@@ -53,19 +55,32 @@ def new(request):
         return HttpResponse(simplejson.dumps(to_json), mimetype='application/json')
     
     elif request.method == 'POST':
-        #No nice solution, but my json from backbone does not work directly with djsango forms
+        url="http://127.0.0.1:8989/Fursten-simulator/rest/resources/"
         json_data = simplejson.loads(request.raw_post_data)
-        print request.raw_post_data
+        req = urllib2.Request(url)
+        req.add_data(simplejson.dumps(json_data))
+        req.add_header('Content-Type', 'application/json')
+        req.add_header('Accept', 'application/json')
+        f = urllib2.urlopen(req)
+        #to_json = simplejson.loads(f.read())
+        print f.getcode();
         return HttpResponse(status=200)
-        form = ResourceForm(json_data)
+    
+        #return HttpResponse(simplejson.dumps(to_json), mimetype='application/json')
+    
+    
+        #json_data = simplejson.loads(request.raw_post_data)
+        #print request.raw_post_data
+        #return HttpResponse(status=200)
+        #form = ResourceForm(json_data)
         
-        if not form.is_valid():
-            return HttpResponseBadRequest(simplejson.dumps(form.errors), mimetype='application/json')
-        else:
-            cd = form.cleaned_data
-            res = Resource(name=cd['name'], pub_date=datetime.datetime.now())
-            res.save();
-            return HttpResponse(status=200)
+        #if not form.is_valid():
+        #    return HttpResponseBadRequest(simplejson.dumps(form.errors), mimetype='application/json')
+        #else:
+        #    cd = form.cleaned_data
+        #    res = Resource(name=cd['name'], pub_date=datetime.datetime.now())
+        #    res.save();
+        #    return HttpResponse(status=200)
         
     elif request.method == 'PUT':
         print "put"

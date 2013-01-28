@@ -557,7 +557,7 @@ Form.helpers = (function() {
     } else {
       constructorFn = schemaType;
     }
-
+    
     return new constructorFn(options);
   };
   
@@ -1187,6 +1187,7 @@ Form.editors = (function() {
      * Adds the editor to the DOM
      */
     render: function() {
+    	
       this.setValue(this.value);
 
       return this;

@@ -12,13 +12,11 @@ var ResourceCollection = Backbone.Collection.extend({
 var ResourceWeight = Backbone.Model.extend({
 	defaults: {
 		resource : 1,
-		value : 32,
-		group : 1
+		value : 32
     },
     schema: {
-    	resource: { type: 'Number' },
-        value: { type: 'Number' },
-        group: { type: 'Select', options: ['1', '2', '3'] }
+    	resource: { type: 'Autocomplete', options: {url:'/resource/search'}, editorClass: 'input-medium' },
+        value: { type: 'Number', editorClass: 'input-mini' }
     }
 });
 
@@ -30,7 +28,7 @@ var ResourceWeightGroup = Backbone.Model.extend({
     	weights: {
         	type: 'Repeater',
         	layout: 'table',
-        	itemType: 'InlineNestedModel',
+        	itemType: 'NestedModel',
         	model: ResourceWeight
         },
     }
@@ -42,8 +40,8 @@ var ResourceOffspring = Backbone.Model.extend({
 		value : 321
     },
     schema: {
-    	resource: 'Number',
-        value: 'Number'
+    	resource: { type: 'Autocomplete', options: {url:'/resource/search'}, editorClass: 'input-medium' },
+        value: { type: 'Number', editorClass: 'input-mini' }
     }
 });
 
@@ -61,26 +59,14 @@ var ResourceForm = Backbone.Model.extend({
         threshold: 'Number',
         weightgroups: {
         	type: 'Repeater',
-        	itemType: 'InlineNestedModel',
+        	itemType: 'NestedModel',
         	model: ResourceWeightGroup
         },
         offsprings: {
         	type: 'Repeater',
-        	itemType: 'InlineNestedModel',
+        	itemType: 'NestedModel',
+        	layout: 'table',
         	model: ResourceOffspring
         }
     }
 });
-
-/*
- * 
-        offsprings: { type: 'NestedModel', model: ResourceOffspring }
-
-//weight: { type: 'NestedModel', model: ResourceWeight },
-	private int key;
-	private String name;
-	private float threshold;
-	
-	private ArrayList<OffspringNode> offsprings;
-	private ArrayList<HashMap<Integer, Float>> weights;
-*/

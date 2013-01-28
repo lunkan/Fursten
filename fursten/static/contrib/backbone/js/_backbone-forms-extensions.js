@@ -32,23 +32,7 @@
 	'
   });
   
-  /*
-   <% _.each(items, function(item) { %>',
-    ' <div class="clearfix">',
-    '   <label for="input-<%= item.cid %>-<%= item.label %>"><%= item.label %></label>',
-    '   <div class="input">',
-    '     <%= item.html %>',
-    '   </div>',
-    ' </div>',
-    '<% }); %>'
-   */
-  /*
-   * <td>{{editor}}</td>\
-   * <tr>\
-		  	<td>{{editor}}</td>\
-		  </tr>\
-   */
-  editors.Repeater = editors.List.extend({
+  /*editors.Repeater = editors.List.extend({
 	  
 	  events: {
 		  'click [data-action="add"]': function(event) {
@@ -143,7 +127,7 @@
 	      
 	      return this;
 	    },
-  });
+  });*/
   
   return Backbone;
 })(this);
@@ -170,13 +154,10 @@
     test: '<p>test</p>'
   });
 
-  editors.List.InlineNestedModel = editors.List.NestedModel.extend({
+  /*editors.List.InlineNestedModel = editors.List.NestedModel.extend({
   
     events: {},
 
-    /**
-     * @param {Object} options
-     */
     initialize: function(options) {
       editors.Base.prototype.initialize.call(this, options);
 
@@ -194,9 +175,7 @@
       list.on('add', this.onUserAdd, this);
     },
     
-    /**
-     * Render the list item representation
-     */
+    //Render the list item representation
     render: function() {
       var self = this;
 
@@ -228,10 +207,6 @@
       }
       
       this.form = new Form({
-        /*
-        schema: this.nestedSchema,
-        data: this.value
-        */
         template: template,
         fieldsetTemplate: 'nestedFormFieldset',
         fieldTemplate: 'nestedFormFieldTemplate',
@@ -262,13 +237,13 @@
     	this.form.$('input, textarea, select').first().focus();
     }
 
-  });
+  });*/
   
   return Backbone;
 })(this);
 
 
-;(function(root) {
+/*;(function(root) {
 	
 	var Form = root.Backbone.Form,
     	editors = Form.editors;
@@ -282,7 +257,6 @@
 				source: this.schema.options.url,
 				minLength: 2,
 			    select: function( event, ui ) {
-			    	/*log*/
 			    }
 			});
 	
@@ -293,4 +267,4 @@
 	
 	return Backbone;
 	
-})(this);
+})(this);*/
