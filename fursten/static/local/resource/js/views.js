@@ -1,7 +1,6 @@
- 
 var recourceViews = {}
+
 jQuery(document).ready(function($) {
-	
 	recourceViews.ResourceListView = Backbone.View.extend({
     
 		template: _.template($('#tpl-table').html()),
