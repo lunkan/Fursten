@@ -31,12 +31,17 @@ var ResourceModule = (function () {
 			    model: currentResourceForm
 			});
 			
-			currentResourceForm.on('sync', function() {
+			currentResourceFormView.render();
+			var controls = [{callback:fu.models['resource'].onSaveResource, label:"Save"}];
+			fu.openModal("New resource", currentResourceFormView.el, controls);
+			
+			
+			/*currentResourceForm.on('sync', function() {
 				currentResourceFormView.render();
 				var controls = [{callback:fu.models['resource'].onSaveResource, label:"Save"}];
 				fu.openModal("New resource", currentResourceFormView.el, controls);
 			}, this);
-			currentResourceForm.fetch();
+			currentResourceForm.fetch();*/
 		};
 		
 		this.onSaveResource = function() {
@@ -46,6 +51,13 @@ var ResourceModule = (function () {
 			var errors = currentResourceFormView.commit();
 			
 			if(!errors) {
+				currentResourceForm.on('error', function() {
+					$(currFormView.el).prepend('<div class="alert">\
+						<button type="button" class="close" data-dismiss="alert">&times;</button>\
+						<strong>Warning!</strong> Could not save date.\
+						</div>\
+					');
+				});
 				currentResourceForm.on('sync', function() {
 					fu.models['resource'].onResourceSaveComplete();
 				});

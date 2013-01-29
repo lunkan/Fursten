@@ -11,8 +11,8 @@ var ResourceCollection = Backbone.Collection.extend({
 
 var ResourceWeight = Backbone.Model.extend({
 	defaults: {
-		resource : 1,
-		value : 32
+		resource : 0,
+		value : 1
     },
     schema: {
     	resource: { type: 'Autocomplete', options: {url:'/resource/search'}, editorClass: 'input-medium' },
@@ -36,8 +36,8 @@ var ResourceWeightGroup = Backbone.Model.extend({
 
 var ResourceOffspring = Backbone.Model.extend({
 	defaults: {
-		resource : 123,
-		value : 321
+		resource : 0,
+		value : 1
     },
     schema: {
     	resource: { type: 'Autocomplete', options: {url:'/resource/search'}, editorClass: 'input-medium' },
@@ -45,19 +45,23 @@ var ResourceOffspring = Backbone.Model.extend({
     }
 });
 
+/*
+ ,
+    	offsprings : [],
+    	weightGroups: [] 
+ */
 var ResourceForm = Backbone.Model.extend({
 	url: "/resource/new/",
 	defaults: {
-    	name : 'default name',
-    	threshold : 123,
-    	offsprings : [],
-    	weightgroups: []
+		key : 0,
+    	name : '',
+    	threshold : 0.9
     },
     schema: {
-    	atomat: { type: 'Autocomplete', options: {url:'/resource/search'}},
+    	key: 'Hidden',
         name: 'Text',
         threshold: 'Number',
-        weightgroups: {
+        weightGroups: {
         	type: 'Repeater',
         	itemType: 'NestedModel',
         	model: ResourceWeightGroup
