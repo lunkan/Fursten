@@ -41,6 +41,13 @@ var WorldModule = (function () {
 			var currFormView = currentWorldFormView;
 			var errors = currentWorldFormView.commit();
 			if(!errors) {
+				currForm.on('error', function() {
+					$(currForm.el).prepend('<div class="alert alert-error">\
+						<button type="button" class="close" data-dismiss="alert">&times;</button>\
+						<strong>Warning!</strong> Could not save data.\
+						</div>\
+					');
+				});
 				currentWorldForm.on('sync', function() {
 					fu.models['world'].onNewWorldCompleted();
 				});

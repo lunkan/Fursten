@@ -1,0 +1,19 @@
+<div id="{{ id }}" class="block {{ classes }}">
+	
+	{% block header %}
+	{% if title %}
+	<div class="block__header">
+		<h5>{{ title }}</h5>
+	</div>
+	{% endif %}
+	{% endblock  %}
+	{% block content %}
+	<div class="block__content container-fluid">
+		{% block body %}
+		<div class="row-fluid">
+			<div class="span12 block__body"></div>
+		</div>
+		{% endblock  %}
+	</div>
+	{% endblock  %}
+</div>

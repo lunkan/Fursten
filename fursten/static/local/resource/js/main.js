@@ -3,7 +3,9 @@ var ResourceModule = (function () {
 	
 	var resourceModule = function() {
 		var that = this;
-		var resourceList = new ResourceCollection();
+		var resourceList = null;
+		var resourceListView = null;
+		//new ResourceCollection();
 		
 		var currentResourceForm = null;
 		var currentResourceFormView = null;
@@ -14,13 +16,24 @@ var ResourceModule = (function () {
 		
 		this.onJQueryReady = function() {
 			
-			var resourceListView = new recourceViews.ResourceListView({
-				collection: resourceList,
-				el: $('#resource-list-block .block-content')
-			});
+			
 		};
 		
 		this.onInitialized = function() {
+			
+			fu.msg.newResource.add(that.onNewResource);
+			fu.msg.resourceChange.add(that.onResourceChange);
+			fu.msg.worldChanged.add(that.onResourceChange);
+			
+			resourceList = new ResourceListForm();
+			resourceListView = new Backbone.Form({
+			    model: resourceList
+			});
+			
+			resourceList.on('sync', function() {
+				resourceListView.render();
+				$('#resource-list-block .block__body').append(resourceListView.el);
+			}, this);
 			resourceList.fetch();
 		};
 	    
@@ -52,9 +65,9 @@ var ResourceModule = (function () {
 			
 			if(!errors) {
 				currentResourceForm.on('error', function() {
-					$(currFormView.el).prepend('<div class="alert">\
+					$(currFormView.el).prepend('<div class="alert alert-error">\
 						<button type="button" class="close" data-dismiss="alert">&times;</button>\
-						<strong>Warning!</strong> Could not save date.\
+						<strong>Warning!</strong> Could not save data.\
 						</div>\
 					');
 				});
@@ -80,8 +93,6 @@ var ResourceModule = (function () {
 		//SUBSCRIBE TO MESSAGES
 		fu.msg.jQueryReady.add(this.onJQueryReady);
 		fu.msg.initialized.add(this.onInitialized);
-		fu.msg.newResource.add(this.onNewResource);
-		fu.msg.resourceChange.add(this.onResourceChange);
 	}
 	
 	return resourceModule;

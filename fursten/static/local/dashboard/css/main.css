@@ -37,9 +37,8 @@ body, html {
 .nav-tabs a {
 	padding:8px !important;
 }
-.container-fluid {
-	padding-left:10px;
-	padding-right:10px;
+.main-container {
+	margin: 0 10px;
 }
 
 .main-view {
@@ -60,7 +59,7 @@ body, html {
 .sidebar-block {
 	margin:5px 0;
 }
-.block-header {
+.block__header {
 	padding:3px 10px;
 	font-weight: bold;
 	font-size:12px;

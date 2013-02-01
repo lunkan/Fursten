@@ -13,6 +13,7 @@ def handle_post_viewed(sender, **kwargs):
     
     page['head'].addCss('bootstrap-responsive','contrib/bootstrap/css/bootstrap-responsive.css')
     page['head'].addCss('bootstrap', 'contrib/bootstrap/css/bootstrap.min.css')
+    page['head'].addCss('bootstrap-fursten', 'local/bootstrap/css/bootstrap-fursten.css')
     page['head'].addCss('fursten-main', 'local/dashboard/css/main.css')
     
     page['head'].addJs('jquery', 'contrib/jquery/js/jquery-1.8.3.min.js')
@@ -27,6 +28,7 @@ def handle_post_viewed(sender, **kwargs):
     #page['head'].addJs('backbone', 'contrib/backbone/js/list.js')
     page['head'].addJs('backbone', 'local/backbone/js/autocomplete.js')
     page['head'].addJs('backbone', 'local/backbone/js/repeater.js')
+    page['head'].addJs('backbone', 'local/backbone/js/static-fields.js')
     #page['head'].addJs('backbone', 'contrib/backbone/js/backbone-forms-extensions.js')
     page['head'].addJs('backbone', 'contrib/backbone/js/backbone-custom-sync.js')
     

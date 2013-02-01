@@ -45,11 +45,6 @@ var ResourceOffspring = Backbone.Model.extend({
     }
 });
 
-/*
- ,
-    	offsprings : [],
-    	weightGroups: [] 
- */
 var ResourceForm = Backbone.Model.extend({
 	url: "/resource/new/",
 	defaults: {
@@ -71,6 +66,31 @@ var ResourceForm = Backbone.Model.extend({
         	itemType: 'NestedModel',
         	layout: 'table',
         	model: ResourceOffspring
+        }
+    }
+});
+
+var ResourceListFormItem = Backbone.Model.extend({
+	defaults: {
+		name : "unknown"
+    },
+    schema: {
+    	name: { type: 'StaticText' },
+    	isDisplayed: { type: 'Checkboxes', options: [''], header: '<i class="icon-eye-open"></i>' },
+    	isRendered: { type: 'Checkboxes', options: [''], header: '<i class="icon-globe"></i>' }
+    }
+});
+//Static
+var ResourceListForm = Backbone.Model.extend({
+	url: "/resource/",
+	schema: {
+    	resourceIndex: {
+        	type: 'Repeater',
+        	itemType: 'NestedModel',
+        	layout: 'table',
+        	dynamic: false,
+        	title: false,
+        	model: ResourceListFormItem
         }
     }
 });

@@ -12,7 +12,12 @@
 		',
 		repeaterTable: '\
 			  <div class="bbf-list" data-spec="alpha">\
-			  	<table class="table table-striped">\
+			  	<table class="table table-striped table-condensed">\
+					<colgroup>\
+					<% _.each(headers, function(header) { %>\
+		    			<col/>\
+					<% }); %>\
+		  			</colgroup>\
 					<thead>\
 						<tr>\
 						<% _.each(headers, function(header) { %>\
@@ -21,11 +26,13 @@
 						<th></th>\
 						</tr>\
 					</thead>\
+					<% if(dynamic !== false){ %>\
 					<tfoot>\
 						<tr>\
 							<td colspan="{{headers.length+1}}"><div class="bbf-actions"><button type="button" data-action="add" data-cid="{{cid}}">Add</div></td>\
 						</tr>\
 					</tfoot>\
+					<% } %>\
 					<tbody>{{items}}</tbody\
 				</table>\
 			  </div>\
@@ -103,12 +110,20 @@
 				
 				var headers = [];
 				for(var key in editor.nestedSchema){
-					headers.push(key);
+					if(editor.nestedSchema[key].header != undefined)
+						headers.push(editor.nestedSchema[key].header);
+					else
+						headers.push(key);
 				}
 				
 				return headers;
 				
 			})();
+			
+			if(this.schema.dynamic === false)
+				this.dynamic = false;
+			else
+				this.dynamic = true;
 			
 			this.items = [];
 		},
@@ -126,6 +141,7 @@
 			var $el = $(Form.templates[this.schema.listTemplate]({
 				items : emptyEl,
 				headers : this.headers,
+				dynamic : this.dynamic,
 				cid : this.cid
 			}));
 
@@ -471,8 +487,11 @@
 		      delete this.options.item.events['keydown input[type=text]'];
 
 		      var schema = this.schema;
-		      if (!schema.model) throw 'Missing required option "schema.model"';
-
+		      if (!schema.model) { // throw 'Missing required option "schema.model"';
+		    	  alert(JSON.stringify(schema));
+		      	this.schema.model = {};
+		      }
+		      
 		      this.nestedSchema = schema.model.prototype.schema;
 		      if (_.isFunction(this.nestedSchema)) this.nestedSchema = this.nestedSchema();
 		      
@@ -510,7 +529,7 @@
 		        
 		        var formEl = this.form.render().el;
 		        
-		        if(this.schema.layout) {
+		        if(this.schema.layout == "table" && this.schema.dynamic !== false) {
 		      	  $(formEl).append('<td><button type="button" data-action="remove" class="bbf-remove">&times;</button></td>');
 		        }
 		        
@@ -540,7 +559,7 @@
 				},
 
 			    onUserAdd: function() {
-			    	this.form.$('input, textarea, select').first().focus();
+			    	//this.form.$('input, textarea, select').first().focus();
 			    },
 
 			    getValue: function() {
