@@ -66,8 +66,6 @@ var Form = (function() {
       
         return model.schema;
       })();
-
-      //alert(JSON.stringify(this.schema) + " # " + JSON.stringify(options));
       
       //Option defaults
       options = _.extend({
@@ -559,7 +557,7 @@ Form.helpers = (function() {
     } else {
       constructorFn = schemaType;
     }
-
+    
     return new constructorFn(options);
   };
   
@@ -1189,6 +1187,7 @@ Form.editors = (function() {
      * Adds the editor to the DOM
      */
     render: function() {
+    	
       this.setValue(this.value);
 
       return this;
@@ -1850,7 +1849,7 @@ Form.editors = (function() {
     
     _observeFormEvents: function() {
       this.form.on('all', function() {
-        // args = ["key:change", form, fieldEditor]
+    	// args = ["key:change", form, fieldEditor]
         var args = _.toArray(arguments);
         args[1] = this;
         // args = ["key:change", this=objectEditor, fieldEditor]

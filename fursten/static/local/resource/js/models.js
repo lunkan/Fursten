@@ -11,68 +11,86 @@ var ResourceCollection = Backbone.Collection.extend({
 
 var ResourceWeight = Backbone.Model.extend({
 	defaults: {
-		resource : 1,
-		value : 32,
-		group : 1
+		resource : 0,
+		value : 1
     },
     schema: {
-    	resource: 'Number',
-        value: 'Number',
-        group: { type: 'Select', options: ['1', '2', '3'] }
+    	resource: { type: 'Autocomplete', options: {url:'/resource/search'}, editorClass: 'input-medium' },
+        value: { type: 'Number', editorClass: 'input-mini' }
     }
 });
 
-function testToString(object) {
-    return "Hej";
-}
+var ResourceWeightGroup = Backbone.Model.extend({
+	defaults: {
+		weights : []
+    },
+    schema: {
+    	weights: {
+        	type: 'Repeater',
+        	layout: 'table',
+        	itemType: 'NestedModel',
+        	model: ResourceWeight
+        },
+    }
+});
 
 var ResourceOffspring = Backbone.Model.extend({
 	defaults: {
-		resource : 123,
-		value : 321
+		resource : 0,
+		value : 1
     },
     schema: {
-    	resource: 'Number',
-        value: 'Number'
+    	resource: { type: 'Autocomplete', options: {url:'/resource/search'}, editorClass: 'input-medium' },
+        value: { type: 'Number', editorClass: 'input-mini' }
     }
 });
 
 var ResourceForm = Backbone.Model.extend({
 	url: "/resource/new/",
 	defaults: {
-    	name : 'default name',
-    	threshold : 123,
-    	offsprings : [],
-    	weights: []
+		key : 0,
+    	name : '',
+    	threshold : 0.9
     },
     schema: {
-    	atomat: { type: 'Autocomplete', options: {
-    		schema: {queryUrl: '/resource/names/', itemToString: testToString }
-    	}},
+    	key: 'Hidden',
         name: 'Text',
         threshold: 'Number',
-        weights: {
-        	type: 'List',
-        	itemType: 'InlineNestedModel',
-        	model: ResourceWeight
+        weightGroups: {
+        	type: 'Repeater',
+        	itemType: 'NestedModel',
+        	model: ResourceWeightGroup
         },
         offsprings: {
-        	type: 'List',
-        	itemType: 'InlineNestedModel',
+        	type: 'Repeater',
+        	itemType: 'NestedModel',
+        	layout: 'table',
         	model: ResourceOffspring
         }
     }
 });
 
-/*
- * 
-        offsprings: { type: 'NestedModel', model: ResourceOffspring }
-
-//weight: { type: 'NestedModel', model: ResourceWeight },
-	private int key;
-	private String name;
-	private float threshold;
-	
-	private ArrayList<OffspringNode> offsprings;
-	private ArrayList<HashMap<Integer, Float>> weights;
-*/
+var ResourceListFormItem = Backbone.Model.extend({
+	defaults: {
+		name : "unknown"
+    },
+    schema: {
+    	name: { type: 'StaticText' },
+    	isDisplayed: { type: 'Checkboxes', options: [''], header: '<i class="icon-eye-open"></i>' },
+    	isRendered: { type: 'Checkboxes', options: [''], header: '<i class="icon-globe"></i>' }
+    }
+});
+//Static
+var ResourceListForm = Backbone.Model.extend({
+	url: "/resource/",
+	schema: {
+    	resourceIndex: {
+        	type: 'Repeater',
+        	itemType: 'NestedModel',
+        	layout: 'table',
+        	dynamic: false,
+        	title: false,
+        	model: ResourceListFormItem
+        }
+    }
+});

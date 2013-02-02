@@ -14,9 +14,9 @@
    */
   editors.List = editors.Base.extend({
     
-    events: {
+	events: {
       'click [data-action="add"]': function(event) {
-        event.preventDefault();
+    	event.preventDefault();
         this.addItem(null, true);
       }
     },
@@ -46,14 +46,14 @@
         //Or whichever was passed
         return editors[type];
       })();
-
+      
       this.items = [];
     },
 
     render: function() {
       var self = this,
           value = this.value || [];
-
+      
       //Create main element
       var $el = $(Form.templates[this.schema.listTemplate]({
         items: '<b class="bbf-tmp"></b>'
@@ -281,7 +281,8 @@
     },
 
     render: function() {
-      //Create editor
+    	
+    //Create editor
       this.editor = new this.Editor({
         key: this.key,
         schema: this.schema,
@@ -294,12 +295,26 @@
       var $el = $(Form.templates[this.schema.listItemTemplate]({
         editor: '<b class="bbf-tmp"></b>'
       }));
-
-      $el.find('.bbf-tmp').replaceWith(this.editor.el);
-
-      //Replace the entire element so there isn't a wrapper tag
-      this.setElement($el);
-        
+      
+      //$el.find('.bbf-tmp').parent().replaceWith(this.editor.el);
+      
+      //ToDo:make work
+      if(this.schema.listItemTemplate == "repeaterRow") {
+    	 var $altElm = $('<tr></tr>');
+    	 $.each($(this.editor.el).find('td'), function() {
+    		 $altElm.append($(this));
+    	 });
+    	 
+    	 $altElm.attr('name', this.editor.getName());
+    	  this.setElement($altElm);
+      }
+      else {
+      
+    	  $el.find('.bbf-tmp').parent().replaceWith(this.editor.el);
+    	//Replace the entire element so there isn't a wrapper tag
+          this.setElement($el);
+      }
+      
       return this;
     },
 

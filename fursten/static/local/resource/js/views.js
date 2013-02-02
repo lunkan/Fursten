@@ -1,6 +1,6 @@
 var recourceViews = {}
 
-jQuery(document).ready(function($) {
+/*jQuery(document).ready(function($) {
 	recourceViews.ResourceListView = Backbone.View.extend({
     
 		template: _.template($('#tpl-table').html()),
@@ -25,4 +25,4 @@ jQuery(document).ready(function($) {
 	        $(this.el).html(renderedTable);
 	    }
 	});
-});
+});*/

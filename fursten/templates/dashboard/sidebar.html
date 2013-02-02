@@ -9,15 +9,7 @@
 		{% for tab_name, tab_content in blocks.items %}
 		<div class="tab-pane {% if forloop.first %}active{% endif %}" id="tab{{ forloop.counter	}}">
 			{% for block_key, block_content in tab_content.items %}
-				<div id="{{ block_content.id }}" class="block sidebar-block">
-				
-					<div class="block-header">
-						{{ block_key|label }}
-					</div>
-					<div class="block-content" data-src="{{ block_content.src }}">
-					</div>
-					
-				</div>
+				{{ block_content.blocks.toHtml }}
 			{% endfor %}
 		</div>
 		{% endfor %}
