@@ -11,7 +11,7 @@ def handle_post_viewed(sender, **kwargs):
         print "in group!: "
     
     page['header'].addMainMenuItem('diagram/general/connect', 'onClick', 'fu.msg.connectToSimulator.dispatch()')    
-    page['left_sidebar'].addBlock('diagram/diagram_list', '/diagram', 'diagram-list-block')
+    page['left_sidebar'].addBlock('diagram/diagram_controls', '/diagram', 'diagram-controls-block')
     page['head'].addJs('fursten-diagram', 'local/diagram/js/views.js')
     page['head'].addJs('fursten-diagram', 'local/diagram/js/main.js')
     page['head'].addJs('fursten-diagram', 'local/diagram/js/mouse.js')

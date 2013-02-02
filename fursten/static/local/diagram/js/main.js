@@ -8,6 +8,7 @@ function translate_map(deltaX, deltaY) {
 
 function draw_map(paths) {
 	var svgmap = d3.select("#svgmap");
+	svgmap.selectAll('#mappath').remove();
 	_.each(paths, function(path) {
 		svgmap.append("path")
 		    .attr("stroke", "black")
@@ -47,21 +48,27 @@ var DiagramModule = (function () {
 		
 		var currentConnectForm = null;
 		var currentConnectFormView = null;
-		
+		this.running = false;
+		var that = this;
+		console.log(that);
 		//MESSAGES
 		fu.msg.drawMap = new signals.Signal();
 		fu.msg.connectToSimulator = new signals.Signal();
+		fu.msg.startRunning = new signals.Signal();
+		fu.msg.stopRunning = new signals.Signal();
 		
-		this.ondrawMap = function() {
-			$.getJSON('/diagram/getsvgjson', function(data) {
+		this.ondrawMap = function(tick) {
+			$.getJSON('/diagram/getsvgjson', {'tick': tick}, function(data) {
 				console.log(data);
 				draw_map(data.paths);
 				var svgmap = d3.select("#svgmap");
-				console.log(data);
+
+				svgmap.selectAll('#mapnode').remove();
 				_.each(data.nodes, function(list,key) {
 					_.each(list, function(xy){
 						svgmap.append("circle")
 						   .attr("class", "node_" + key + ' map_node')
+						   .attr('id', 'mapnode')
 						   .attr("cx", xy[0])
 					       .attr("cy", xy[1])
 						   .attr("r", 3/0.025)
@@ -73,6 +80,8 @@ var DiagramModule = (function () {
 						mouse.mouse_over_node(key);
 					});
 				});
+
+				svgmap.selectAll('#show_node_name').remove();
 				var text_element = svgmap.append('text');
 				text_element.text('')
 				      .attr('x', 10)
@@ -90,7 +99,13 @@ var DiagramModule = (function () {
 			    .attr('fill-opacity', 0.5)
 			    .attr('id', 'show_node_name_box');
 
+				console.log(that.running);
+				console.log(that);
+				if (that.running) {
+					fu.msg.drawMap.dispatch('true');
+				}
 			});
+			
 		};
 		
 		this.onConnectToSimulator = function() {
@@ -108,11 +123,7 @@ var DiagramModule = (function () {
 		}
 		
 		this.onInitiateConnection = function() {
-			
-//			var currForm = currentResourceForm;
-//			var currFormView = currentResourceFormView;
 			var errors = currentConnectFormView.commit();
-			
 			if(!errors) {
 				currentConnectForm.on('sync', function() {
 					fu.models['diagram'].onInitiateConnectionComplete();
@@ -129,13 +140,33 @@ var DiagramModule = (function () {
 					function(data) {
 					$("#node_style").html(data.css);
 			});
-			fu.msg.drawMap.dispatch();
+			fu.msg.drawMap.dispatch('false');
+			this.addSimulatorControl();
 		}
+		
+		this.addSimulatorControl = function() {
+			var template = _.template($('#tpl-diagram-simulator-control-buttons').html());
+			var steamRoller = $(template());
+			$('#diagram-simulator-control-buttons').html(steamRoller);
+		};
+		
+		this.onStartRunning = function() {
+			that.running = true;
+			fu.msg.drawMap.dispatch('true');
+		};
+		
+		this.onStopRunning = function() {
+			that.running = false;
+		};
 		
 		//SUBSCRIBE TO MESSAGES
 		fu.msg.drawMap.add(this.ondrawMap);
 		fu.msg.connectToSimulator.add(this.onConnectToSimulator);
+		fu.msg.startRunning.add(this.onStartRunning);
+		fu.msg.stopRunning.add(this.onStopRunning);
 	};
+	
+	
 	return diagramModule;
 })();
 fu.models['diagram'] = new DiagramModule();
