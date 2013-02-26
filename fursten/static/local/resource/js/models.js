@@ -1,22 +1,20 @@
-var ResourceListItem = Backbone.Model.extend({
-    defaults: {
-    	name : 'default name'
-    }
-});
- 
-var ResourceCollection = Backbone.Collection.extend({
-    model: ResourceListItem,
-    url: "/resource/"
-});
-
 var ResourceWeight = Backbone.Model.extend({
 	defaults: {
 		resource : 0,
 		value : 1
     },
     schema: {
-    	resource: { type: 'Autocomplete', options: {url:'/resource/search'}, editorClass: 'input-medium' },
-        value: { type: 'Number', editorClass: 'input-mini' }
+    	resource: {
+    		type: 'AutocompleteResource',
+    		options: {
+    			url:'/resource/search'
+    		},
+    		editorClass: 'input-medium'
+    	},
+        value: {
+        	type: 'Number',
+        	editorClass: 'input-mini'
+        }
     }
 });
 
@@ -40,7 +38,7 @@ var ResourceOffspring = Backbone.Model.extend({
 		value : 1
     },
     schema: {
-    	resource: { type: 'Autocomplete', options: {url:'/resource/search'}, editorClass: 'input-medium' },
+    	resource: { type: 'AutocompleteResource', options: {url:'/resource/search'}, editorClass: 'input-medium' },
         value: { type: 'Number', editorClass: 'input-mini' }
     }
 });
@@ -75,9 +73,10 @@ var ResourceListFormItem = Backbone.Model.extend({
 		name : "unknown"
     },
     schema: {
+    	key: 'Hidden',
     	name: { type: 'StaticText' },
-    	isDisplayed: { type: 'Checkboxes', options: [''], header: '<i class="icon-eye-open"></i>' },
-    	isRendered: { type: 'Checkboxes', options: [''], header: '<i class="icon-globe"></i>' }
+    	isDisplayed: { type: 'Checkbox', header: '<i class="icon-eye-open"></i>' },
+    	isRendered: { type: 'Checkbox', header: '<i class="icon-globe"></i>' }
     }
 });
 //Static

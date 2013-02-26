@@ -21,23 +21,11 @@
 	
 		getValue: function() {     
 			var value = this.$el.val();
-			return 3;//"Hej du glade";
+			return value;
 		},
 		    
 	    setValue: function(value) {
-	      
-	    	value = "Hej du glade";
-	    		/*(function() {
-		        if (_.isNumber(value)) return value;
-
-		        if (_.isString(value) && value !== '') return parseFloat(value, 10);
-
-		        return null;
-		      })();
-
-		      if (_.isNaN(value)) value = null;*/
-		      
-		      editors.Text.prototype.setValue.call(this, value);
+	    	editors.Text.prototype.setValue.call(this, value);
 	    }
 	});
 	

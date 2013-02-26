@@ -14,11 +14,11 @@
  						{% for menu_group_name, menu_group in main_menu_item.items %}
  							<li class="nav-header">{{ menu_group_name|label }}</li>
  							{% for menu_item_name, menu_item in menu_group.items %}
- 							<li><a {{ menu_item.action|safe }}>{{ menu_item_name|label }}</a></li>
+ 							<li id="main_menu_item_{{ menu_item_name }}"><a {{ menu_item.action|safe }}>{{ menu_item_name|label }}</a></li>
+                      		{% endfor %}
                       		{% if forloop.last|is_false %}
                         	<li class="divider"></li>
                       		{% endif %}
-                      		{% endfor %}
  						{% endfor %}
 						</ul>
  					</li>

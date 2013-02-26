@@ -20,6 +20,14 @@ DATABASES = {
     }
 }
 
+SIMULATOR_URL = 'http://127.0.0.1:8989/Fursten-simulator/'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
+}
+
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -138,6 +146,8 @@ INSTALLED_APPS = (
     'fursten.world',
     'fursten',
     'fursten.diagram',
+    'fursten.utils',
+    'fursten.nodes',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin'
     # Uncomment the next line to enable admin documentation:

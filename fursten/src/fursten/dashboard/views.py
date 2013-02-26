@@ -13,6 +13,7 @@ from fursten.dashboard.blocks import *
 from fursten.resources import receivers
 from fursten.world import receivers
 from fursten.diagram import receivers
+from fursten.nodes import receivers
 
 @login_required(login_url='/index?error=forbidden')
 def index(request):

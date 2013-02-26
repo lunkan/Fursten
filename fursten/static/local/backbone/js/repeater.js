@@ -23,7 +23,9 @@
 						<% _.each(headers, function(header) { %>\
 							<th>{{header}}</th>\
 						<% }); %>\
+						<% if(dynamic !== false){ %>\
 						<th></th>\
+						<% } %>\
 						</tr>\
 					</thead>\
 					<% if(dynamic !== false){ %>\
@@ -110,10 +112,12 @@
 				
 				var headers = [];
 				for(var key in editor.nestedSchema){
-					if(editor.nestedSchema[key].header != undefined)
-						headers.push(editor.nestedSchema[key].header);
-					else
-						headers.push(key);
+					if(editor.nestedSchema[key] != "Hidden") {
+						if(editor.nestedSchema[key].header != undefined)
+							headers.push(editor.nestedSchema[key].header);
+						else
+							headers.push(key);
+					}
 				}
 				
 				return headers;
@@ -149,10 +153,12 @@
 			this.$list = $el.find('.bbf-tmp').parent().empty();
 
 			// Add existing items
-			if (value.length) {
+			// items is array or single item as object
+			if(Object.prototype.toString.call(value) !== '[object Array]' && value) {
+			    self.addItem(value);
+			}
+			else if (value.length) {
 				_.each(value, function(itemValue) {
-					// self.$list.append(item.el);
-
 					self.addItem(itemValue);
 				});
 			}
@@ -385,11 +391,19 @@
 						editor : '<b class="bbf-tmp"></b>'
 					}));
 
-					// $el.find('.bbf-tmp').parent().replaceWith(this.editor.el);
-
-					// ToDo:make work
 					if (this.schema.listItemTemplate == "repeaterRow") {
+						
 						var $altElm = $('<tr></tr>');
+						
+						//Adds id attribute to row if id or key is supplied
+						//Todo:get cid if possible
+						if(this.value) {
+							if(this.value.key)
+								$altElm.attr("id", this.value.key);
+							if(this.value.id)
+								$altElm.attr("id", this.value.id);
+						}
+						
 						$.each($(this.editor.el).find('td'), function() {
 							$altElm.append($(this));
 						});
@@ -488,8 +502,7 @@
 
 		      var schema = this.schema;
 		      if (!schema.model) { // throw 'Missing required option "schema.model"';
-		    	  alert(JSON.stringify(schema));
-		      	this.schema.model = {};
+		    	this.schema.model = {};
 		      }
 		      
 		      this.nestedSchema = schema.model.prototype.schema;

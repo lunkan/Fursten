@@ -11,3 +11,23 @@ col:first-child {
 .container-fluid {
 	padding:0;
 }
+
+tr.selected td {
+	background-color:#0000ff !important;
+	color:#fff;
+}
+.tabbable[class*="strech"] {
+	position:relative;
+}
+.tabbable[class*="strech"] > .tab-content {
+	bottom: 0;
+    left: 0;
+    overflow: auto;
+    position: absolute;
+    right: 0;
+    top: 38px;
+}
+
+.dropdown-menu li > a {
+	cursor:pointer;
+}
