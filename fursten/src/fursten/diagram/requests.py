@@ -88,12 +88,12 @@ def sendResourceXmlRequest(address):
 #    print stuff
     return stuff
 
-def sendProcessRequest(address, type, argument):
+def sendProcessRequest(address):
     header = {"Content-Type": "application/x-www-form-urlencoded"}
     conn = httplib.HTTPConnection(address)
     processRequest = test_pb2.ProcessRequest()
-    processRequest.command = type
-    processRequest.argument = argument
+    processRequest.command = test_pb2.ProcessRequest.RUN
+    processRequest.argument = "Run"
     
     
     

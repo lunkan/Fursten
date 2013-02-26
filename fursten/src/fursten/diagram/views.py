@@ -39,11 +39,16 @@ logger = logging.getLogger('console')
 
     
 def getSvgJson(request):
-    logger.info('getsvgjson')
+    logger.info(request.GET)
     SCALE = 200
     X=range(-50,50)
     Y=range(-50,50)
     simulator_host = SimulatorData.objects.get(pk=1).simulatorUrl
+    logger.info(request.GET['tick'])
+    if str(request.GET['tick']) == 'true':
+        logger.info('GOT TICK')
+        requests.sendProcessRequest(simulator_host)
+    
     allNodes = requests.getNodes(simulator_host)
     
     resources_with_nodes = [resource_name 
@@ -104,15 +109,6 @@ def connectToSimulator(request):
         simulatorData.simulatorUrl = json_data['simulatorUrl']
         simulatorData.save()
         return HttpResponse(status=200)
-#        form = ResourceForm(json_data)
-#        
-#        if not form.is_valid():
-#            return HttpResponseBadRequest(simplejson.dumps(form.errors), mimetype='application/json')
-#        else:
-#            cd = form.cleaned_data
-#            res = Resource(name=cd['name'], pub_date=datetime.datetime.now())
-#            res.save();
-#            return HttpResponse(status=200)
     elif request.method == 'PUT':
         logger.info('PUT')
     return HttpResponse('SOME TEXT')
