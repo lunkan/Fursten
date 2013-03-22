@@ -11,3 +11,6 @@ def handle_post_viewed(sender, **kwargs):
     page['header'].addMainMenuItem('file/general/new_world', 'onClick', 'fu.msg.newWorld.dispatch()')
     page['head'].addJs('fursten-resource', 'local/world/js/models.js')
     page['head'].addJs('fursten-resource', 'local/world/js/main.js')
+    
+    page['left_sidebar'].addBlock('simulator/process', 'blocks/process-control-panel.html', { 'id':'process-control-panel-block', 'title':'Process' })
+    page['left_sidebar'].addBlock('simulator/status', 'blocks/block.html', { 'id':'process-status-block', 'title':'Status' })

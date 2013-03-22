@@ -9,4 +9,6 @@ urlpatterns = patterns('',
     url(r'^inject', 'fursten.nodes.views.inject', name='inject'),
     url(r'^remove', 'fursten.nodes.views.remove', name='remove'),
     url(r'^set', 'fursten.nodes.views.set', name='set'),
+    url(r'^samples', 'fursten.nodes.views.samples', name='samples'),
+    
 )

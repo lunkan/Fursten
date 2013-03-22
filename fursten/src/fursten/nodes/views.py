@@ -8,6 +8,7 @@ import urllib
 import httplib
 from fursten.utils.requests import RequestWithMethod
 from django.conf import settings
+import types
 
 def index(request):
     
@@ -112,7 +113,7 @@ def set(request):
         url = settings.SIMULATOR_URL + "rest/nodes"
         json_data = simplejson.loads(request.raw_post_data)
         
-        print json_data
+        #print json_data
     
         req = RequestWithMethod(url, 'PUT')
         req.add_data(simplejson.dumps(json_data))
@@ -122,6 +123,44 @@ def set(request):
         try:
             f = urllib2.urlopen(req)
             return HttpResponse(status=200)
+        except urllib2.HTTPError, e:
+            print e
+            to_json = {'error': 'Unable to save resource on server.'}
+        except urllib2.URLError, e:
+            print 'URLError = ' + str(e.reason)
+            to_json = {'error': 'URLError.'}
+        except httplib.HTTPException, e:
+            print 'HTTPException'
+            to_json = {'error': 'HTTPException.'}
+        except Exception:
+            print 'Exception'
+            to_json = {'error': 'Exception.'}
+        
+        return HttpResponse(simplejson.dumps(to_json), mimetype='application/json', status=e.code)
+    
+def samples(request):
+    
+    if request.method == 'POST':
+        
+        url = settings.SIMULATOR_URL + "rest/samples"
+        json_data = simplejson.loads(request.raw_post_data)
+        
+        #print json_data
+    
+        req = RequestWithMethod(url, 'POST')
+        req.add_data(simplejson.dumps(json_data))
+        req.add_header('Content-Type', 'application/json')
+        req.add_header('Accept', 'application/json')
+        
+        try:
+            f = urllib2.urlopen(req)
+            respond_data = simplejson.loads(f.read())
+            
+            #if one item wrap as list
+            if not isinstance(respond_data['samples'], types.ListType):
+                respond_data['samples'] = [respond_data['samples']]
+            
+            return HttpResponse(simplejson.dumps(respond_data), mimetype='application/json')
         except urllib2.HTTPError, e:
             print e
             to_json = {'error': 'Unable to save resource on server.'}

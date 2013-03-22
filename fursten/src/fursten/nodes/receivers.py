@@ -14,6 +14,7 @@ def handle_post_viewed(sender, **kwargs):
     page['header'].addMainMenuItem('node/general/add_nodes', 'onClick', 'fu.msg.newNodes.dispatch()')
     page['header'].addMainMenuItem('node/general/delete_nodes', 'onClick', 'fu.msg.deleteNodes.dispatch()')
     page['header'].addMainMenuItem('node/general/clear_nodes', 'onClick', 'fu.msg.clearNodes.dispatch()')
+    page['header'].addMainMenuItem('node/samples/get_samples', 'onClick', 'fu.msg.getSamples.dispatch()')
     
     page['head'].addJs('fursten-node', 'local/node/js/models.js')
     page['head'].addJs('fursten-node', 'local/node/js/main.js')

@@ -1,0 +1,27 @@
+{% extends "blocks/block.html" %}
+{% block body %}
+<div class="row-fluid">
+	<div class="span12">
+		<dl class="dl-horizontal row-fluid lead">
+  			<dt style="text-align:left;" class="span7">Current tick:</dt>
+  			<dd id="current-tick-display" class="span5">0</dd>
+		</dl>
+	</div>
+</div>
+<div class="row-fluid">
+	<div class="span12 input-append">
+  		<input class="span6" name="ticksToRun" type="number" name="ticks" min="1" max="100" step="1" placeholder="Ticks to run" type="text"/>
+  		<a class="btn btn-primary" onClick="fu.msg.playProcess.dispatch()"><i class="icon-play icon-white"></i></a>
+  		<a class="btn" onClick="fu.msg.pauseProcess.dispatch()"><i class="icon-pause"></i></a>
+  		<a class="btn" onClick="fu.msg.stopProcess.dispatch()"><i class="icon-stop"></i></a>
+	</div>
+		
+</div>
+<div class="row-fluid">
+	<div class="span12">
+		<div id="run-progress-bar" class="progress progress-striped active">
+	  		<div class="bar" style="width: 0%;"></div>
+		</div>
+	</div>
+</div>
+{% endblock  %}

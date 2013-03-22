@@ -48,5 +48,39 @@ def new(request):
             print 'Exception'
             to_json = {'error': 'Exception.'}
             return HttpResponse(simplejson.dumps(to_json), mimetype='application/json', status=e.code)
+
+@csrf_protect
+def status(request):
     
+    #worldStatus
+    
+    if request.method == 'GET':
+        req = urllib2.Request(settings.SIMULATOR_URL + "rest/status/")
+        f = urllib2.urlopen(req)
+        json_data = simplejson.loads(f.read())
+        
+        #Tables accept only lists
+        respons_data = {}
+        respons_data['worldStatus'] = [json_data]
+        return HttpResponse(simplejson.dumps(respons_data), mimetype='application/json')
+    
+@csrf_protect
+def run(request):
+    
+    #worldStatus
+    
+    if request.method == 'POST':
+        req = urllib2.Request(settings.SIMULATOR_URL + "rest/process/")
+        json_data = {}
+        req.add_data(simplejson.dumps(json_data))
+        req.add_header('Content-Type', 'application/json')
+        req.add_header('Accept', 'application/json')
+        
+        try:
+            f = urllib2.urlopen(req)
+            return HttpResponse(status=200)
+        except Exception:
+            print 'Exception'
+            to_json = {'error': 'Exception.'}
+            return HttpResponse(simplejson.dumps(to_json), mimetype='application/json', status=400)
     
