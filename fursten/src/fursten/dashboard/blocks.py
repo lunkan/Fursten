@@ -20,15 +20,13 @@ class Head(Block):
     def __init__(self, template, request):
         Block.__init__(self, template, request)
         self.data['js_includes'] = []
-        self.data['css_includes'] = {}
+        self.data['css_includes'] = []
         
     def addJs(self, key, path):
-        #index = len(self.data['js_includes'])
         self.data['js_includes'].append({'path':path})
-        #self.data['js_includes'][index] = {'index':index, 'path':path}
     
     def addCss(self, key, path):
-        self.data['css_includes'][key] = path
+        self.data['css_includes'].append({'path':path})
     
 class Header(Block):
     
@@ -64,17 +62,6 @@ class Sidebar(Block):
         Block.__init__(self, template, request)
         self.data['blocks'] = {}
         self.data['widgets'] = {}
-        
-    #def addBlock(self, path, src, id):
-    #    current_item = self.data['blocks']
-        
-    #    for item in path.split('/'):
-    #        if(item not in current_item):
-    #            current_item[item] = {}
-    #        current_item = current_item[item]
-            
-    #    current_item['id'] = id
-    #    current_item['src'] = src
         
     def addBlock(self, path, template, data):
         current_item = self.data['blocks']

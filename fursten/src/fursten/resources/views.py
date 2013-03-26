@@ -3,13 +3,22 @@ from django.views.decorators.csrf import csrf_protect
 from django.utils import simplejson
 import datetime
 from fursten.resources.forms import ResourceForm
-from fursten.resources.models import ResourceLayer
+from fursten.resources.models import ResourceLayer, ResourceStyle
 import urllib2
 import urllib
 import httplib
 from fursten.utils.requests import RequestWithMethod
 from django.conf import settings
 import types
+from PIL import Image, ImageDraw
+from PIL.EpsImagePlugin import EpsImageFile
+import StringIO
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.files.base import File
+from fursten.utils.graphics import hex_to_rgb, rgb_to_hex 
+from django.views.decorators.cache import never_cache
+
+#@never_cache
 
 def index(request):
     
@@ -34,6 +43,12 @@ def index(request):
                 
                 for resource in json_data['resourceIndex']:
                     
+                    try:
+                        resource_style = ResourceStyle.objects.get(resource=resource['key'])
+                        resource['icon'] = resource_style.icon.url + "?v=" + str(resource_style.version)
+                    except :
+                        resource['icon'] = settings.MEDIA_URL + "resource/default/icon_default.png"
+    
                     try :
                         resource_layer = ResourceLayer.objects.get(resource=resource['key'])
                         resource['isDisplayed'] = resource_layer.display
@@ -241,8 +256,6 @@ def item(request, id):
         url = settings.SIMULATOR_URL + "rest/resources/"+id+"/"
         print "url " + url
         
-        #req = RequestWithMethod(url, 'PUT')
-        
         json_data = simplejson.loads(request.raw_post_data)
         
         opener = urllib2.build_opener(urllib2.HTTPHandler)
@@ -250,10 +263,8 @@ def item(request, id):
         req.add_header('Content-Type', 'application/json')
         req.add_header('Accept', 'application/json')
         req.get_method = lambda: 'PUT'
-        #url = opener.open(request)
 
         try:
-            #urllib2.urlopen(req)
             opener.open(req)
             return HttpResponse(status=200)
         except urllib2.HTTPError, e:
@@ -266,4 +277,108 @@ def item(request, id):
             to_json = {'error': 'Exception.'}
         
         return HttpResponse(simplejson.dumps(to_json), mimetype='application/json', status=400)
+
+@csrf_protect
+def style(request, id):
+    
+    if request.method == 'GET':
+        
+        style_data = {
+            'color' : '#ffffff',
+            'borderColor' : '#000000',
+            'form' : 'Circle'
+        }
+        
+        return HttpResponse(simplejson.dumps(style_data), mimetype='application/json', status=200)
+    
+    elif request.method == 'POST':
+        print "POST style item:"+id
+        return HttpResponse(status=200)
+        
+    elif request.method == 'PUT':
+        
+        thumb_size = (64,64)
+        icon_size = (14, 14)
+        thumb_image = Image.new('RGBA', thumb_size)
+        draw = ImageDraw.Draw(thumb_image)
+        
+        json_data = simplejson.loads(request.raw_post_data)
+        
+        try:
+            color = hex_to_rgb(json_data['color'])
+            background_color = hex_to_rgb(json_data['borderColor'])
+            form = json_data['form'].lower();
+        except Exception:
+            to_json = {'error': 'Exception.'}
+            return HttpResponse(simplejson.dumps(to_json), mimetype='application/json', status=400)
+        
+        if form == "circle":
+            draw.ellipse((2, 2, 62, 62), fill=background_color)
+            draw.ellipse((10, 10, 54, 54), fill=color)
+            
+        elif form == "cube":
+            draw.rectangle((2, 2, 62, 62), fill=background_color)
+            draw.rectangle((10, 10, 54, 54), fill=color)
+            
+        elif form == "diamond":
+            draw.polygon([(32, 2), (2, 32), (32, 62), (62, 32)], fill=background_color)
+            draw.polygon([(32, 10), (10, 32), (32, 54), (54, 32)], fill=color)
+            
+        elif form == "triangle":
+            draw.polygon([(32, 2), (2, 64), (64, 64)], fill=background_color)
+            draw.polygon([(32, 22), (14, 53), (50, 53)], fill=color)
+            
+        else :
+            to_json = {'error': 'Exception.'}
+            return HttpResponse(simplejson.dumps(to_json), mimetype='application/json', status=400)
+        
+        del draw # I'm done drawing so I don't need this anymore
+        
+        icon_image = thumb_image.copy()
+        icon_image.thumbnail(icon_size, Image.ANTIALIAS)
+        
+        icon_image_io = StringIO.StringIO()
+        icon_image.save(icon_image_io, format='PNG')
+        icon_image_file_name = "icon_" + id + ".png";
+        icon_image_file = InMemoryUploadedFile(icon_image_io, None, icon_image_file_name, 'image/png', icon_image_io.len, None)
+        
+        thumb_image_io = StringIO.StringIO()
+        thumb_image.save(thumb_image_io, format='PNG')
+        thumb_image_file_name = "thumbnail_" + id + ".png";
+        thumb_image_file = InMemoryUploadedFile(thumb_image_io, None, thumb_image_file_name, 'image/png', thumb_image_io.len, None)
+        
+        try:
+            resource_style = ResourceStyle.objects.get(resource=id)
+        except ResourceStyle.DoesNotExist:
+            resource_style = ResourceStyle(resource=id)
+        
+        resource_style.version = resource_style.version +1;
+        resource_style.thumbnail.save(thumb_image_file_name, thumb_image_file, save=True)
+        resource_style.icon.save(icon_image_file_name, icon_image_file, save=True)
+        resource_style.save()
+        
+        return HttpResponse(simplejson.dumps(json_data), mimetype='application/json', status=200)
+    
+def thumbnail(request, id):
+    
+    try:
+        resource_style = ResourceStyle.objects.get(resource=id)
+        image_url = resource_style.thumbnail.url + "?v=" + str(resource_style.version)
+        return HttpResponseRedirect(image_url)
+    except :
+        image_url = settings.MEDIA_URL + "resource/default/thumbnail_default.png"
+        return HttpResponseRedirect(image_url)
+    
+def icon(request, id):
+    
+    try:
+        resource_style = ResourceStyle.objects.get(resource=id)
+        image_url = resource_style.icon.url + "?v=" + str(resource_style.version)
+        return HttpResponseRedirect(image_url)
+    except :
+        image_url = settings.MEDIA_URL + "resource/default/icon_default.png"
+        return HttpResponseRedirect(image_url)
+        
+    
+
     

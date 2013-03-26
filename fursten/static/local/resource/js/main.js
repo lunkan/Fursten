@@ -10,6 +10,9 @@ var ResourceModule = (function () {
 		var currentResourceForm = null;
 		var currentResourceFormView = null;
 		
+		var currentResourceStyleForm = null;
+		var currentResourceStyleFormView = null;
+		
 		var selectedResources = [];
 		
 		//MESSAGES
@@ -21,6 +24,7 @@ var ResourceModule = (function () {
 		fu.msg.resourceSelectChange = new signals.Signal();
 		fu.msg.updateResourceFilters = new signals.Signal();
 		fu.msg.updateResourceFiltersComplete = new signals.Signal();
+		fu.msg.editResourceStyle = new signals.Signal();
 		
 		this.onJQueryReady = function() {
 			
@@ -37,6 +41,7 @@ var ResourceModule = (function () {
 			fu.msg.worldChanged.add(that.onResourceChange);
 			fu.msg.resourceSelectChange.add(that.onResourceSelectChange);
 			fu.msg.updateResourceFilters.add(that.onUpdateResourceFilters);
+			fu.msg.editResourceStyle.add(that.onEditResourceStyle);
 			
 			resourceList = new ResourceListForm();
 			resourceListView = new Backbone.Form({
@@ -121,6 +126,8 @@ var ResourceModule = (function () {
 			currentResourceForm = new ResourceForm();
 			currentResourceForm.url = "/resource/" + that.getSelectedResource() +"/";
 			currentResourceForm.id = that.getSelectedResource();//by seetting id we force a put action
+			currResourceId = that.getSelectedResource();
+			
 			currentResourceFormView = new Backbone.Form({
 			    model: currentResourceForm
 			});
@@ -129,7 +136,7 @@ var ResourceModule = (function () {
 				$(currentResourceFormView.el).html("");
 				currentResourceFormView.render();
 				var controls = [{callback:fu.models['resource'].onSaveResource, label:"Save"}];
-				fu.openModal("Edit resource", currentResourceFormView.el, controls);
+				fu.openModal('<img src="/resource/'+currResourceId+'/thumbnail/"/> Edit resource', currentResourceFormView.el, controls);
 			}, this);
 			currentResourceForm.fetch();
 		};
@@ -203,11 +210,13 @@ var ResourceModule = (function () {
 				$('#main_menu_item_delete_resource').addClass("disabled");
 				$('#main_menu_item_extend_resource').addClass("disabled");
 				$('#main_menu_item_edit_resource').addClass("disabled");
+				$('#main_menu_item_edit_resource_style').addClass("disabled");
 			}
 			else {
 				$('#main_menu_item_delete_resource').removeClass("disabled");
 				$('#main_menu_item_extend_resource').removeClass("disabled");
 				$('#main_menu_item_edit_resource').removeClass("disabled");
+				$('#main_menu_item_edit_resource_style').removeClass("disabled");
 			}
 		}
 		
@@ -219,6 +228,57 @@ var ResourceModule = (function () {
 				resourceList.save();
 			}
 			
+		}
+		
+		this.onEditResourceStyle = function() {
+			
+			if(!that.hasSelectedResource())
+				return;
+			
+			currentResourceStyleForm = new ResourceStyleForm();
+			currentResourceStyleForm.url = "/resource/" + that.getSelectedResource() +"/style/";
+			currentResourceStyleForm.id = that.getSelectedResource();//by setting id we force a put action
+			currResourceId = that.getSelectedResource();
+			
+			currentResourceStyleFormView = new Backbone.Form({
+			    model: currentResourceStyleForm
+			});
+			
+			currentResourceStyleForm.on('sync', function() {
+				$(currentResourceStyleFormView.el).html("");
+				currentResourceStyleFormView.render();
+				var controls = [{callback:fu.models['resource'].onSaveResourceStyle, label:"Save"}];
+				fu.openModal('<img src="/resource/'+currResourceId+'/thumbnail/"/> Edit resource style', currentResourceStyleFormView.el, controls);
+			}, this);
+			currentResourceStyleForm.fetch();
+		};
+		
+		this.onSaveResourceStyle = function() {
+			
+			var currForm = currentResourceStyleForm;
+			var currFormView = currentResourceStyleFormView;
+			var errors = currentResourceStyleFormView.commit();
+			
+			if(!errors) {
+				currentResourceStyleForm.on('error', function() {
+					$(currFormView.el).prepend('<div class="alert alert-error">\
+						<button type="button" class="close" data-dismiss="alert">&times;</button>\
+						<strong>Warning!</strong> Could not save data.\
+						</div>\
+					');
+				});
+				currentResourceStyleForm.on('sync', function() {
+					fu.models['resource'].onResourceStyleSaveComplete();
+				});
+				currentResourceStyleForm.save();
+			}
+		}
+		
+		this.onResourceStyleSaveComplete = function() {
+			currentResourceStyleForm = null;
+			currentResourceStyleFormView = null;
+			fu.closeModal();
+			fu.msg.resourceChange.dispatch();
 		}
 		
 		//SUBSCRIBE TO MESSAGES

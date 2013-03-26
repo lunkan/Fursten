@@ -242,6 +242,48 @@
 	    }
 
 	  });
+	  
+	  //Image
+	  editors.StaticImage = editors.StaticBase.extend({
+
+	    tagName: 'img',
+	    defaultValue: '',
+	    
+	    events: {
+	    	//...
+	    },
+	    
+	    initialize: function(options) {
+	      editors.Base.prototype.initialize.call(this, options);
+	      var schema = this.schema;
+	    },
+
+	    render: function() {
+	    	this.setValue(this.value);
+	    	return this;
+	    },
+
+	    getValue: function() {
+	    	this.value
+	    },
+	    
+	    setValue: function(value) { 
+	    	this.$el.attr('src', value);
+	    },
+	    
+	    focus: function() {
+	    	//...
+	    },
+	    
+	    blur: function() {
+	    	//...
+	    },
+	    
+	    select: function() {
+	    	//...
+	    }
+
+	  });
 	
 	return Backbone;
 	

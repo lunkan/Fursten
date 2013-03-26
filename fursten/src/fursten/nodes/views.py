@@ -40,7 +40,11 @@ def index(request):
             print 'Exception'
             to_json = {'error': 'Exception.'}
         
-        return HttpResponse(simplejson.dumps(to_json), mimetype='application/json', status=e.code)
+        response = HttpResponse(simplejson.dumps(to_json), mimetype='application/json', status=e.code)
+        response['Pragma'] = 'no-cache'
+        response['Cache-Control'] = 'no-cache'
+        return response
+        #HttpResponse(simplejson.dumps(to_json), mimetype='application/json', status=e.code)
 
 def inject(request):
     

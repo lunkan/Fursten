@@ -5,7 +5,7 @@ ul {
 col {
 	width:1px;
 }
-col:first-child {
+col.main-column {
 	width:auto;
 }
 .container-fluid {
@@ -30,4 +30,8 @@ tr.selected td {
 
 .dropdown-menu li > a {
 	cursor:pointer;
+}
+
+.table p {
+	margin:0;
 }

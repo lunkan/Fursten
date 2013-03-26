@@ -15,6 +15,7 @@ def handle_post_viewed(sender, **kwargs):
     page['header'].addMainMenuItem('resource/general/edit_resource', 'onClick', 'fu.msg.editResource.dispatch()')
     page['header'].addMainMenuItem('resource/general/delete_resource', 'onClick', 'fu.msg.deleteResource.dispatch()')
     page['header'].addMainMenuItem('resource/filters/update_resource_filters', 'onClick', 'fu.msg.updateResourceFilters.dispatch()')
+    page['header'].addMainMenuItem('resource/styles/edit_resource_style', 'onClick', 'fu.msg.editResourceStyle.dispatch()')
     
     page['left_sidebar'].addBlock('resource/resource_list', 'blocks/block.html', { 'id':'resource-list-block', 'title':'Resource Index' })
     page['head'].addJs('fursten-resource-list', 'local/resource/js/models.js')

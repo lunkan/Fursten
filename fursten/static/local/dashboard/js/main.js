@@ -33,7 +33,7 @@ var Fursten = (function () {
 				if(index == 0)
 					classes += " btn-primary";
 				
-				var btnElm = $('<a class="' + classes + '" href="#">' + control.label + '</a>');
+				var btnElm = $('<a class="' + classes + '">' + control.label + '</a>');
 				$(btnElm).click(control.callback);
 				$('#myModal .modal-footer').append(btnElm);
 			});

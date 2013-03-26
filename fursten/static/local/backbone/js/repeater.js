@@ -15,13 +15,17 @@
 			  	<table class="table table-striped table-condensed">\
 					<colgroup>\
 					<% _.each(headers, function(header) { %>\
+						<% if(header.css !== undefined){ %>\
+						<col class="{{header.css}}"/>\
+						<% } else { %>\
 		    			<col/>\
+						<% } %>\
 					<% }); %>\
 		  			</colgroup>\
 					<thead>\
 						<tr>\
 						<% _.each(headers, function(header) { %>\
-							<th>{{header}}</th>\
+							<th>{{header.value}}</th>\
 						<% }); %>\
 						<% if(dynamic !== false){ %>\
 						<th></th>\
@@ -116,7 +120,7 @@
 						if(editor.nestedSchema[key].header != undefined)
 							headers.push(editor.nestedSchema[key].header);
 						else
-							headers.push(key);
+							headers.push({value:key});
 					}
 				}
 				

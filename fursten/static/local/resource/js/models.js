@@ -74,9 +74,10 @@ var ResourceListFormItem = Backbone.Model.extend({
     },
     schema: {
     	key: 'Hidden',
-    	name: { type: 'StaticText' },
-    	isDisplayed: { type: 'Checkbox', header: '<i class="icon-eye-open"></i>' },
-    	isRendered: { type: 'Checkbox', header: '<i class="icon-globe"></i>' }
+    	icon: { type: 'StaticImage', header: { value: '<i class="icon-picture"></i>'}},
+    	name: { type: 'StaticText', header: { value: 'Resource', css: 'main-column' }},
+    	isDisplayed: { type: 'Checkbox', header: { value: '<i class="icon-eye-open"></i>'}},
+    	isRendered: { type: 'Checkbox', header: { value: '<i class="icon-globe"></i>'}}
     }
 });
 //Static
@@ -91,5 +92,16 @@ var ResourceListForm = Backbone.Model.extend({
         	title: false,
         	model: ResourceListFormItem
         }
+    }
+});
+
+var ResourceStyleForm = Backbone.Model.extend({
+	url: "/resource/id/style",
+	defaults: {
+    },
+    schema: {
+    	form: { type: 'Select', options: ['Cube', 'Diamond', 'Circle', 'Triangle'] },
+    	color: 'Colorpicker',
+        borderColor: 'Colorpicker'
     }
 });

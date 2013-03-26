@@ -2,8 +2,8 @@
 <!-- Bootstrap -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-{% for key, css_item in css_includes.items %}
-<link href="{{ STATIC_URL }}{{ css_item }}" rel="stylesheet" media="screen">
+{% for css_item in css_includes %}
+<link href="{{ STATIC_URL }}{{ css_item.path }}" rel="stylesheet" media="screen">
 {% endfor %}
 
 {% for js_item in js_includes %}
