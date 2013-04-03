@@ -10,9 +10,8 @@ def handle_post_viewed(sender, **kwargs):
     if user.groups.filter(name="admin").count():
         print "in group!: "
     
-#    page['header'].addMainMenuItem('diagram/general/connect', 'onClick', 'fu.msg.connectToSimulator.dispatch()')    
     #page['left_sidebar'].addBlock('diagram/diagram_controls', '/diagram', 'diagram-controls-block')
-    page['header'].addMainMenuItem('diagram/general/connect', 'onClick', 'fu.msg.connectToSimulator.dispatch()')
+#    page['header'].addMainMenuItem('diagram/general/connect', 'onClick', 'fu.msg.connectToSimulator.dispatch()')
     page['left_sidebar'].addBlock('diagram/diagram_control', 'blocks/diagram-control.html', { 'id':'diagram-control-block', 'title':'Diagram Control', 'custom_var_a':'My custom var A','custom_var_b':'Mycustom var B' })
     #page['left_sidebar'].addBlock('diagram/diagram_list', '/diagram', 'diagram-list-block')
     page['head'].addJs('fursten-diagram', 'local/diagram/js/views.js')
