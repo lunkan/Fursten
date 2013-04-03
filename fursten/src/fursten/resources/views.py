@@ -296,67 +296,70 @@ def style(request, id):
         return HttpResponse(status=200)
         
     elif request.method == 'PUT':
-        
-        thumb_size = (64,64)
-        icon_size = (14, 14)
-        thumb_image = Image.new('RGBA', thumb_size)
-        draw = ImageDraw.Draw(thumb_image)
-        
-        json_data = simplejson.loads(request.raw_post_data)
-        
-        try:
-            color = hex_to_rgb(json_data['color'])
-            background_color = hex_to_rgb(json_data['borderColor'])
-            form = json_data['form'].lower();
-        except Exception:
-            to_json = {'error': 'Exception.'}
-            return HttpResponse(simplejson.dumps(to_json), mimetype='application/json', status=400)
-        
-        if form == "circle":
-            draw.ellipse((2, 2, 62, 62), fill=background_color)
-            draw.ellipse((10, 10, 54, 54), fill=color)
+        try: # Added to simplify debugging
+            thumb_size = (64,64)
+            icon_size = (14, 14)
+            thumb_image = Image.new('RGBA', thumb_size)
+            draw = ImageDraw.Draw(thumb_image)
             
-        elif form == "cube":
-            draw.rectangle((2, 2, 62, 62), fill=background_color)
-            draw.rectangle((10, 10, 54, 54), fill=color)
+            json_data = simplejson.loads(request.raw_post_data)
+            print json_data
+            try:
+                color = hex_to_rgb(json_data['color'])
+                background_color = hex_to_rgb(json_data['borderColor'])
+                form = json_data['form'].lower();
+            except Exception:
+                to_json = {'error': 'Exception.'}
+                return HttpResponse(simplejson.dumps(to_json), mimetype='application/json', status=400)
             
-        elif form == "diamond":
-            draw.polygon([(32, 2), (2, 32), (32, 62), (62, 32)], fill=background_color)
-            draw.polygon([(32, 10), (10, 32), (32, 54), (54, 32)], fill=color)
+            if form == "circle":
+                draw.ellipse((2, 2, 62, 62), fill=background_color)
+                draw.ellipse((10, 10, 54, 54), fill=color)
+                
+            elif form == "cube":
+                draw.rectangle((2, 2, 62, 62), fill=background_color)
+                draw.rectangle((10, 10, 54, 54), fill=color)
+                
+            elif form == "diamond":
+                draw.polygon([(32, 2), (2, 32), (32, 62), (62, 32)], fill=background_color)
+                draw.polygon([(32, 10), (10, 32), (32, 54), (54, 32)], fill=color)
+                
+            elif form == "triangle":
+                draw.polygon([(32, 2), (2, 64), (64, 64)], fill=background_color)
+                draw.polygon([(32, 22), (14, 53), (50, 53)], fill=color)
+                
+            else :
+                to_json = {'error': 'Exception.'}
+                return HttpResponse(simplejson.dumps(to_json), mimetype='application/json', status=400)
             
-        elif form == "triangle":
-            draw.polygon([(32, 2), (2, 64), (64, 64)], fill=background_color)
-            draw.polygon([(32, 22), (14, 53), (50, 53)], fill=color)
+            del draw # I'm done drawing so I don't need this anymore
             
-        else :
-            to_json = {'error': 'Exception.'}
-            return HttpResponse(simplejson.dumps(to_json), mimetype='application/json', status=400)
-        
-        del draw # I'm done drawing so I don't need this anymore
-        
-        icon_image = thumb_image.copy()
-        icon_image.thumbnail(icon_size, Image.ANTIALIAS)
-        
-        icon_image_io = StringIO.StringIO()
-        icon_image.save(icon_image_io, format='PNG')
-        icon_image_file_name = "icon_" + id + ".png";
-        icon_image_file = InMemoryUploadedFile(icon_image_io, None, icon_image_file_name, 'image/png', icon_image_io.len, None)
-        
-        thumb_image_io = StringIO.StringIO()
-        thumb_image.save(thumb_image_io, format='PNG')
-        thumb_image_file_name = "thumbnail_" + id + ".png";
-        thumb_image_file = InMemoryUploadedFile(thumb_image_io, None, thumb_image_file_name, 'image/png', thumb_image_io.len, None)
-        
-        try:
-            resource_style = ResourceStyle.objects.get(resource=id)
-        except ResourceStyle.DoesNotExist:
-            resource_style = ResourceStyle(resource=id)
-        
-        resource_style.version = resource_style.version +1;
-        resource_style.thumbnail.save(thumb_image_file_name, thumb_image_file, save=True)
-        resource_style.icon.save(icon_image_file_name, icon_image_file, save=True)
-        resource_style.save()
-        
+            icon_image = thumb_image.copy()
+            icon_image.thumbnail(icon_size, Image.ANTIALIAS)
+            
+            icon_image_io = StringIO.StringIO()
+            icon_image.save(icon_image_io, format='PNG')
+            icon_image_file_name = "icon_" + id + ".png";
+            icon_image_file = InMemoryUploadedFile(icon_image_io, None, icon_image_file_name, 'image/png', icon_image_io.len, None)
+            
+            thumb_image_io = StringIO.StringIO()
+            thumb_image.save(thumb_image_io, format='PNG')
+            thumb_image_file_name = "thumbnail_" + id + ".png";
+            thumb_image_file = InMemoryUploadedFile(thumb_image_io, None, thumb_image_file_name, 'image/png', thumb_image_io.len, None)
+            
+            try:
+                resource_style = ResourceStyle.objects.get(resource=id)
+            except ResourceStyle.DoesNotExist:
+                resource_style = ResourceStyle(resource=id)
+            
+            resource_style.version = resource_style.version +1;
+            resource_style.thumbnail.save(thumb_image_file_name, thumb_image_file, save=True)
+            resource_style.icon.save(icon_image_file_name, icon_image_file, save=True)
+            resource_style.color = json_data['color']
+            resource_style.background_color = json_data['borderColor']
+            resource_style.save()
+        except Exception, e:
+            print e    
         return HttpResponse(simplejson.dumps(json_data), mimetype='application/json', status=200)
     
 def thumbnail(request, id):

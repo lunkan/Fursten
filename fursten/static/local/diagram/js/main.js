@@ -18,6 +18,8 @@ function draw_map(paths) {
 		    		translate_map())
 		    .attr("fill-rule", "evenodd")
 		    .attr("class", "node_" + path[1])
+		    .attr('fill', path[2]['color'])
+		    .attr('stroke', path[2]['background_color'])
 		    .attr("d", path[0]);
     });
 }

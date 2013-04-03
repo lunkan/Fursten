@@ -48,7 +48,6 @@ def getSvgJson(request):
         SCALE = 200
         X=range(-50,50)
         Y=range(-50,50)
-        simulator_host = SimulatorData.objects.get(pk=1).simulatorUrl
         url = settings.SIMULATOR_URL + "rest/nodes"
         req = RequestWithMethod(url, 'GET')
         req.add_header('Content-Type', 'application/json')
@@ -63,12 +62,15 @@ def getSvgJson(request):
             logger.info(resource_style.icon)
             
         nodes_for_map = {}
+        
         for node in data['nodes']:
             if node['r'] in nodes_for_map:
                 nodes_for_map[node['r']].append([int(node['x']), int(node['y'])])
             else:
                 nodes_for_map[node['r']] = [[int(node['x']), int(node['y'])]]
             
+        
+        
 
         logger.info(data)
         resources_with_nodes = [resource_name 
@@ -76,12 +78,19 @@ def getSvgJson(request):
                                 in nodes_for_map.keys()]
         logger.info(resources_with_nodes)
         logger.info(nodes_for_map)
-        paths, debug_dummy = contour.getPaths(SCALE, nodes_for_map, X, Y)
+        
+        colors_for_map = {}
+        for key in nodes_for_map.keys():
+            resource_style = ResourceStyle.objects.get(resource=key)
+            colors_for_map[key] = {'color': resource_style.color, 'background_color': resource_style.background_color}
+        logger.info(colors_for_map)
+        
+        paths, debug_dummy = contour.getPaths(SCALE, nodes_for_map, colors_for_map, X, Y)
 
         data =  json.dumps({'nodes': nodes_for_map, 
                             'paths': paths,
                             })
-        
+        logger.info(data)
 #         if str(request.GET['tick']) == 'true':
 #             requests.sendProcessRequest(simulator_host)
         
@@ -113,17 +122,19 @@ def getSvgJson(request):
         logger.error(e)
         
 
-def getCss(request):
-    simulator_host = SimulatorData.objects.get(pk=1).simulatorUrl
-    cssdata = requests.sendFurstenCssRequest(simulator_host)
-    for line in cssdata.splitlines():
-        m = re.match(r"#(.*)\{.*color:(#.{6}).*", line)
-        if (m is not None):
-            cssdata += "\n#line_%s{stroke: %s;}"%(m.group(1), m.group(2))
-        m = re.match(r"\.(.*?)-.*border-color:(#.{6}).*color:(#.{6}).*", line)    
-        if (m is not None):
-            cssdata += "\n.node_%s{stroke: %s; fill: %s;}"%(m.group(1), m.group(2), m.group(3))
-
-    data = json.dumps({"css": cssdata})
-    return HttpResponse(data)
+# def getCss(request):
+#     
+#     
+#     simulator_host = SimulatorData.objects.get(pk=1).simulatorUrl
+#     cssdata = requests.sendFurstenCssRequest(simulator_host)
+#     for line in cssdata.splitlines():
+#         m = re.match(r"#(.*)\{.*color:(#.{6}).*", line)
+#         if (m is not None):
+#             cssdata += "\n#line_%s{stroke: %s;}"%(m.group(1), m.group(2))
+#         m = re.match(r"\.(.*?)-.*border-color:(#.{6}).*color:(#.{6}).*", line)    
+#         if (m is not None):
+#             cssdata += "\n.node_%s{stroke: %s; fill: %s;}"%(m.group(1), m.group(2), m.group(3))
+# 
+#     data = json.dumps({"css": cssdata})
+#     return HttpResponse(data)
 

@@ -15,6 +15,7 @@ class ResourceStyle(models.Model):
     version = models.IntegerField(default=0)
     thumbnail = models.ImageField(upload_to = 'resource/images', storage = OverwriteStorage(), null = True, blank = True)
     icon = models.ImageField(upload_to = 'resource/images', storage = OverwriteStorage(), null = True, blank = True)
-    
+    color = models.CharField(max_length=7)
+    background_color = models.CharField(max_length=7)
     
     
