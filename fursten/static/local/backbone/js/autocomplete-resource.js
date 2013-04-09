@@ -15,7 +15,7 @@
 	    		   type: 'GET',
 	    		   async: false,
 	    		   success: function(data) {
-	    			   resourceAutoIndex = data.resourceIndex;
+	    			   resourceAutoIndex = data.resources;
 	    		   },
 	    		   error: function() {
 	    			   alert('resourceAutoComplete error');

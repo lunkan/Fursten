@@ -84,7 +84,7 @@ var ResourceListFormItem = Backbone.Model.extend({
 var ResourceListForm = Backbone.Model.extend({
 	url: "/resource/",
 	schema: {
-    	resourceIndex: {
+		resources: {
         	type: 'Repeater',
         	itemType: 'NestedModel',
         	layout: 'table',

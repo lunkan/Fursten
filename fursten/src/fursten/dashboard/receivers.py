@@ -18,10 +18,12 @@ def handle_post_viewed(sender, **kwargs):
     
     page['head'].addCss('colorpicker', 'contrib/bootstrap-colorpicker/css/colorpicker.css')
     
+    page['head'].addJs('moment', 'contrib/moment/js/moment.min.js')
+    
     page['head'].addJs('jquery', 'contrib/jquery/js/jquery-1.8.3.min.js')
+    page['head'].addJs('jquery', 'contrib/jquery/js/jquery.cookie.js')
     page['head'].addJs('jquery', 'contrib/jquery/js/jquery-ui-1.10.0.custom.autocomplete.js')
-    
-    
+    page['head'].addJs('jquery', 'contrib/jquery/js/jquery.form.js')
     
     page['head'].addJs('backbone', 'contrib/backbone/js/underscore-1.4.3.js')
     page['head'].addJs('backbone', 'contrib/bootstrap/js/bootstrap.min.js')
@@ -34,6 +36,8 @@ def handle_post_viewed(sender, **kwargs):
     page['head'].addJs('backbone', 'local/backbone/js/repeater.js')
     page['head'].addJs('backbone', 'local/backbone/js/static-fields.js')
     page['head'].addJs('backbone', 'contrib/backbone/js/backbone-custom-sync.js')
+    
+    page['head'].addJs('django', 'local/django/js/ajax-csrf.js');
     
     page['head'].addJs('d3js', 'contrib/d3js/js/d3.v3.js')
     

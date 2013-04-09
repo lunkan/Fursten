@@ -18,7 +18,9 @@ var NodeModule = (function () {
 		fu.msg.clearNodes = new signals.Signal();
 		fu.msg.nodesChange = new signals.Signal();
 		fu.msg.getSamples = new signals.Signal();
-		
+		fu.msg.importNodes = new signals.Signal();
+	    fu.msg.exportNodes = new signals.Signal();
+	    
 		this.onJQueryReady = function() {
 			//...
 		};
@@ -29,6 +31,8 @@ var NodeModule = (function () {
 			fu.msg.setNodes.add(that.onSetNodes);
 			fu.msg.clearNodes.add(that.onClearNodes);
 			fu.msg.getSamples.add(that.onGetSamples);
+			fu.msg.importNodes.add(that.onImportNodes);
+		    fu.msg.exportNodes.add(that.onExportNodes);
 		};
 	    
 		this.onNewNodes = function() {
@@ -159,6 +163,82 @@ var NodeModule = (function () {
 				currentSampleForm.save();
 			}
 			
+		};
+		
+		this.onImportNodes = function() {
+			
+			/*currentImportFormView = $('\
+				<form id="import-resources-form" action="/resource/import-export/" enctype="multipart/form-data" method="post">\
+		    		<label>File</label>\
+		    		<input type="file" name="resource-file">\
+		    		<span class="help-block">Must be a .proto file!</span>\
+				</form>\
+			');
+			
+			var controls = [{callback:fu.models['resource'].onSaveImportResources, label:"Import"}];
+			fu.openModal('Import Resources', currentImportFormView, controls);*/
+		};
+		
+		this.onSaveImportNodes = function() {
+			
+			/*var csrftoken = $.cookie('csrftoken');
+			$('#import-resources-form').ajaxForm({
+				beforeSend: function(xhr, settings) {
+			    	if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+			        	xhr.setRequestHeader("X-CSRFToken", csrftoken);
+			        }
+			    },
+				beforeSubmit: function(arr, $form, options) {
+					//... validate?
+				},
+				success: function() {
+					fu.closeModal();
+					fu.msg.resourceChange.dispatch();
+				},
+				error: function() {
+					$(currFormView.el).prepend('\
+						<div class="alert alert-error">\
+							<button type="button" class="close" data-dismiss="alert">&times;</button>\
+							<strong>Warning!</strong> Could not save data.\
+						</div>\
+					');
+				}
+			}).submit();*/
+			
+		};
+		
+		this.onExportNodes = function() {
+			
+			var d1= moment();
+			var dateStr = d1.format('YYYY-MM-DD');
+			var defaultValue = "nodes-" + dateStr;
+			
+			currentExportFormView = $('\
+				<form id="import-nodes-form" action="/node/import-export/" method="get">\
+		    		<label>Save file as:</label>\
+		    		<input class="span3" type="text" name="node-file-name" value="' + defaultValue + '">\
+				</form>\
+			');
+				
+			var controls = [{callback:fu.models['node'].onSaveExportNodes, label:"Export"}];
+			fu.openModal('Export Nodes', currentExportFormView, controls);
+		};
+		
+		this.onSaveExportNodes = function() {
+			
+			var filename = $('#import-nodes-form input[name=node-file-name]').val();
+			var src = "/node/import-export/" + filename + ".proto";
+			
+			if($('#file-loader-container').length != 0) {
+				$("#file-loader-container").html("");
+			}
+			else {
+				$("body").append('<div id="file-loader-container"></div>');
+			}
+			
+			alert(src);
+			$('#file-loader-container').append('<iframe src="' + src + '"></iframe>');
+			fu.closeModal();
 		};
 		
 		//SUBSCRIBE TO MESSAGES

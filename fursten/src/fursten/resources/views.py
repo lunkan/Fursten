@@ -17,6 +17,10 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.files.base import File
 from fursten.utils.graphics import hex_to_rgb, rgb_to_hex 
 from django.views.decorators.cache import never_cache
+from fursten.diagram import test_pb2
+from fursten.resources import simulator_protos_pb2
+import os
+from fursten.simulator.resource_proxy import ResourceProxy
 
 #@never_cache
 
@@ -25,65 +29,47 @@ def index(request):
     if request.method == 'GET':
         print "GET index"
         
-        #todo:implement cache
-        url = settings.SIMULATOR_URL + "rest/resources/"
-        req = urllib2.Request(url)
-        req.add_header('Content-Type', 'application/json')
-        req.add_header('Accept', 'application/json')
-        
-        try:
-            f = urllib2.urlopen(req)
-            json_data = simplejson.loads(f.read())
-            resource_layers = []
-            if 'resourceIndex' in json_data:
-                
-                #if one item wrap as list
-                if not isinstance(json_data['resourceIndex'], types.ListType):
-                    json_data['resourceIndex'] = [json_data['resourceIndex']]
-                
-                for resource in json_data['resourceIndex']:
-                    
-                    try:
-                        resource_style = ResourceStyle.objects.get(resource=resource['key'])
-                        resource['icon'] = resource_style.icon.url + "?v=" + str(resource_style.version)
-                    except :
-                        resource['icon'] = settings.MEDIA_URL + "resource/default/icon_default.png"
-    
-                    try :
-                        resource_layer = ResourceLayer.objects.get(resource=resource['key'])
-                        resource['isDisplayed'] = resource_layer.display
-                        resource['isRendered'] = resource_layer.render
-                        resource_layers.append(resource_layer);
-                    except :
-                        resource['isDisplayed'] = False
-                        resource['isRendered'] = False
-                        pass
+        status, response = ResourceProxy().getResources()
+        if status != 200:
+            return HttpResponse(status=status)
             
-            #make sure deleted is removed
-            #todo: improve!
-            ResourceLayer.objects.all().delete()
-            for updatedResourceLayer in resource_layers:
-                resource_layer = ResourceLayer(resource=updatedResourceLayer.resource, render=updatedResourceLayer.render, display=updatedResourceLayer.display)
-                resource_layer.save()
+        resource_layers = []
+        
+        #Append data from interface (fursten)
+        for resource in response['resources']:
             
-            return HttpResponse(simplejson.dumps(json_data), mimetype='application/json')
+            #Merge with icon
+            try:
+                resource_style = ResourceStyle.objects.get(resource=resource['key'])
+                resource['icon'] = resource_style.icon.url + "?v=" + str(resource_style.version)
+            except :
+                resource['icon'] = settings.MEDIA_URL + "resource/default/icon_default.png"
+            
+            #merge with render-filter
+            try :
+                resource_layer = ResourceLayer.objects.get(resource=resource['key'])
+                resource['isDisplayed'] = resource_layer.display
+                resource['isRendered'] = resource_layer.render
+                resource_layers.append(resource_layer);
+            except :
+                resource['isDisplayed'] = False
+                resource['isRendered'] = False
+                pass
         
-        except urllib2.HTTPError, e:
-            to_json = {'error': 'HTTPError.'}
-        except urllib2.URLError, e:
-            to_json = {'error': 'URLError.'}
-        except httplib.HTTPException, e:
-            to_json = {'error': 'HTTPException.'}
-        except Exception:
-            to_json = {'error': 'Exception.'}
+        #Update resource layers  
+        #todo: improve!
+        ResourceLayer.objects.all().delete()
+        for updatedResourceLayer in resource_layers:
+            resource_layer = ResourceLayer(resource=updatedResourceLayer.resource, render=updatedResourceLayer.render, display=updatedResourceLayer.display)
+            resource_layer.save()
         
-        return HttpResponse(simplejson.dumps(to_json), mimetype='application/json', status=400)
+        return HttpResponse(simplejson.dumps(response), mimetype='application/json')
     
     #post current filter settings (render, delete)
     elif request.method == 'POST':
         
         json_data = simplejson.loads(request.raw_post_data)
-        for resource in json_data['resourceIndex']:
+        for resource in json_data['resources']:
             try :
                 resource_layer = ResourceLayer.objects.get(resource=resource['key'])
                 resource_layer.render = resource['isRendered']
@@ -97,186 +83,139 @@ def index(request):
         return HttpResponse(status=200)
         
     elif request.method == 'DELETE':
-        filter_arg = request.GET['filter'];
-        if(filter_arg):
-            print "delete it all " + filter_arg
-            url = settings.SIMULATOR_URL + "rest/resources?filter="+filter_arg;
+        resource_key = request.GET['filter'];
+        
+        #delete all if no key is provided
+        if resource_key is not None:
+            status, response = ResourceProxy().deleteResource(resource_key)
         else:
-            url = settings.SIMULATOR_URL + "rest/resources/"
+            status, response = ResourceProxy().deleteResources()
         
-        req = RequestWithMethod(url, 'DELETE')
-        req.add_header('Content-Type', 'application/json')
-        req.add_header('Accept', 'application/json')
-        
-        try:
-            urllib2.urlopen(req)
-            return HttpResponse(status=200)
-        except urllib2.HTTPError, e:
-            to_json = {'error': 'HTTPError.'}
-        except urllib2.URLError, e:
-            to_json = {'error': 'URLError.'}
-        except httplib.HTTPException, e:
-            to_json = {'error': 'HTTPException.'}
-        except Exception:
-            to_json = {'error': 'Exception.'}
-        
-        return HttpResponse(simplejson.dumps(to_json), mimetype='application/json', status=400)
+        return HttpResponse(status=status)
         
 def search(request):
     
-    response = []
     term = request.GET.get('term', '').lower()
+    search_result = []
     
-    #todo:implement cache
-    url = settings.SIMULATOR_URL + "rest/resources/"
-    req = urllib2.Request(url)
-    req.add_header('Content-Type', 'application/json')
-    req.add_header('Accept', 'application/json')
+    status, response = ResourceProxy().getResources()
+    if status != 200:
+        return HttpResponse(status=status)
     
-    try:
-        f = urllib2.urlopen(req)
-        json_data = simplejson.loads(f.read());
-    except Exception:
-        return HttpResponse(status=400)
-    
-    if 'resourceIndex' in json_data:
-                
-        #if one item wrap as list
-        if not isinstance(json_data['resourceIndex'], types.ListType):
-            json_data['resourceIndex'] = [json_data['resourceIndex']]
-                    
-        for resource in json_data['resourceIndex']:
-            if resource['name'].lower().find(term) != -1:
-                response.append(resource['name'])
-    
-    response.sort()
-    return HttpResponse(simplejson.dumps(response), mimetype='application/json')
+    for resource in response['resources']:
+        if resource['name'].lower().find(term) != -1:
+            search_result.append(resource['name'])
+            
+    search_result.sort()
+    return HttpResponse(simplejson.dumps(search_result), mimetype='application/json')
     
 @csrf_protect
 def new(request):
     
     if request.method == 'GET':
-        
-        to_json = {
-            'name': 'New Resourcing',
-            'threshold': 100,
-            'offsprings': [{'resource':14,'value':1}],
-            'weightGroups': [{'weights':[{'resource':12,'value':35,'group':1},{'resource':11,'value':37,'group':2}]},{'weights':[{'resource':12,'value':35,'group':1}]}]
-        }
-        
-        return HttpResponse(simplejson.dumps(to_json), mimetype='application/json')
+        default_data = { 'name': 'New Resourcing' }
+        return HttpResponse(simplejson.dumps(default_data), mimetype='application/json')
     
     elif request.method == 'POST':
-        url = settings.SIMULATOR_URL + "rest/resources/"
-        json_data = simplejson.loads(request.raw_post_data)
-        req = urllib2.Request(url)
-        req.add_data(simplejson.dumps(json_data))
-        req.add_header('Content-Type', 'application/json')
-        req.add_header('Accept', 'application/json')
-        
-        try:
-            f = urllib2.urlopen(req)
-            return HttpResponse(status=200)
-        except urllib2.HTTPError, e:
-            to_json = {'error': 'Unable to save resource on server.'}
-            return HttpResponse(simplejson.dumps(to_json), mimetype='application/json', status=e.code)
-        except urllib2.URLError, e:
-            print 'URLError = ' + str(e.reason)
-            to_json = {'error': 'URLError.'}
-            return HttpResponse(simplejson.dumps(to_json), mimetype='application/json', status=e.code)
-        except httplib.HTTPException, e:
-            print 'HTTPException'
-            to_json = {'error': 'HTTPException.'}
-            return HttpResponse(simplejson.dumps(to_json), mimetype='application/json', status=e.code)
-        except Exception:
-            print 'Exception'
-            to_json = {'error': 'Exception.'}
-            return HttpResponse(simplejson.dumps(to_json), mimetype='application/json', status=e.code)
-        
-    elif request.method == 'PUT':
-        print "put"
-        
+        data = simplejson.loads(request.raw_post_data)
+        status, response = ResourceProxy().addResource(data)
+        return HttpResponse(status=status)
+    
 @csrf_protect
 def item(request, id):
     
     if request.method == 'GET':
-        print "GET item:"+id
-        url = settings.SIMULATOR_URL + "rest/resources/"+id+"/"
-        req = urllib2.Request(url)
-        req.add_header('Content-Type', 'application/json')
-        req.add_header('Accept', 'application/json')
         
-        try:
-            f = urllib2.urlopen(req)
-            json_data = simplejson.loads(f.read());
-            return HttpResponse(simplejson.dumps(json_data), mimetype='application/json')
-        except urllib2.HTTPError, e:
-            to_json = {'error': 'HTTPError.'}
-        except urllib2.URLError, e:
-            to_json = {'error': 'URLError.'}
-        except httplib.HTTPException, e:
-            to_json = {'error': 'HTTPException.'}
-        except Exception:
-            to_json = {'error': 'Exception.'}
-        
-        return HttpResponse(simplejson.dumps(to_json), mimetype='application/json', status=400)
+        status, response = ResourceProxy().getResource(id)
+        if status != 200:
+            return HttpResponse(status=status)
+        else:
+            return HttpResponse(simplejson.dumps(response), mimetype='application/json')
     
     elif request.method == 'POST':
-        #print "POST item:"+id
-        #return HttpResponse(status=200)
         
-        url = settings.SIMULATOR_URL + "rest/resources/"+id+"/"
         json_data = simplejson.loads(request.raw_post_data)
-        req = urllib2.Request(url)
-        req.add_data(simplejson.dumps(json_data))
-        req.add_header('Content-Type', 'application/json')
-        req.add_header('Accept', 'application/json')
-        
-        try:
-            f = urllib2.urlopen(req)
-            return HttpResponse(status=200)
-        except urllib2.HTTPError, e:
-            to_json = {'error': 'Unable to save resource on server.'}
-            return HttpResponse(simplejson.dumps(to_json), mimetype='application/json', status=e.code)
-        except urllib2.URLError, e:
-            print 'URLError = ' + str(e.reason)
-            to_json = {'error': 'URLError.'}
-            return HttpResponse(simplejson.dumps(to_json), mimetype='application/json', status=e.code)
-        except httplib.HTTPException, e:
-            print 'HTTPException'
-            to_json = {'error': 'HTTPException.'}
-            return HttpResponse(simplejson.dumps(to_json), mimetype='application/json', status=e.code)
-        except Exception:
-            print 'Exception'
-            to_json = {'error': 'Exception.'}
-            return HttpResponse(simplejson.dumps(to_json), mimetype='application/json', status=e.code)
+        status, response = ResourceProxy().addResource(json_data, id)
+        return HttpResponse(status=status)
         
     elif request.method == 'PUT':
-        print "put"
-        url = settings.SIMULATOR_URL + "rest/resources/"+id+"/"
-        print "url " + url
         
         json_data = simplejson.loads(request.raw_post_data)
-        
-        opener = urllib2.build_opener(urllib2.HTTPHandler)
-        req = urllib2.Request(url, data=simplejson.dumps(json_data))
-        req.add_header('Content-Type', 'application/json')
-        req.add_header('Accept', 'application/json')
-        req.get_method = lambda: 'PUT'
+        status, response = ResourceProxy().replaceResource(json_data, id)
+        return HttpResponse(status=status)
+    
+@csrf_protect
+def import_export(request):
 
-        try:
-            opener.open(req)
-            return HttpResponse(status=200)
-        except urllib2.HTTPError, e:
-            to_json = {'error': 'HTTPError.'}
-        except urllib2.URLError, e:
-            to_json = {'error': 'URLError.'}
-        except httplib.HTTPException, e:
-            to_json = {'error': 'HTTPException.'}
-        except Exception:
-            to_json = {'error': 'Exception.'}
+    if request.method == 'GET':
+        print "GET export"
         
-        return HttpResponse(simplejson.dumps(to_json), mimetype='application/json', status=400)
+        url = settings.SIMULATOR_URL + "rest/resources/"
+        req = urllib2.Request(url)
+        req.add_header('Content-Type', 'application/json')
+        req.add_header('Accept', 'application/x-protobuf')
+    
+        try:
+            f = urllib2.urlopen(req)
+            resourceResponse = simulator_protos_pb2.ResourceResponse()
+            resourceResponse.ParseFromString(f.read())
+            f.close()
+
+            for resource in resourceResponse.resource:
+                try:
+                    print resource.name + " - " + str(resource.key) + " - " + str(resource.threshold)
+                except Exception as e:
+                    print e
+                
+        except Exception as e:
+                print e
+    
+        file = resourceResponse.SerializeToString()
+        return HttpResponse(file, mimetype='application/x-protobuf')
+    
+    if request.method == 'POST':
+        print "POST import"
+        
+        #resource_proxy = ResourceProxy()
+        #resource_proxy.getResources(details=True, resource_keys, method)
+        status, response = ResourceProxy().getResources()
+        #resource_proxy.getResources()
+        print response
+        for resource in response['resources']:
+            try:
+                print resource['name'] + " # " + str(resource['key'])
+                # + " - " + resource.key + " - " + resource.threshold
+            except Exception as e:
+                print e
+        return
+    
+        data1 = request.FILES['resource-file'].read()
+        resourceResponse = simulator_protos_pb2.ResourceResponse()
+        resourceResponse.ParseFromString(data1)
+        
+        for resource in resourceResponse.resource:
+            try:
+                print resource.name + " # " + str(resource.key)
+                # + " - " + resource.key + " - " + resource.threshold
+            except Exception as e:
+                print e
+        
+        print "Read it"
+        
+        '''url = settings.SIMULATOR_URL + "rest/resources/"
+        file = resourceResponse.SerializeToString()
+    
+        try:
+            header = {"Content-Type": "application/x-protobuf"}
+            conn = httplib.HTTPConnection('localhost', 8989)
+            conn.request("PUT", "/Fursten-simulator/rest/resources/", file , header)
+        except Exception as e:
+            print e'''
+        
+        #print resourceResponse.resource
+        #print resourceResponse.success
+                
+        return HttpResponse(status=200)
 
 @csrf_protect
 def style(request, id):

@@ -95,8 +95,6 @@ def sendProcessRequest(address):
     processRequest.command = test_pb2.ProcessRequest.RUN
     processRequest.argument = "Run"
     
-    
-    
     params = processRequest.SerializeToString()
     conn.request("POST", "/simulatorwebservice/api/proto/process", params , header)
     r1 = conn.getresponse()

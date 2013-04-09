@@ -13,6 +13,8 @@ var ResourceModule = (function () {
 		var currentResourceStyleForm = null;
 		var currentResourceStyleFormView = null;
 		
+		var currentImportFormView = null;
+		
 		var selectedResources = [];
 		
 		//MESSAGES
@@ -25,6 +27,8 @@ var ResourceModule = (function () {
 		fu.msg.updateResourceFilters = new signals.Signal();
 		fu.msg.updateResourceFiltersComplete = new signals.Signal();
 		fu.msg.editResourceStyle = new signals.Signal();
+		fu.msg.importResources = new signals.Signal();
+	    fu.msg.exportResources = new signals.Signal();
 		
 		this.onJQueryReady = function() {
 			
@@ -42,7 +46,9 @@ var ResourceModule = (function () {
 			fu.msg.resourceSelectChange.add(that.onResourceSelectChange);
 			fu.msg.updateResourceFilters.add(that.onUpdateResourceFilters);
 			fu.msg.editResourceStyle.add(that.onEditResourceStyle);
-			
+			fu.msg.importResources.add(that.onImportResources);
+		    fu.msg.exportResources.add(that.onExportResources);
+		    
 			resourceList = new ResourceListForm();
 			resourceListView = new Backbone.Form({
 			    model: resourceList
@@ -281,6 +287,81 @@ var ResourceModule = (function () {
 			fu.msg.resourceChange.dispatch();
 		}
 		
+		this.onImportResources = function() {
+			
+			currentImportFormView = $('\
+				<form id="import-resources-form" action="/resource/import-export/" enctype="multipart/form-data" method="post">\
+		    		<label>File</label>\
+		    		<input type="file" name="resource-file">\
+		    		<span class="help-block">Must be a .proto file!</span>\
+				</form>\
+			');
+			
+			var controls = [{callback:fu.models['resource'].onSaveImportResources, label:"Import"}];
+			fu.openModal('Import Resources', currentImportFormView, controls);
+		}
+		
+		this.onSaveImportResources = function() {
+			
+			var csrftoken = $.cookie('csrftoken');
+			$('#import-resources-form').ajaxForm({
+				beforeSend: function(xhr, settings) {
+			    	if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+			        	xhr.setRequestHeader("X-CSRFToken", csrftoken);
+			        }
+			    },
+				beforeSubmit: function(arr, $form, options) {
+					//... validate?
+				},
+				success: function() {
+					fu.closeModal();
+					fu.msg.resourceChange.dispatch();
+				},
+				error: function() {
+					$(currFormView.el).prepend('\
+						<div class="alert alert-error">\
+							<button type="button" class="close" data-dismiss="alert">&times;</button>\
+							<strong>Warning!</strong> Could not save data.\
+						</div>\
+					');
+				}
+			}).submit();
+			
+		}
+		
+		this.onExportResources = function() {
+			
+			var d1= moment();
+			var dateStr = d1.format('YYYY-MM-DD');
+			var defaultValue = "resources-" + dateStr;
+			
+			currentExportFormView = $('\
+				<form id="import-resources-form" action="/resource/import-export/" method="get">\
+		    		<label>Save file as:</label>\
+		    		<input class="span3" type="text" name="resource-file-name" value="' + defaultValue + '">\
+				</form>\
+			');
+				
+			var controls = [{callback:fu.models['resource'].onSaveExportResources, label:"Export"}];
+			fu.openModal('Export Resources', currentExportFormView, controls);
+		}
+		
+		this.onSaveExportResources = function() {
+			
+			var filename = $('#import-resources-form input[name=resource-file-name]').val();
+			var src = "/resource/import-export/" + filename + ".proto";
+			
+			if($('#file-loader-container').length != 0) {
+				$("#file-loader-container").html("");
+			}
+			else {
+				$("body").append('<div id="file-loader-container"></div>');
+			}
+				
+			$('#file-loader-container').append('<iframe src="' + src + '"></iframe>');
+			fu.closeModal();
+		}
+	    
 		//SUBSCRIBE TO MESSAGES
 		fu.msg.jQueryReady.add(this.onJQueryReady);
 		fu.msg.initialized.add(this.onInitialized);
