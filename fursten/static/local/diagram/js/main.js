@@ -18,6 +18,8 @@ function draw_map(paths) {
 		    		translate_map())
 		    .attr("fill-rule", "evenodd")
 		    .attr("class", "node_" + path[1])
+		    .attr('fill', path[2]['color'])
+		    .attr('stroke', path[2]['background_color'])
 		    .attr("d", path[0]);
     });
 }
@@ -53,7 +55,6 @@ var DiagramModule = (function () {
 		console.log(that);
 		//MESSAGES
 		fu.msg.drawMap = new signals.Signal();
-		fu.msg.connectToSimulator = new signals.Signal();
 		fu.msg.startRunning = new signals.Signal();
 		fu.msg.stopRunning = new signals.Signal();
 		
@@ -107,21 +108,7 @@ var DiagramModule = (function () {
 			});
 			
 		};
-		
-		this.onConnectToSimulator = function() {
-			currentConnectForm = new ConnectForm();
-			currentConnectFormView = new Backbone.Form({
-			    model: currentConnectForm
-			});
-			
-			currentConnectForm.on('sync', function() {
-				currentConnectFormView.render();
-				var controls = [{callback:fu.models['diagram'].onInitiateConnection, label:"Connect"}];
-				fu.openModal("Connect To Simulator", currentConnectFormView.el, controls);
-			}, this);
-			currentConnectForm.fetch();
-		}
-		
+				
 		this.onInitiateConnection = function() {
 			var errors = currentConnectFormView.commit();
 			if(!errors) {
@@ -161,7 +148,6 @@ var DiagramModule = (function () {
 		
 		//SUBSCRIBE TO MESSAGES
 		fu.msg.drawMap.add(this.ondrawMap);
-		fu.msg.connectToSimulator.add(this.onConnectToSimulator);
 		fu.msg.startRunning.add(this.onStartRunning);
 		fu.msg.stopRunning.add(this.onStopRunning);
 	};

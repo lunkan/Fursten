@@ -141,7 +141,11 @@ def getSvg(scale, nodes, node_names, X, Y):
         retval += createPath.path(d[0], "node_%s\n"%d[1])
     return retval, real_data
     
-def getPaths(scale, nodes, node_names, X, Y):
+def getPaths(scale, nodes_dict, colors_for_map, X, Y):
+    node_names = nodes_dict.keys()
+    nodes = []
+    for node_name in node_names:
+        nodes.append(nodes_dict[node_name])
     scale = float(scale)
     t0 = time.time()
     R = 1000/scale
@@ -209,6 +213,6 @@ def getPaths(scale, nodes, node_names, X, Y):
             x = [l*scale for l in line[0]]
             y = [l*scale for l in line[1]]
             d += createPath.d(x,y)
-        paths.append([d, node_name])
+        paths.append([d, node_name, colors_for_map[node_name]])
     return paths, real_data
         

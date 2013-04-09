@@ -7,11 +7,16 @@ from django.template import Template
 from django.template import RequestContext
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
+
+from django.conf import settings
 from fursten.diagram.models import SimulatorData
+from fursten.utils.requests import RequestWithMethod
+from fursten.resources.models import ResourceLayer, ResourceStyle
 
 import json
 import logging
 import re
+import urllib2
 
 
 import requests
@@ -39,76 +44,97 @@ logger = logging.getLogger('console')
 
     
 def getSvgJson(request):
-    logger.info(request.GET)
-    SCALE = 200
-    X=range(-50,50)
-    Y=range(-50,50)
-    simulator_host = SimulatorData.objects.get(pk=1).simulatorUrl
-    logger.info(request.GET['tick'])
-    if str(request.GET['tick']) == 'true':
-        logger.info('GOT TICK')
-        requests.sendProcessRequest(simulator_host)
-    
-    allNodes = requests.getNodes(simulator_host)
-    
-    resources_with_nodes = [resource_name 
-                            for resource_name 
-                            in RESOURCES_AREA_MAP 
-                            if allNodes.has_key(resource_name)]
-    nodes = [allNodes[resource_name] 
-             for resource_name 
-             in resources_with_nodes]
-    paths, debug_dummy = contour.getPaths(SCALE, nodes, resources_with_nodes , X, Y)
-    
-    resources_with_nodes = [resource_name 
-                            for resource_name 
-                            in RESOURCES_NODE_MAP 
-                            if allNodes.has_key(resource_name)]
-    nodes_for_map = {}
-    for resource in resources_with_nodes:
-        nodes_for_map[resource] = allNodes[resource]
+    try:
+        SCALE = 200
+        X=range(-50,50)
+        Y=range(-50,50)
+        url = settings.SIMULATOR_URL + "rest/nodes"
+        req = RequestWithMethod(url, 'GET')
+        req.add_header('Content-Type', 'application/json')
+        req.add_header('Accept', 'application/json')
+        f = urllib2.urlopen(req)
+        data = json.loads(f.read())
+        logger.info('DATA:\n' + str(data))
+        logger.info(data['nodes'])
+        for node in data['nodes']:
+            logger.info(node['r'])
+            resource_style = ResourceStyle.objects.get(resource=node['r'])
+            logger.info(resource_style.icon)
+            
+        nodes_for_map = {}
         
-    data =  json.dumps({'nodes': nodes_for_map, 
-                        'paths': paths,
-                        })
-    
-    
-    return HttpResponse(data)
-
-def getCss(request):
-    simulator_host = SimulatorData.objects.get(pk=1).simulatorUrl
-    cssdata = requests.sendFurstenCssRequest(simulator_host)
-    for line in cssdata.splitlines():
-        m = re.match(r"#(.*)\{.*color:(#.{6}).*", line)
-        if (m is not None):
-            cssdata += "\n#line_%s{stroke: %s;}"%(m.group(1), m.group(2))
-        m = re.match(r"\.(.*?)-.*border-color:(#.{6}).*color:(#.{6}).*", line)    
-        if (m is not None):
-            cssdata += "\n.node_%s{stroke: %s; fill: %s;}"%(m.group(1), m.group(2), m.group(3))
-
-    data = json.dumps({"css": cssdata})
-    return HttpResponse(data)
-
-@csrf_protect
-def connectToSimulator(request):
-    if request.method == 'GET':
-        all_entries = SimulatorData.objects.all()
-        if all_entries.count() == 0:
-            simulatorData = SimulatorData(simulatorUrl = 'localhost:8888')
-            simulatorData.save()
-        else:
-            simulatorData = SimulatorData.objects.get(pk=1)
-        response = {
-            'simulatorUrl': simulatorData.simulatorUrl,
-        }
+        for node in data['nodes']:
+            if node['r'] in nodes_for_map:
+                nodes_for_map[node['r']].append([int(node['x']), int(node['y'])])
+            else:
+                nodes_for_map[node['r']] = [[int(node['x']), int(node['y'])]]
+            
         
-        return HttpResponse(json.dumps(response), mimetype='application/json')
-    elif request.method == 'POST':
-        json_data = json.loads(request.raw_post_data)
-        simulatorData = SimulatorData.objects.get(pk=1)
-        simulatorData.simulatorUrl = json_data['simulatorUrl']
-        simulatorData.save()
-        return HttpResponse(status=200)
-    elif request.method == 'PUT':
-        logger.info('PUT')
-    return HttpResponse('SOME TEXT')
+        
+
+        logger.info(data)
+        resources_with_nodes = [resource_name 
+                                for resource_name 
+                                in nodes_for_map.keys()]
+        logger.info(resources_with_nodes)
+        logger.info(nodes_for_map)
+        
+        colors_for_map = {}
+        for key in nodes_for_map.keys():
+            resource_style = ResourceStyle.objects.get(resource=key)
+            colors_for_map[key] = {'color': resource_style.color, 'background_color': resource_style.background_color}
+        logger.info(colors_for_map)
+        
+        paths, debug_dummy = contour.getPaths(SCALE, nodes_for_map, colors_for_map, X, Y)
+
+        data =  json.dumps({'nodes': nodes_for_map, 
+                            'paths': paths,
+                            })
+        logger.info(data)
+#         if str(request.GET['tick']) == 'true':
+#             requests.sendProcessRequest(simulator_host)
+        
+#         allNodes = requests.getNodes(simulator_host)
+#         
+#         resources_with_nodes = [resource_name 
+#                                 for resource_name 
+#                                 in RESOURCES_AREA_MAP 
+#                                 if allNodes.has_key(resource_name)]
+#         nodes = [allNodes[resource_name] 
+#                  for resource_name 
+#                  in resources_with_nodes]
+#         paths, debug_dummy = contour.getPaths(SCALE, nodes, resources_with_nodes , X, Y)
+#         
+#         resources_with_nodes = [resource_name 
+#                                 for resource_name 
+#                                 in RESOURCES_NODE_MAP 
+#                                 if allNodes.has_key(resource_name)]
+#         nodes_for_map = {}
+#         for resource in resources_with_nodes:
+#             nodes_for_map[resource] = allNodes[resource]
+#             
+#         data =  json.dumps({'nodes': nodes_for_map, 
+#                             'paths': paths,
+#                             })
+#         
+        return HttpResponse(data)
+    except Exception, e:
+        logger.error(e)
+        
+
+# def getCss(request):
+#     
+#     
+#     simulator_host = SimulatorData.objects.get(pk=1).simulatorUrl
+#     cssdata = requests.sendFurstenCssRequest(simulator_host)
+#     for line in cssdata.splitlines():
+#         m = re.match(r"#(.*)\{.*color:(#.{6}).*", line)
+#         if (m is not None):
+#             cssdata += "\n#line_%s{stroke: %s;}"%(m.group(1), m.group(2))
+#         m = re.match(r"\.(.*?)-.*border-color:(#.{6}).*color:(#.{6}).*", line)    
+#         if (m is not None):
+#             cssdata += "\n.node_%s{stroke: %s; fill: %s;}"%(m.group(1), m.group(2), m.group(3))
+# 
+#     data = json.dumps({"css": cssdata})
+#     return HttpResponse(data)
+
