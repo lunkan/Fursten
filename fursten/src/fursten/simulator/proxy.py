@@ -12,48 +12,59 @@ import httplib
 from django.utils import simplejson
 
 class Proxy(object):
-    
-    FilterMethod = enum(CHILDREN='children', PARENTS='parents')
-    HTTPMethod = enum(GET='GET', POST='POST', PUT='PUT', DELETE='DELETE')
-    MimeType = enum(JSON='application/json', PROTOBUF='application/x-protobuf')
-    PROXY_URL = "rest/"
+
+    class MimeType:
+        JSON='application/json'
+        PROTOBUF='application/x-protobuf'
+        
+    class HTTPMethod:
+        GET='GET'
+        POST='POST'
+        PUT='PUT'
+        DELETE='DELETE'
+        
+    class FilterMethod:
+        CHILDREN='children'
+        PARENTS='parents'
+        
+    class ServerConnection:
+        PROXY_URL = "rest/"
     
     def __init__(self, mime_type=None):
         if mime_type is not None:
             self.mime_type = mime_type
         else:
-            self.mime_type = self.MimeType.JSON
+            self.mime_type = Proxy.MimeType.JSON
     
     #GET
     def get(self, path, params=None):
         headers = { 'Content-Type' : self.mime_type, 'Accept' : self.mime_type }
-        return self.sendRequest(http_method=self.HTTPMethod.GET, path=path, params=params, headers=headers)
+        return self.sendRequest(http_method=Proxy.HTTPMethod.GET, path=path, params=params, headers=headers)
     
     #POST
-    def post(self, path, dict_data, params=None):
-        data = simplejson.dumps(dict_data)
+    def post(self, path, data, params=None):
+        parsed_data = self.paresData(data)
         headers = { 'Content-Type' : self.mime_type, 'Accept' : self.mime_type }
-        return self.sendRequest(http_method=self.HTTPMethod.POST, path=path, params=params, data=data, headers=headers)
+        return self.sendRequest(http_method=Proxy.HTTPMethod.POST, path=path, params=params, data=parsed_data, headers=headers)
     
     #PUT
-    def put(self, path, dict_data, params=None):
-        data = simplejson.dumps(dict_data)
+    def put(self, path, data, params=None):
+        parsed_data = self.paresData(data)
         headers = { 'Content-Type' : self.mime_type, 'Accept' : self.mime_type }
-        return self.sendRequest(http_method=self.HTTPMethod.PUT, path=path, params=params, data=data, headers=headers)
+        return self.sendRequest(http_method=Proxy.HTTPMethod.PUT, path=path, params=params, data=parsed_data, headers=headers)
     
     #DELETE
     def delete(self, path, params=None):
-        headers = { 'Content-Type' : self.MimeType.JSON, 'Accept' : self.MimeType.JSON }
-        return self.sendRequest(http_method=self.HTTPMethod.DELETE, path=path, params=params, headers=headers)
+        headers = { 'Content-Type' : self.mime_type, 'Accept' : self.mime_type }
+        return self.sendRequest(http_method=Proxy.HTTPMethod.DELETE, path=path, params=params, headers=headers)
     
     def sendRequest(self, http_method, headers, path, params=None, data=None):
         
-        url = settings.SIMULATOR_URL + self.PROXY_URL + path
+        url = settings.SIMULATOR_URL + Proxy.ServerConnection.PROXY_URL + path
         
         #Parameters
         if params is not None:
             try:
-                print params
                 params_str = urllib.urlencode(params)
                 url += '?'+params_str
             except Exception, e:
@@ -61,12 +72,11 @@ class Proxy(object):
                 return 500
         
         #HTTPMethod (GET|POST|PUT|DELETE)
-        #Use RequestWithMethod to allow httpMethod DELETE
+        #Use RequestWithMethod to allow httpMethod DELETE & PUT
         req = RequestWithMethod(url, http_method)
         
         #Send data
         if data is not None:
-            print data
             req.add_data(data)
         
         #Headers
@@ -86,6 +96,7 @@ class Proxy(object):
             print 'HTTPException: status(' + str(e.code) + ') ' + str(e.reason)
             return e.code
         except Exception, e:
+            print e
             print 'HTTPException:: status(' + str(e.code) + ') ' + str(e.reason)
             return e.code
         
@@ -93,15 +104,29 @@ class Proxy(object):
         f.close()
         if respons_data is None:
             return 200
-        
-        if self.mime_type == self.MimeType.JSON:
+        if self.mime_type == Proxy.MimeType.JSON:
             parsed_respons = self.parseJSONResponse(respons_data)
             return 200, parsed_respons
-        elif self.mime_type == self.MimeType.PROTOBUF:
+        elif self.mime_type == Proxy.MimeType.PROTOBUF:
             parsed_respons = self.parseProtobufResponse(respons_data)
             return 200, parsed_respons
         else:
-            return 200, respons_data
+            return 200, parsed_respons
+    
+    def paresData(self, send_data):
+        
+        print self.mime_type
+        if self.mime_type == Proxy.MimeType.JSON:
+            if type(send_data) is dict:
+                return simplejson.dumps(send_data)
+            else:
+                return send_data
+        elif self.mime_type == Proxy.MimeType.PROTOBUF:
+            return self.parseProtobufData(send_data)
+    
+    def parseProtobufData(self, send_data):
+        #override this in sub-classes
+        return send_data
         
     def parseJSONResponse(self, respons_data):
         try:

@@ -1,26 +1,14 @@
-from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponseRedirect, HttpResponse
 from django.views.decorators.csrf import csrf_protect
 from django.utils import simplejson
-import datetime
-from fursten.resources.forms import ResourceForm
 from fursten.resources.models import ResourceLayer, ResourceStyle
-import urllib2
-import urllib
-import httplib
-from fursten.utils.requests import RequestWithMethod
 from django.conf import settings
-import types
 from PIL import Image, ImageDraw
-from PIL.EpsImagePlugin import EpsImageFile
 import StringIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.core.files.base import File
-from fursten.utils.graphics import hex_to_rgb, rgb_to_hex 
-from django.views.decorators.cache import never_cache
-from fursten.diagram import test_pb2
-from fursten.resources import simulator_protos_pb2
-import os
 from fursten.simulator.resource_proxy import ResourceProxy
+from fursten.simulator.proxy import Proxy
+from fursten.utils.graphics import hex_to_rgb
 
 #@never_cache
 
@@ -148,74 +136,15 @@ def item(request, id):
 def import_export(request):
 
     if request.method == 'GET':
-        print "GET export"
-        
-        url = settings.SIMULATOR_URL + "rest/resources/"
-        req = urllib2.Request(url)
-        req.add_header('Content-Type', 'application/json')
-        req.add_header('Accept', 'application/x-protobuf')
-    
-        try:
-            f = urllib2.urlopen(req)
-            resourceResponse = simulator_protos_pb2.ResourceResponse()
-            resourceResponse.ParseFromString(f.read())
-            f.close()
-
-            for resource in resourceResponse.resource:
-                try:
-                    print resource.name + " - " + str(resource.key) + " - " + str(resource.threshold)
-                except Exception as e:
-                    print e
-                
-        except Exception as e:
-                print e
-    
-        file = resourceResponse.SerializeToString()
-        return HttpResponse(file, mimetype='application/x-protobuf')
+        status, response = ResourceProxy(Proxy.MimeType.PROTOBUF).getResources(details=True)
+        file = response.SerializeToString()
+        return HttpResponse(file, mimetype=Proxy.MimeType.PROTOBUF)
     
     if request.method == 'POST':
-        print "POST import"
-        
-        #resource_proxy = ResourceProxy()
-        #resource_proxy.getResources(details=True, resource_keys, method)
-        status, response = ResourceProxy().getResources()
-        #resource_proxy.getResources()
-        print response
-        for resource in response['resources']:
-            try:
-                print resource['name'] + " # " + str(resource['key'])
-                # + " - " + resource.key + " - " + resource.threshold
-            except Exception as e:
-                print e
-        return
-    
-        data1 = request.FILES['resource-file'].read()
-        resourceResponse = simulator_protos_pb2.ResourceResponse()
-        resourceResponse.ParseFromString(data1)
-        
-        for resource in resourceResponse.resource:
-            try:
-                print resource.name + " # " + str(resource.key)
-                # + " - " + resource.key + " - " + resource.threshold
-            except Exception as e:
-                print e
-        
-        print "Read it"
-        
-        '''url = settings.SIMULATOR_URL + "rest/resources/"
-        file = resourceResponse.SerializeToString()
-    
-        try:
-            header = {"Content-Type": "application/x-protobuf"}
-            conn = httplib.HTTPConnection('localhost', 8989)
-            conn.request("PUT", "/Fursten-simulator/rest/resources/", file , header)
-        except Exception as e:
-            print e'''
-        
-        #print resourceResponse.resource
-        #print resourceResponse.success
-                
-        return HttpResponse(status=200)
+        data = request.FILES['resource-file'].read()
+        status, response = ResourceProxy(Proxy.MimeType.PROTOBUF).replaceResources(data)
+        print "status " ,status
+        return HttpResponse(status=status)
 
 @csrf_protect
 def style(request, id):
@@ -320,7 +249,4 @@ def icon(request, id):
     except :
         image_url = settings.MEDIA_URL + "resource/default/icon_default.png"
         return HttpResponseRedirect(image_url)
-        
-    
-
     

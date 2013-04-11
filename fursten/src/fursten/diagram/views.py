@@ -62,7 +62,6 @@ def getSvgJson(request):
             logger.info(resource_style.icon)
             
         nodes_for_map = {}
-        
         for node in data['nodes']:
             if node['r'] in nodes_for_map:
                 nodes_for_map[node['r']].append([int(node['x']), int(node['y'])])
