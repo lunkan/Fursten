@@ -55,7 +55,6 @@ def getSvgJson(request):
         f = urllib2.urlopen(req)
         data = json.loads(f.read())
         logger.info('DATA:\n' + str(data))
-        logger.info(data['nodes'])
         for node in data['nodes']:
             logger.info(node['r'])
             resource_style = ResourceStyle.objects.get(resource=node['r'])
@@ -83,7 +82,6 @@ def getSvgJson(request):
             resource_style = ResourceStyle.objects.get(resource=key)
             colors_for_map[key] = {'color': resource_style.color, 'background_color': resource_style.background_color}
         logger.info(colors_for_map)
-        
         paths, debug_dummy = contour.getPaths(SCALE, nodes_for_map, colors_for_map, X, Y)
 
         data =  json.dumps({'nodes': nodes_for_map, 

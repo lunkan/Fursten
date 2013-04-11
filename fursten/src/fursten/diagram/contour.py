@@ -86,6 +86,8 @@ LT_2 = {((0,1),
        [0.0 ,0.5]]],                  
       }
 
+logger = logging.getLogger('console')
+
 def contour_newer(data, X, Y, number_of_types):
     lines = [[] for dummy in xrange(number_of_types + 1)]
     for y_l in Y[:-1]:
@@ -103,7 +105,7 @@ def contour_newer(data, X, Y, number_of_types):
                                         [x_l + LT_2[T][0][1][0], y_l + LT_2[T][0][1][1]]])
                     lines[colornumber].append([[x_l + LT_2[T][1][0][0], y_l  + LT_2[T][1][0][1]],
                                         [x_l + LT_2[T][1][1][0], y_l + LT_2[T][1][1][1]]])
-    return lines
+    return lines[1:]
 
 def lineify(lines):
     retval = []
@@ -159,7 +161,6 @@ def getPaths(scale, nodes_dict, colors_for_map, X, Y):
     real_data = []
     
     boxes = [ [ [[] for dummy in split_y[:-1]] for dummy in split_x[:-1]]  for dummy in nodes]
-    
     for box_n,node_list in enumerate(nodes):
         for node in node_list:
             for n in xrange(len(split_x) - 1):
@@ -201,18 +202,18 @@ def getPaths(scale, nodes_dict, colors_for_map, X, Y):
                             min_distance = distance
                             colornumber = box_n + 1
                 real_data[-1].append(colornumber)
-    logging.info("getSvg()::before contour time:%f"%(time.time() - t0))
+    logger.info("getSvg()::before contour time:%f"%(time.time() - t0))
     lines = contour_newer(real_data, X, Y, len(node_names))
-    
     retval = ''
     paths = []
-    for line_list, node_name in zip(lines[1:], node_names):
-        full_lines = lineify(line_list)
-        d = ""
-        for line in full_lines:
-            x = [l*scale for l in line[0]]
-            y = [l*scale for l in line[1]]
-            d += createPath.d(x,y)
-        paths.append([d, node_name, colors_for_map[node_name]])
+    for line_list, node_name in zip(lines, node_names):
+        if line_list != []:
+            full_lines = lineify(line_list)
+            d = ""
+            for line in full_lines:
+                x = [l*scale for l in line[0]]
+                y = [l*scale for l in line[1]]
+                d += createPath.d(x,y)
+            paths.append([d, node_name, colors_for_map[node_name]])
     return paths, real_data
         
