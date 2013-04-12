@@ -13,7 +13,7 @@ from google.protobuf import descriptor_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='node.proto',
   package='messages',
-  serialized_pb='\n\nnode.proto\x12\x08messages\"\'\n\x04Node\x12\t\n\x01x\x18\x01 \x02(\x11\x12\t\n\x01y\x18\x02 \x02(\x11\x12\t\n\x01r\x18\x03 \x02(\x11\"/\n\x0eNodeCollection\x12\x1d\n\x05nodes\x18\x01 \x03(\x0b\x32\x0e.messages.NodeB&\n\x19org.fursten.message.protoB\tNodeProto')
+  serialized_pb='\n\nnode.proto\x12\x08messages\"\'\n\x04Node\x12\t\n\x01x\x18\x01 \x02(\x11\x12\t\n\x01y\x18\x02 \x02(\x11\x12\t\n\x01r\x18\x03 \x02(\x11\"/\n\x0eNodeCollection\x12\x1d\n\x05nodes\x18\x01 \x03(\x0b\x32\x0e.messages.Node\"]\n\x0fNodeTransaction\x12$\n\x0c\x64\x65lete_nodes\x18\x01 \x03(\x0b\x32\x0e.messages.Node\x12$\n\x0cinject_nodes\x18\x02 \x03(\x0b\x32\x0e.messages.NodeB&\n\x19org.fursten.message.protoB\tNodeProto')
 
 
 
@@ -87,9 +87,47 @@ _NODECOLLECTION = _descriptor.Descriptor(
   serialized_end=112,
 )
 
+
+_NODETRANSACTION = _descriptor.Descriptor(
+  name='NodeTransaction',
+  full_name='messages.NodeTransaction',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='delete_nodes', full_name='messages.NodeTransaction.delete_nodes', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='inject_nodes', full_name='messages.NodeTransaction.inject_nodes', index=1,
+      number=2, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  serialized_start=114,
+  serialized_end=207,
+)
+
 _NODECOLLECTION.fields_by_name['nodes'].message_type = _NODE
+_NODETRANSACTION.fields_by_name['delete_nodes'].message_type = _NODE
+_NODETRANSACTION.fields_by_name['inject_nodes'].message_type = _NODE
 DESCRIPTOR.message_types_by_name['Node'] = _NODE
 DESCRIPTOR.message_types_by_name['NodeCollection'] = _NODECOLLECTION
+DESCRIPTOR.message_types_by_name['NodeTransaction'] = _NODETRANSACTION
 
 class Node(_message.Message):
   __metaclass__ = _reflection.GeneratedProtocolMessageType
@@ -102,6 +140,12 @@ class NodeCollection(_message.Message):
   DESCRIPTOR = _NODECOLLECTION
 
   # @@protoc_insertion_point(class_scope:messages.NodeCollection)
+
+class NodeTransaction(_message.Message):
+  __metaclass__ = _reflection.GeneratedProtocolMessageType
+  DESCRIPTOR = _NODETRANSACTION
+
+  # @@protoc_insertion_point(class_scope:messages.NodeTransaction)
 
 
 DESCRIPTOR.has_options = True

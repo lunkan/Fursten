@@ -82,7 +82,7 @@ class ResourceProxy(Proxy):
     def parseProtobufData(self, send_data):
         
         #Add data as protobuf class or raw encoded string
-        if type(send_data) is resource_pb2.ResourceCollection:
+        if isinstance(send_data, resource_pb2.ResourceCollection):
             return send_data.SerializeToString()
         else:
             return send_data

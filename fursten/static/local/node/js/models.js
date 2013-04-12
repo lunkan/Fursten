@@ -74,6 +74,7 @@ var Sample = Backbone.Model.extend({
 var SampleForm = Backbone.Model.extend({
 	url: "/node/samples",
 	schema: {
+		prospecting: { type: 'Checkbox' },
     	samples: {
         	type: 'Repeater',
         	layout: 'table',

@@ -167,22 +167,22 @@ var NodeModule = (function () {
 		
 		this.onImportNodes = function() {
 			
-			/*currentImportFormView = $('\
-				<form id="import-resources-form" action="/resource/import-export/" enctype="multipart/form-data" method="post">\
+			currentImportFormView = $('\
+				<form id="import-nodes-form" action="/node/import-export/" enctype="multipart/form-data" method="post">\
 		    		<label>File</label>\
-		    		<input type="file" name="resource-file">\
+		    		<input type="file" name="nodes-file">\
 		    		<span class="help-block">Must be a .proto file!</span>\
 				</form>\
 			');
 			
-			var controls = [{callback:fu.models['resource'].onSaveImportResources, label:"Import"}];
-			fu.openModal('Import Resources', currentImportFormView, controls);*/
+			var controls = [{callback:fu.models['node'].onSaveImportNodes, label:"Import"}];
+			fu.openModal('Import Nodes', currentImportFormView, controls);
 		};
 		
 		this.onSaveImportNodes = function() {
 			
-			/*var csrftoken = $.cookie('csrftoken');
-			$('#import-resources-form').ajaxForm({
+			var csrftoken = $.cookie('csrftoken');
+			$('#import-nodes-form').ajaxForm({
 				beforeSend: function(xhr, settings) {
 			    	if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
 			        	xhr.setRequestHeader("X-CSRFToken", csrftoken);
@@ -203,7 +203,7 @@ var NodeModule = (function () {
 						</div>\
 					');
 				}
-			}).submit();*/
+			}).submit();
 			
 		};
 		
@@ -236,7 +236,6 @@ var NodeModule = (function () {
 				$("body").append('<div id="file-loader-container"></div>');
 			}
 			
-			alert(src);
 			$('#file-loader-container').append('<iframe src="' + src + '"></iframe>');
 			fu.closeModal();
 		};

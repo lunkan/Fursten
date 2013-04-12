@@ -4,7 +4,7 @@ Created on 26 mar 2013
 @author: Jonas
 '''
 from django.core.files.storage import FileSystemStorage
-
+    
 def hex_to_rgb(value):
     value = value.lstrip('#')
     lv = len(value)

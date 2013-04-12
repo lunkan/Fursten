@@ -65,7 +65,7 @@ class Proxy(object):
         #Parameters
         if params is not None:
             try:
-                params_str = urllib.urlencode(params)
+                params_str = urllib.urlencode(params, True);
                 url += '?'+params_str
             except Exception, e:
                 print 'Unable to urlencode: ' + str(params)
@@ -77,12 +77,15 @@ class Proxy(object):
         
         #Send data
         if data is not None:
+            print data
             req.add_data(data)
         
         #Headers
         if headers is not None:
             for header in headers:
                 req.add_header(header, headers[header])
+        
+        print url
         
         try:
             f = urllib2.urlopen(req)

@@ -24,34 +24,42 @@ def index(request):
         resource_layers = []
         
         #Append data from interface (fursten)
-        for resource in response['resources']:
-            
-            #Merge with icon
-            try:
-                resource_style = ResourceStyle.objects.get(resource=resource['key'])
-                resource['icon'] = resource_style.icon.url + "?v=" + str(resource_style.version)
-            except :
-                resource['icon'] = settings.MEDIA_URL + "resource/default/icon_default.png"
-            
-            #merge with render-filter
-            try :
-                resource_layer = ResourceLayer.objects.get(resource=resource['key'])
-                resource['isDisplayed'] = resource_layer.display
-                resource['isRendered'] = resource_layer.render
-                resource_layers.append(resource_layer);
-            except :
-                resource['isDisplayed'] = False
-                resource['isRendered'] = False
-                pass
+        if 'resources' in response:
+            for resource in response['resources']:
+                
+                #Merge with icon
+                try:
+                    resource_style = ResourceStyle.objects.get(resource=resource['key'])
+                    resource['icon'] = resource_style.icon.url + "?v=" + str(resource_style.version)
+                except :
+                    resource['icon'] = settings.MEDIA_URL + "resource/default/icon_default.png"
+                
+                #merge with render-filter
+                try :
+                    resource_layer = ResourceLayer.objects.get(resource=resource['key'])
+                    resource['isDisplayed'] = resource_layer.display
+                    resource['isRendered'] = resource_layer.render
+                    resource_layers.append(resource_layer);
+                except :
+                    resource['isDisplayed'] = False
+                    resource['isRendered'] = False
+                    pass
+        else:
+            response = {
+                'resources':[]
+            }
         
-        #Update resource layers  
+        #Update resource layers
         #todo: improve!
         ResourceLayer.objects.all().delete()
         for updatedResourceLayer in resource_layers:
             resource_layer = ResourceLayer(resource=updatedResourceLayer.resource, render=updatedResourceLayer.render, display=updatedResourceLayer.display)
             resource_layer.save()
         
-        return HttpResponse(simplejson.dumps(response), mimetype='application/json')
+        response = HttpResponse(simplejson.dumps(response), mimetype='application/json')
+        response['Pragma'] = 'no-cache'
+        response['Cache-Control'] = 'no-cache'
+        return response
     
     #post current filter settings (render, delete)
     elif request.method == 'POST':
@@ -143,7 +151,6 @@ def import_export(request):
     if request.method == 'POST':
         data = request.FILES['resource-file'].read()
         status, response = ResourceProxy(Proxy.MimeType.PROTOBUF).replaceResources(data)
-        print "status " ,status
         return HttpResponse(status=status)
 
 @csrf_protect
