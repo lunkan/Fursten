@@ -24,7 +24,7 @@ def index(request):
         resource_layers = []
         
         #Append data from interface (fursten)
-        if 'resources' in response:
+        try:
             for resource in response['resources']:
                 
                 #Merge with icon
@@ -44,7 +44,7 @@ def index(request):
                     resource['isDisplayed'] = False
                     resource['isRendered'] = False
                     pass
-        else:
+        except:
             response = {
                 'resources':[]
             }

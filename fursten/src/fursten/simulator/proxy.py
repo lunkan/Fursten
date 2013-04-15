@@ -42,14 +42,20 @@ class Proxy(object):
         return self.sendRequest(http_method=Proxy.HTTPMethod.GET, path=path, params=params, headers=headers)
     
     #POST
-    def post(self, path, data, params=None):
-        parsed_data = self.paresData(data)
+    def post(self, path, data=None, params=None):
+        if data is not None:
+            parsed_data = self.paresData(data)
+        else:
+            parsed_data = None
         headers = { 'Content-Type' : self.mime_type, 'Accept' : self.mime_type }
         return self.sendRequest(http_method=Proxy.HTTPMethod.POST, path=path, params=params, data=parsed_data, headers=headers)
     
     #PUT
-    def put(self, path, data, params=None):
-        parsed_data = self.paresData(data)
+    def put(self, path, data=None, params=None):
+        if data is not None:
+            parsed_data = self.paresData(data)
+        else:
+            parsed_data = None
         headers = { 'Content-Type' : self.mime_type, 'Accept' : self.mime_type }
         return self.sendRequest(http_method=Proxy.HTTPMethod.PUT, path=path, params=params, data=parsed_data, headers=headers)
     
@@ -77,15 +83,12 @@ class Proxy(object):
         
         #Send data
         if data is not None:
-            print data
             req.add_data(data)
         
         #Headers
         if headers is not None:
             for header in headers:
                 req.add_header(header, headers[header])
-        
-        print url
         
         try:
             f = urllib2.urlopen(req)
@@ -105,8 +108,9 @@ class Proxy(object):
         
         respons_data = f.read()
         f.close()
+        
         if respons_data is None:
-            return 200
+            return 200, None
         if self.mime_type == Proxy.MimeType.JSON:
             parsed_respons = self.parseJSONResponse(respons_data)
             return 200, parsed_respons

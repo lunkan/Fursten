@@ -6,6 +6,7 @@ import urllib
 import httplib
 from django.conf import settings
 from fursten.simulator.world_proxy import WorldProxy
+from fursten.simulator.process_proxy import ProcessProxy
 
 def index(request):
     to_json = []
@@ -35,14 +36,14 @@ def new(request):
 @csrf_protect
 def status(request):
     
-    #worldStatus
-    
     if request.method == 'GET':
         
         status, response = WorldProxy().getWorld()
+        print "status: ", status
         if status != 200:
             return HttpResponse(status=status)
         else:
+            print "status: ", status
             #Tables accept only lists
             respons_data = {
                 "worldStatus" : [response]
@@ -52,20 +53,8 @@ def status(request):
 @csrf_protect
 def run(request):
     
-    #worldStatus
-    
     if request.method == 'POST':
-        req = urllib2.Request(settings.SIMULATOR_URL + "rest/process/")
-        json_data = {}
-        req.add_data(simplejson.dumps(json_data))
-        req.add_header('Content-Type', 'application/json')
-        req.add_header('Accept', 'application/json')
         
-        try:
-            f = urllib2.urlopen(req)
-            return HttpResponse(status=200)
-        except Exception:
-            print 'Exception'
-            to_json = {'error': 'Exception.'}
-            return HttpResponse(simplejson.dumps(to_json), mimetype='application/json', status=400)
+        status, response = ProcessProxy().run()
+        return HttpResponse(status=status);
     
