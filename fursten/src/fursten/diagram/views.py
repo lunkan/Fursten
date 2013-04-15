@@ -22,6 +22,7 @@ import urllib2
 import requests
 import contour
 
+
 RESOURCES_AREA_MAP = ['recap_agric_field',
                       'vegetation_trees_leaf',
                       'vegetation_grass',
@@ -86,52 +87,11 @@ def getSvgJson(request):
 
         data =  json.dumps({'nodes': nodes_for_map, 
                             'paths': paths,
+                            'colors': colors_for_map,
                             })
         logger.info(data)
-#         if str(request.GET['tick']) == 'true':
-#             requests.sendProcessRequest(simulator_host)
-        
-#         allNodes = requests.getNodes(simulator_host)
-#         
-#         resources_with_nodes = [resource_name 
-#                                 for resource_name 
-#                                 in RESOURCES_AREA_MAP 
-#                                 if allNodes.has_key(resource_name)]
-#         nodes = [allNodes[resource_name] 
-#                  for resource_name 
-#                  in resources_with_nodes]
-#         paths, debug_dummy = contour.getPaths(SCALE, nodes, resources_with_nodes , X, Y)
-#         
-#         resources_with_nodes = [resource_name 
-#                                 for resource_name 
-#                                 in RESOURCES_NODE_MAP 
-#                                 if allNodes.has_key(resource_name)]
-#         nodes_for_map = {}
-#         for resource in resources_with_nodes:
-#             nodes_for_map[resource] = allNodes[resource]
-#             
-#         data =  json.dumps({'nodes': nodes_for_map, 
-#                             'paths': paths,
-#                             })
-#         
+       
         return HttpResponse(data)
     except Exception, e:
         logger.error(e)
         
-
-# def getCss(request):
-#     
-#     
-#     simulator_host = SimulatorData.objects.get(pk=1).simulatorUrl
-#     cssdata = requests.sendFurstenCssRequest(simulator_host)
-#     for line in cssdata.splitlines():
-#         m = re.match(r"#(.*)\{.*color:(#.{6}).*", line)
-#         if (m is not None):
-#             cssdata += "\n#line_%s{stroke: %s;}"%(m.group(1), m.group(2))
-#         m = re.match(r"\.(.*?)-.*border-color:(#.{6}).*color:(#.{6}).*", line)    
-#         if (m is not None):
-#             cssdata += "\n.node_%s{stroke: %s; fill: %s;}"%(m.group(1), m.group(2), m.group(3))
-# 
-#     data = json.dumps({"css": cssdata})
-#     return HttpResponse(data)
-

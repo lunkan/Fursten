@@ -11,7 +11,6 @@ function draw_map(paths) {
 	svgmap.selectAll('#mappath').remove();
 	_.each(paths, function(path) {
 		svgmap.append("path")
-		    .attr("stroke", "black")
 		    .attr("stroke-width", 10)
 		    .attr("id", "mappath")
 		    .attr("transform", 
@@ -74,6 +73,8 @@ var DiagramModule = (function () {
 					       .attr("cy", xy[1])
 						   .attr("r", 3/0.025)
 						   .attr("stroke-width", 1/0.025)
+						   .attr('fill', data.colors[key].color)
+						   .attr('stroke', data.colors[key].background_color)
 						   .attr("transform", 
 				    		  translate_map());
 					});
