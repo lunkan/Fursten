@@ -13,7 +13,7 @@ from google.protobuf import descriptor_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='resource.proto',
   package='messages',
-  serialized_pb='\n\x0eresource.proto\x12\x08messages\"\xb5\x02\n\x08Resource\x12\x0b\n\x03key\x18\x01 \x02(\x11\x12\x0c\n\x04name\x18\x02 \x02(\t\x12\x11\n\tthreshold\x18\x03 \x01(\x02\x12\x35\n\rweight_groups\x18\x04 \x03(\x0b\x32\x1e.messages.Resource.WeightGroup\x12\x30\n\noffsprings\x18\x05 \x03(\x0b\x32\x1c.messages.Resource.Offspring\x1a\x39\n\x0bWeightGroup\x12*\n\x07weights\x18\x01 \x03(\x0b\x32\x19.messages.Resource.Weight\x1a)\n\x06Weight\x12\x10\n\x08resource\x18\x01 \x02(\x11\x12\r\n\x05value\x18\x02 \x02(\x02\x1a,\n\tOffspring\x12\x10\n\x08resource\x18\x01 \x02(\x11\x12\r\n\x05value\x18\x02 \x02(\x02\";\n\x12ResourceCollection\x12%\n\tresources\x18\x01 \x03(\x0b\x32\x12.messages.ResourceB*\n\x19org.fursten.message.protoB\rResourceProto')
+  serialized_pb='\n\x0eresource.proto\x12\x08messages\"\xc1\x03\n\x08Resource\x12\x0b\n\x03key\x18\x01 \x02(\x11\x12\x0c\n\x04name\x18\x02 \x02(\t\x12\x11\n\tis_locked\x18\x03 \x01(\x08\x12\x11\n\tmortality\x18\x04 \x01(\x02\x12\x11\n\tthreshold\x18\x05 \x01(\x02\x12\x35\n\rweight_groups\x18\x06 \x03(\x0b\x32\x1e.messages.Resource.WeightGroup\x12\x30\n\noffsprings\x18\x07 \x03(\x0b\x32\x1c.messages.Resource.Offspring\x12/\n\tmutations\x18\x08 \x03(\x0b\x32\x1c.messages.Resource.Offspring\x1a\x39\n\x0bWeightGroup\x12*\n\x07weights\x18\x01 \x03(\x0b\x32\x19.messages.Resource.Weight\x1a)\n\x06Weight\x12\x10\n\x08resource\x18\x01 \x02(\x11\x12\r\n\x05value\x18\x02 \x02(\x02\x1a\x61\n\tOffspring\x12\x10\n\x08resource\x18\x01 \x02(\x11\x12\r\n\x05ratio\x18\x02 \x02(\x02\x12\x0c\n\x04\x63ost\x18\x03 \x02(\x02\x12\x12\n\nmultiplier\x18\x04 \x02(\x02\x12\x11\n\tis_linked\x18\x05 \x02(\x08\";\n\x12ResourceCollection\x12%\n\tresources\x18\x01 \x03(\x0b\x32\x12.messages.ResourceB*\n\x19org.fursten.message.protoB\rResourceProto')
 
 
 
@@ -41,8 +41,8 @@ _RESOURCE_WEIGHTGROUP = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=192,
-  serialized_end=249,
+  serialized_start=279,
+  serialized_end=336,
 )
 
 _RESOURCE_WEIGHT = _descriptor.Descriptor(
@@ -75,8 +75,8 @@ _RESOURCE_WEIGHT = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=251,
-  serialized_end=292,
+  serialized_start=338,
+  serialized_end=379,
 )
 
 _RESOURCE_OFFSPRING = _descriptor.Descriptor(
@@ -94,9 +94,30 @@ _RESOURCE_OFFSPRING = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='value', full_name='messages.Resource.Offspring.value', index=1,
+      name='ratio', full_name='messages.Resource.Offspring.ratio', index=1,
       number=2, type=2, cpp_type=6, label=2,
       has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='cost', full_name='messages.Resource.Offspring.cost', index=2,
+      number=3, type=2, cpp_type=6, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='multiplier', full_name='messages.Resource.Offspring.multiplier', index=3,
+      number=4, type=2, cpp_type=6, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='is_linked', full_name='messages.Resource.Offspring.is_linked', index=4,
+      number=5, type=8, cpp_type=7, label=2,
+      has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -109,8 +130,8 @@ _RESOURCE_OFFSPRING = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=294,
-  serialized_end=338,
+  serialized_start=381,
+  serialized_end=478,
 )
 
 _RESOURCE = _descriptor.Descriptor(
@@ -135,22 +156,43 @@ _RESOURCE = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='threshold', full_name='messages.Resource.threshold', index=2,
-      number=3, type=2, cpp_type=6, label=1,
+      name='is_locked', full_name='messages.Resource.is_locked', index=2,
+      number=3, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='mortality', full_name='messages.Resource.mortality', index=3,
+      number=4, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='weight_groups', full_name='messages.Resource.weight_groups', index=3,
-      number=4, type=11, cpp_type=10, label=3,
+      name='threshold', full_name='messages.Resource.threshold', index=4,
+      number=5, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='weight_groups', full_name='messages.Resource.weight_groups', index=5,
+      number=6, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='offsprings', full_name='messages.Resource.offsprings', index=4,
-      number=5, type=11, cpp_type=10, label=3,
+      name='offsprings', full_name='messages.Resource.offsprings', index=6,
+      number=7, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='mutations', full_name='messages.Resource.mutations', index=7,
+      number=8, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -165,7 +207,7 @@ _RESOURCE = _descriptor.Descriptor(
   is_extendable=False,
   extension_ranges=[],
   serialized_start=29,
-  serialized_end=338,
+  serialized_end=478,
 )
 
 
@@ -192,8 +234,8 @@ _RESOURCECOLLECTION = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=340,
-  serialized_end=399,
+  serialized_start=480,
+  serialized_end=539,
 )
 
 _RESOURCE_WEIGHTGROUP.fields_by_name['weights'].message_type = _RESOURCE_WEIGHT
@@ -202,6 +244,7 @@ _RESOURCE_WEIGHT.containing_type = _RESOURCE;
 _RESOURCE_OFFSPRING.containing_type = _RESOURCE;
 _RESOURCE.fields_by_name['weight_groups'].message_type = _RESOURCE_WEIGHTGROUP
 _RESOURCE.fields_by_name['offsprings'].message_type = _RESOURCE_OFFSPRING
+_RESOURCE.fields_by_name['mutations'].message_type = _RESOURCE_OFFSPRING
 _RESOURCECOLLECTION.fields_by_name['resources'].message_type = _RESOURCE
 DESCRIPTOR.message_types_by_name['Resource'] = _RESOURCE
 DESCRIPTOR.message_types_by_name['ResourceCollection'] = _RESOURCECOLLECTION

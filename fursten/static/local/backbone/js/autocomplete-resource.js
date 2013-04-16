@@ -1,7 +1,7 @@
 ;(function(root) {
 	
 	var resourceAutoIndex = null;
-	
+	var autoIndexLastUpdate = 0;
 	var Form = root.Backbone.Form,
     	editors = Form.editors;
 	
@@ -9,12 +9,15 @@
 	
 		getIndex: function() {
 			
-			if(!resourceAutoIndex) {
+			//Add a sec cache - this function will be called multiple time in a row
+			var currTime = new Date().getTime();
+			if(!resourceAutoIndex || (autoIndexLastUpdate + 1000) < currTime) {
 				$.ajax({
 	    		   url: '/resource/',
 	    		   type: 'GET',
 	    		   async: false,
 	    		   success: function(data) {
+	    			   autoIndexLastUpdate = currTime;
 	    			   resourceAutoIndex = data.resources;
 	    		   },
 	    		   error: function() {

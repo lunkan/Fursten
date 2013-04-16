@@ -38,8 +38,24 @@ var ResourceOffspring = Backbone.Model.extend({
 		value : 1
     },
     schema: {
+    	ratio: { type: 'Number', editorClass: 'input-mini' },
+        cost: { type: 'Number', editorClass: 'input-mini' },
+        multiplier: { type: 'Number', editorClass: 'input-mini' },
+        isLinked: { type: 'Checkbox', header: { value: 'isLinked'}}
+    }
+});
+
+var ResourceMutation = Backbone.Model.extend({
+	defaults: {
+		resource : 0,
+		value : 1
+    },
+    schema: {
     	resource: { type: 'AutocompleteResource', options: {url:'/resource/search'}, editorClass: 'input-medium' },
-        value: { type: 'Number', editorClass: 'input-mini' }
+    	ratio: { type: 'Number', editorClass: 'input-mini' },
+        cost: { type: 'Number', editorClass: 'input-mini' },
+        multiplier: { type: 'Number', editorClass: 'input-mini' },
+        isLinked: { type: 'Checkbox', header: { value: 'isLinked'}}
     }
 });
 
@@ -53,6 +69,8 @@ var ResourceForm = Backbone.Model.extend({
     schema: {
     	key: 'Hidden',
         name: 'Text',
+        isLocked: 'Checkbox',
+        mortality: 'Number',
         threshold: 'Number',
         weightGroups: {
         	type: 'Repeater',
@@ -64,6 +82,12 @@ var ResourceForm = Backbone.Model.extend({
         	itemType: 'NestedModel',
         	layout: 'table',
         	model: ResourceOffspring
+        },
+        mutations: {
+        	type: 'Repeater',
+        	itemType: 'NestedModel',
+        	layout: 'table',
+        	model: ResourceMutation
         }
     }
 });
