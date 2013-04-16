@@ -66,8 +66,29 @@ mouseclick.init = function() {
 	var map = $("#svgmap");
 	var svgmap = d3.select("#svgmap");
 	map.mousedown(function(event){
+		console.log(event);
 		if (event.button == 0) {
-			if (mouseclick.mode == mouseclick.modes.UP) {
+			if (event.ctrlKey) {
+				if (fu.models['resource'].hasSelectedResource()) {
+					console.log(fu.models['resource'].getSelectedResource());
+					var x_map = (event.offsetX - map_view.X)/map_view.get_scale();
+					var y_map = (event.offsetY - map_view.Y)/map_view.get_scale();
+					var data = JSON.stringify({"nodes":[{r :fu.models['resource'].getSelectedResource(), x: x_map, y: y_map}]});
+					$.post('/node/set', data, function(data){
+						svgmap.append('rect')
+						  .attr('class', 'map_collector')
+					      .attr('x', x_map - 120)
+					      .attr('y', y_map - 120)
+					      .attr('width', 240)
+					      .attr('height', 240)
+					      .attr('fill', 'yellow')
+					      .attr('stroke', 'black')
+					      .attr('stroke-width', 40)
+					      .attr("transform", 
+				   		   translate_map());
+					});
+				}
+			} else if (mouseclick.mode === mouseclick.modes.UP) {
 				mouseclick.mode = mouseclick.modes.DOWN;
 				mouseclick.startX = event.pageX;
 				mouseclick.startY = event.pageY;
