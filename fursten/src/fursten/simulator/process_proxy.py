@@ -26,7 +26,10 @@ class ProcessProxy(Proxy):
         super(ProcessProxy, self).__init__(mime_type)
     
     def run(self):
-        path = self.REST_PATH
-        
+        path = self.REST_PATH + "/run"
+        return super(ProcessProxy, self).post(path=path)
+    
+    def clean(self):
+        path = self.REST_PATH + "/clean"
         return super(ProcessProxy, self).post(path=path)
 

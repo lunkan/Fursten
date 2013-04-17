@@ -58,3 +58,11 @@ def run(request):
         status, response = ProcessProxy().run()
         return HttpResponse(status=status);
     
+@csrf_protect
+def clean(request):
+    
+    if request.method == 'POST':
+        
+        status, response = ProcessProxy().clean()
+        return HttpResponse(status=status);
+    

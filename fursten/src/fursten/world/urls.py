@@ -9,4 +9,5 @@ urlpatterns = patterns('',
     url(r'^new', 'fursten.world.views.new', name='new'),
     url(r'^status', 'fursten.world.views.status', name='status'),
     url(r'^run', 'fursten.world.views.run', name='run'),
+    url(r'^clean', 'fursten.world.views.clean', name='clean'),
 )

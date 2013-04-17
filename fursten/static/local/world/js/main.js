@@ -18,6 +18,7 @@ var WorldModule = (function () {
 		
 		//MESSAGES
 		fu.msg.newWorld = new signals.Signal();
+		fu.msg.cleanSimulator = new signals.Signal();
 		fu.msg.worldChanged = new signals.Signal();
 		fu.msg.playProcess = new signals.Signal();
 		fu.msg.pauseProcess = new signals.Signal();
@@ -99,6 +100,20 @@ var WorldModule = (function () {
 			fu.closeModal();
 			fu.msg.worldChanged.dispatch();
 			worldStatus.fetch();
+		}
+		
+		this.onCleanSimulator = function() {
+			
+			$.ajax({
+				url: '/world/clean/',
+	    		type: 'POST',
+	    		success: function() {
+	    			fu.msg.worldChanged.dispatch();
+	    		},
+	    		error: function() {
+	    			alert('clean error');
+	    		}
+		    });
 		}
 		
 		this.onPlayProcess = function() {
@@ -193,6 +208,7 @@ var WorldModule = (function () {
 		fu.msg.jQueryReady.add(this.onJQueryReady);
 		fu.msg.initialized.add(this.onInitialized);
 		fu.msg.newWorld.add(this.onNewWorld);
+		fu.msg.cleanSimulator.add(this.onCleanSimulator);
 		fu.msg.playProcess.add(this.onPlayProcess);
 		fu.msg.pauseProcess.add(this.onPauseProcess);
 		fu.msg.stopProcess.add(this.onStopProcess);
