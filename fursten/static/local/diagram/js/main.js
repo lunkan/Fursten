@@ -160,7 +160,8 @@ var DiagramModule = (function () {
 		};
 		
 		//SUBSCRIBE TO MESSAGES
-		fu.msg.drawMap.add(this.ondrawMap);
+		//fu.msg.drawMap.add(this.ondrawMap);
+		fu.msg.updateResourceFiltersComplete.add(this.ondrawMap);
 		fu.msg.startRunning.add(this.onStartRunning);
 		fu.msg.stopRunning.add(this.onStopRunning);
 	};
