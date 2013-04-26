@@ -85,8 +85,8 @@ var DiagramModule = (function () {
 					       .attr("cy", xy[1])
 						   .attr("r", 3/0.025)
 						   .attr("stroke-width", 1/0.025)
-						   .attr('fill', data.colors[key].color)
-						   .attr('stroke', data.colors[key].background_color)
+						   .attr('fill', data.colors_for_nodes[key].color)
+						   .attr('stroke', data.colors_for_nodes[key].background_color)
 						   .attr("transform", 
 				    		  translate_map());
 					});

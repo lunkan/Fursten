@@ -71,36 +71,66 @@ def getSvgJson(request):
             logger.info(node['r'])
             resource_style = ResourceStyle.objects.get(resource=node['r'])
             logger.info(resource_style.icon)
+        
+        resources_for_area = []
+        resources_for_nodes = []
+        for resource_layer in ResourceLayer.objects.all():
             
-        nodes_for_map = {}
+            if resource_layer.render == True:
+                resources_for_area.append(resource_layer.resource)
+                logger.info("render:%s"%resource_layer.resource)
+            if resource_layer.display == True:
+                resources_for_nodes.append(resource_layer.resource)
+                logger.info("display:%s"%resource_layer.resource)
+        
+        nodes_for_area = {}
         for node in data['nodes']:
-            if node['r'] in nodes_for_map:
-                nodes_for_map[node['r']].append([int(node['x']), int(node['y'])])
-            else:
-                nodes_for_map[node['r']] = [[int(node['x']), int(node['y'])]]
+            if node['r'] in resources_for_area:
+                if node['r'] in nodes_for_area:
+                    nodes_for_area[node['r']].append([int(node['x']), int(node['y'])])
+                else:
+                    nodes_for_area[node['r']] = [[int(node['x']), int(node['y'])]]
             
         
         
 
         logger.info(data)
-        resources_with_nodes = [resource_name 
-                                for resource_name 
-                                in nodes_for_map.keys()]
-        logger.info(resources_with_nodes)
-        logger.info(nodes_for_map)
+#         resources_with_nodes = [resource_name 
+#                                 for resource_name 
+#                                 in nodes_for_area.keys()]
+#         logger.info(resources_with_nodes)
+        logger.info(nodes_for_area)
         
-        colors_for_map = {}
+        colors_for_area = {}
+        for key in nodes_for_area.keys():
+            resource_style = ResourceStyle.objects.get(resource=key)
+            colors_for_area[key] = {'color': resource_style.color, 'background_color': resource_style.background_color}
+        logger.info(colors_for_area)
+        
+        
+        
+        paths, debug_dummy = contour.getPaths(SCALE, nodes_for_area, colors_for_area, X, Y)
+        nodes_for_map = {}
+        for node in data['nodes']:
+            if node['r'] in resources_for_nodes:
+                if node['r'] in nodes_for_map:
+                    nodes_for_map[node['r']].append([int(node['x']), int(node['y'])])
+                else:
+                    nodes_for_map[node['r']] = [[int(node['x']), int(node['y'])]]
+        colors_for_nodes = {}
         for key in nodes_for_map.keys():
             resource_style = ResourceStyle.objects.get(resource=key)
-            colors_for_map[key] = {'color': resource_style.color, 'background_color': resource_style.background_color}
-        logger.info(colors_for_map)
-        paths, debug_dummy = contour.getPaths(SCALE, nodes_for_map, colors_for_map, X, Y)
-
+            colors_for_nodes[key] = {'color': resource_style.color, 'background_color': resource_style.background_color}
+        logger.info(colors_for_nodes)
+        
+        
+        
         data =  json.dumps({'nodes': nodes_for_map, 
                             'paths': paths,
                             'world_width': world_width,
                             'world_height': world_height,
-                            'colors': colors_for_map,
+                            'colors_for_area': colors_for_area,
+                            'colors_for_nodes': colors_for_nodes,
                             })
         logger.info(data)
        
