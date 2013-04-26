@@ -12,6 +12,7 @@ from django.conf import settings
 from fursten.diagram.models import SimulatorData
 from fursten.utils.requests import RequestWithMethod
 from fursten.resources.models import ResourceLayer, ResourceStyle
+from fursten.simulator.world_proxy import WorldProxy
 
 import json
 import logging
@@ -46,6 +47,16 @@ logger = logging.getLogger('console')
     
 def getSvgJson(request):
     try:
+        status, response = WorldProxy().getWorld()
+        logger.info( "status: %i"%status)
+        if status != 200:
+            logger.info("No answer from world")
+        else:
+            world_width = response['width']
+            world_height = response['height']
+            logger.info("world width %i"%world_width)
+            logger.info("world height %i"%world_height)
+        
         SCALE = 200
         X=range(-50,50)
         Y=range(-50,50)
@@ -87,6 +98,8 @@ def getSvgJson(request):
 
         data =  json.dumps({'nodes': nodes_for_map, 
                             'paths': paths,
+                            'world_width': world_width,
+                            'world_height': world_height,
                             'colors': colors_for_map,
                             })
         logger.info(data)

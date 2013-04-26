@@ -60,10 +60,22 @@ var DiagramModule = (function () {
 		this.ondrawMap = function(tick) {
 			$.getJSON('/diagram/getsvgjson', {'tick': tick}, function(data) {
 				console.log(data);
-				draw_map(data.paths);
+				
 				var svgmap = d3.select("#svgmap");
 
 				svgmap.selectAll('#mapnode').remove();
+				svgmap.selectAll('.map_collector').remove();
+				svgmap.selectAll('#background').remove();
+				svgmap.append('rect')
+					  .attr('id', 'background')
+				      .attr('x', -data.world_width/2)
+				      .attr('y', -data.world_height/2)
+				      .attr('width', data.world_width)
+				      .attr('height', data.world_height)
+				      .attr('fill', 'black')
+				      .attr("transform", 
+				    		  translate_map());
+				draw_map(data.paths);
 				_.each(data.nodes, function(list,key) {
 					_.each(list, function(xy){
 						svgmap.append("circle")

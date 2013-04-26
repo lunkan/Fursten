@@ -16,6 +16,9 @@ mouse.transform_map = function(deltaX, deltaY) {
 	svgmap.selectAll(".map_collector")
     .attr("transform", 
 		  translate_map(deltaX, deltaY));
+	svgmap.selectAll("#background")
+    .attr("transform", 
+		  translate_map(deltaX, deltaY));
 }
 
 mouse.mouse_over_node = function(text) {
@@ -26,6 +29,14 @@ mouse.mouse_over_node = function(text) {
             .attr('y', bb.y)
             .attr('width', bb.width + 8)
             .attr('height', bb.height);
+}
+
+mouse.get_mouse_position = function(event) {
+    var xpos = event.pageX - $('#map').offset().left; // no offsetX in firefox
+    var ypos = event.pageY - $('#map').offset().top;
+	var x_map = (xpos - map_view.X)/map_view.get_scale();
+	var y_map = (ypos - map_view.Y)/map_view.get_scale();
+	return {x: x_map, y: y_map};
 }
 
 var mousewheel = {}
@@ -71,22 +82,43 @@ mouseclick.init = function() {
 			if (event.ctrlKey) {
 				if (fu.models['resource'].hasSelectedResource()) {
 					console.log(fu.models['resource'].getSelectedResource());
-					var x_map = (event.offsetX - map_view.X)/map_view.get_scale();
-					var y_map = (event.offsetY - map_view.Y)/map_view.get_scale();
+					var mouse_coords = mouse.get_mouse_position(event);
+					var x_map = mouse_coords.x;
+					var y_map = mouse_coords.y;
 					var data = JSON.stringify({"nodes":[{r :fu.models['resource'].getSelectedResource(), x: x_map, y: y_map}]});
-					$.post('/node/set', data, function(data){
-						svgmap.append('rect')
-						  .attr('class', 'map_collector')
-					      .attr('x', x_map - 120)
-					      .attr('y', y_map - 120)
-					      .attr('width', 240)
-					      .attr('height', 240)
-					      .attr('fill', 'yellow')
-					      .attr('stroke', 'black')
-					      .attr('stroke-width', 40)
-					      .attr("transform", 
-				   		   translate_map());
+					$.ajax ({
+					    url: '/node/set',
+					    type: "POST",
+					    data: data,
+					    dataType: "json",
+					    contentType: "application/json",
+					    success: function(data){
+							svgmap.append('rect')
+							  .attr('class', 'map_collector')
+						      .attr('x', x_map - 120)
+						      .attr('y', y_map - 120)
+						      .attr('width', 240)
+						      .attr('height', 240)
+						      .attr('fill', 'yellow')
+						      .attr('stroke', 'black')
+						      .attr('stroke-width', 40)
+						      .attr("transform", 
+					   		   translate_map());
+						}
 					});
+//					$.post('/node/set', data, function(data){
+//						svgmap.append('rect')
+//						  .attr('class', 'map_collector')
+//					      .attr('x', x_map - 120)
+//					      .attr('y', y_map - 120)
+//					      .attr('width', 240)
+//					      .attr('height', 240)
+//					      .attr('fill', 'yellow')
+//					      .attr('stroke', 'black')
+//					      .attr('stroke-width', 40)
+//					      .attr("transform", 
+//				   		   translate_map());
+//					});
 				}
 			} else if (mouseclick.mode === mouseclick.modes.UP) {
 				mouseclick.mode = mouseclick.modes.DOWN;
@@ -99,8 +131,9 @@ mouseclick.init = function() {
 			} else if (mouseclick.mode == mouseclick.modes.PUT_COLLECTOR) {
 				mouseclick.mode = mouseclick.modes.UP;
 				d3.select('#put_cursor').remove();
-				var x_map = (event.offsetX - map_view.X)/map_view.get_scale();
-				var y_map = (event.offsetY - map_view.Y)/map_view.get_scale();
+				var mouse_coords = mouse.get_mouse_position(event);
+				var x_map = mouse_coords.x;
+				var y_map = mouse_coords.y;
 				$.post('/postcollector/', {'x': x_map, 'y': y_map}, function(data){
 					svgmap.append('rect')
 					  .attr('class', 'map_collector')
@@ -120,8 +153,9 @@ mouseclick.init = function() {
 	map.mousemove(function(event){
 		if (mouseclick.mode == mouseclick.modes.PUT_COLLECTOR) {
 			d3.select('#put_cursor').remove();
-			var x_map = (event.offsetX - map_view.X)/map_view.get_scale();
-			var y_map = (event.offsetY - map_view.Y)/map_view.get_scale();
+			var mouse_coords = mouse.get_mouse_position(event);
+			var x_map = mouse_coords.x;
+			var y_map = mouse_coords.y;
 			svgmap.append('rect')
 			      .attr('class', 'map_collector')
 			      .attr('id', 'put_cursor')
