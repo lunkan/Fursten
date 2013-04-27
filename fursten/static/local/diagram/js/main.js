@@ -58,6 +58,7 @@ var DiagramModule = (function () {
 		fu.msg.stopRunning = new signals.Signal();
 		
 		this.ondrawMap = function(tick) {
+			console.log('this.ondrawMap');
 			$.getJSON('/diagram/getsvgjson', {'tick': tick}, function(data) {
 				console.log(data);
 				
@@ -95,15 +96,21 @@ var DiagramModule = (function () {
 					});
 				});
 
+				var text = svgmap.selectAll('#show_node_name');
+				var node_name = '';
+				if (!text.empty()) {
+					node_name = text.text();
+				}
 				svgmap.selectAll('#show_node_name').remove();
 				var text_element = svgmap.append('text');
-				text_element.text('')
+				text_element.text(node_name)
 				      .attr('x', 10)
 				      .attr('y', 20)
 				      .attr('id', 'show_node_name')
 				      .attr('font-weight', 'bold')
 				      .attr('font-size', 24);
 				var bb = text_element.node().getBBox();
+				svgmap.selectAll('#show_node_name_box').remove();
 				svgmap.insert(('rect'), '#show_node_name')
 				.attr('x', bb.x - 4)
 			    .attr('y', bb.y)
@@ -162,8 +169,11 @@ var DiagramModule = (function () {
 		//SUBSCRIBE TO MESSAGES
 		//fu.msg.drawMap.add(this.ondrawMap);
 		fu.msg.updateResourceFiltersComplete.add(this.ondrawMap);
+		
+		fu.msg.runProcessComplete.add(this.ondrawMap);
 		fu.msg.startRunning.add(this.onStartRunning);
 		fu.msg.stopRunning.add(this.onStopRunning);
+		console.log(fu.msg.runProcessComplete);
 	};
 	
 	
