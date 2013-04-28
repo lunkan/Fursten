@@ -3,6 +3,7 @@ jQuery(document).ready(function($) {
 	$('#diagram-control-block').append('<div id="diagram-simulator-control-buttons">');
 	var map = $('#map');
 	map.append('<svg id="svgmap" width="100%" height="100%"></svg>');
+	map.append('<svg id="diagram_plot" style="left: 50%; top: 0px; position: absolute;" width="50%" height="100%"></svg>');
 	mouseclick.init();
 	mousewheel.init();
 });

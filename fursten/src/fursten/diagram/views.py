@@ -118,7 +118,7 @@ def getSvgJson(request):
                 else:
                     nodes_for_map[node['r']] = [[int(node['x']), int(node['y'])]]
         colors_for_nodes = {}
-        for key in nodes_for_map.keys():
+        for key in resources_for_nodes:
             resource_style = ResourceStyle.objects.get(resource=key)
             colors_for_nodes[key] = {'color': resource_style.color, 'background_color': resource_style.background_color}
         logger.info(colors_for_nodes)

@@ -130,8 +130,6 @@ var WorldModule = (function () {
 				that.runProcess();
 			}
 			
-			fu.msg.runProcessComplete = new signals.Signal();
-			fu.msg.runProcessNext = new signals.Signal();
 			
 		}
 		

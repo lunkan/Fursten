@@ -18,3 +18,4 @@ def handle_post_viewed(sender, **kwargs):
     page['head'].addJs('fursten-diagram', 'local/diagram/js/main.js')
     page['head'].addJs('fursten-diagram', 'local/diagram/js/mouse.js')
     page['head'].addJs('fursten-diagram', 'local/diagram/js/models.js')
+    page['head'].addJs('fursten-diagram', 'local/diagram/js/diagram.js')

@@ -50,16 +50,83 @@ var DiagramModule = (function () {
 		var currentConnectForm = null;
 		var currentConnectFormView = null;
 		this.running = false;
+		this.showingDiagram = false;
+		this.nodeCount = {};
 		var that = this;
 		console.log(that);
 		//MESSAGES
 		fu.msg.drawMap = new signals.Signal();
 		fu.msg.startRunning = new signals.Signal();
 		fu.msg.stopRunning = new signals.Signal();
+		fu.msg.showDiagram = new signals.Signal();
+		fu.msg.removeDiagram = new signals.Signal();
 		
-		this.ondrawMap = function(tick) {
+		
+		this.onShowDiagram = function() {
+			var map = $('#map');
+			map.append('<svg id="svgdiagram" style="left: 50%; top: 0px; position: absolute;" width="50%" height="100%" viewBox="0 0 500 500"></svg>');
+			var svgdiagram = d3.select("#svgdiagram");
+			svgdiagram.append('rect')
+			  .attr('id', 'diagrambackground')
+		      .attr('x', 0)
+		      .attr('y', 0)
+		      .attr('width', "100%")
+		      .attr('height', "100%")
+		      .attr('fill', 'black');
+			that.showingDiagram = true;
+			that.drawDiagram();
+			
+		}
+		
+		this.drawDiagram = function(colors_for_nodes, tick) {
+			
+			console.log(colors_for_nodes);
+			var svgdiagram = d3.select("#svgdiagram");
+			console.log("DRAWDIAGRAM");
+			if (tick === undefined) {
+				diagram.drawYAxis(0);
+				diagram.drawXAxis(0);
+			} else {
+				var maxY = 0;
+				var minX = tick;
+				$.each(that.nodeCount, function(key, value) {
+					value.forEach(function(point) {
+						if (point.x < minX) {
+							minX = point.x;
+						}
+						if (point.y > maxY) {
+							maxY = point.y;
+						}
+					});
+				});
+				diagram.drawYAxis(maxY);
+				diagram.drawXAxis(minX, tick);
+			}
+			
+			if (colors_for_nodes !== undefined) {
+				svgdiagram.selectAll('.diagram_lines').remove();
+				$.each(that.nodeCount, function(key, value){
+				
+				
+					svgdiagram.append("svg:path")
+					.attr("d", diagram.line(value))
+					.attr("class", "diagram_lines")
+					.attr("id", "line_" + key)
+					.attr('stroke', colors_for_nodes[key].color)
+					.attr('fill', 'none');
+				});
+			}
+		}
+		
+		
+		this.onRemoveDiagram = function() {
+			that.showingDiagram = false;
+			d3.select("#svgdiagram").remove();
+		}
+		
+		this.ondrawMap = function() {
 			console.log('this.ondrawMap');
-			$.getJSON('/diagram/getsvgjson', {'tick': tick}, function(data) {
+			$.getJSON('/diagram/getsvgjson', {'tick': false}, function(data) {
 				console.log(data);
 				
 				var svgmap = d3.select("#svgmap");
@@ -81,7 +148,7 @@ var DiagramModule = (function () {
 					_.each(list, function(xy){
 						svgmap.append("circle")
 						   .attr("class", "node_" + key + ' map_node')
-						   .attr('id', 'mapnode')
+						   .attr('id', 'mapnode_' + key)
 						   .attr("cx", xy[0])
 					       .attr("cy", xy[1])
 						   .attr("r", 3/0.025)
@@ -91,6 +158,21 @@ var DiagramModule = (function () {
 						   .attr("transform", 
 				    		  translate_map());
 					});
+					if (that.showingDiagram) {
+						$.getJSON('/world/status', function(worldData) {
+							console.log(worldData.worldStatus[0].tick);
+							console.log("" + key + ":" + list.length);
+							if (key in that.nodeCount) {
+								if (that.nodeCount[key][that.nodeCount[key].length - 1].x !== worldData.worldStatus[0].tick) {
+									that.nodeCount[key].push({y: list.length, x: worldData.worldStatus[0].tick});
+								}
+							} else {
+								that.nodeCount[key] = [{y: list.length, x: worldData.worldStatus[0].tick}];
+							}
+							that.drawDiagram(data.colors_for_nodes, worldData.worldStatus[0].tick);
+						}); 
+						
+					}
 					$(".node_" + key).mouseover(function() {
 						mouse.mouse_over_node(key);
 					});
@@ -124,6 +206,9 @@ var DiagramModule = (function () {
 				console.log(that);
 				if (that.running) {
 					fu.msg.drawMap.dispatch('true');
+				}
+				if (that.running) {
+					diagram.runWorld();
 				}
 			});
 			
@@ -159,7 +244,7 @@ var DiagramModule = (function () {
 		
 		this.onStartRunning = function() {
 			that.running = true;
-			fu.msg.drawMap.dispatch('true');
+			diagram.runWorld();
 		};
 		
 		this.onStopRunning = function() {
@@ -173,7 +258,8 @@ var DiagramModule = (function () {
 		fu.msg.runProcessComplete.add(this.ondrawMap);
 		fu.msg.startRunning.add(this.onStartRunning);
 		fu.msg.stopRunning.add(this.onStopRunning);
-		console.log(fu.msg.runProcessComplete);
+		fu.msg.showDiagram.add(this.onShowDiagram);
+		fu.msg.removeDiagram.add(this.onRemoveDiagram);
 	};
 	
 	
