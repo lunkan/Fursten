@@ -145,6 +145,7 @@ var DiagramModule = (function () {
 				    		  translate_map());
 				draw_map(data.paths);
 				_.each(data.nodes, function(list,key) {
+					var resource_name = data.resource_names[key];
 					_.each(list, function(xy){
 						svgmap.append("circle")
 						   .attr("class", "node_" + key + ' map_node')
@@ -174,7 +175,7 @@ var DiagramModule = (function () {
 						
 					}
 					$(".node_" + key).mouseover(function() {
-						mouse.mouse_over_node(key);
+						mouse.mouse_over_node(resource_name);
 					});
 				});
 

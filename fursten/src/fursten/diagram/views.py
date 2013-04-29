@@ -13,6 +13,7 @@ from fursten.diagram.models import SimulatorData
 from fursten.utils.requests import RequestWithMethod
 from fursten.resources.models import ResourceLayer, ResourceStyle
 from fursten.simulator.world_proxy import WorldProxy
+from fursten.simulator.resource_proxy import ResourceProxy
 
 import json
 import logging
@@ -47,6 +48,11 @@ logger = logging.getLogger('console')
     
 def getSvgJson(request):
     try:
+        resources = ResourceProxy().getResources()
+        resource_names = {}
+        for resource_id, resource in zip(resources[1]['keySet'], resources[1]['resources']):
+            resource_names[resource_id] = resource['name']
+        logger.info(resource_names)
         status, response = WorldProxy().getWorld()
         logger.info( "status: %i"%status)
         if status != 200:
@@ -131,10 +137,10 @@ def getSvgJson(request):
                             'world_height': world_height,
                             'colors_for_area': colors_for_area,
                             'colors_for_nodes': colors_for_nodes,
+                            'resource_names': resource_names,
                             })
         logger.info(data)
        
         return HttpResponse(data)
     except Exception, e:
         logger.error(e)
-        
