@@ -10,6 +10,9 @@ mouse.transform_map = function(deltaX, deltaY) {
 	svgmap.selectAll(".map_node")
     .attr("transform", 
 		  translate_map(deltaX, deltaY));
+	svgmap.selectAll(".map_river")
+    .attr("transform", 
+		  translate_map(deltaX, deltaY));
 	svgmap.selectAll("#mappath")
 	.attr("transform", 
 		  translate_map(deltaX, deltaY));

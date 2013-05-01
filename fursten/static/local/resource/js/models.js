@@ -101,7 +101,8 @@ var ResourceListFormItem = Backbone.Model.extend({
     	icon: { type: 'StaticImage', header: { value: '<i class="icon-picture"></i>'}},
     	name: { type: 'StaticText', header: { value: 'Resource', css: 'main-column' }},
     	isDisplayed: { type: 'Checkbox', header: { value: '<i class="icon-eye-open"></i>'}},
-    	isRendered: { type: 'Checkbox', header: { value: '<i class="icon-globe"></i>'}}
+    	isRendered: { type: 'Checkbox', header: { value: '<i class="icon-globe"></i>'}},
+    	isRiver: { type: 'Checkbox', header: { value: '<i class="icon-random"></i>'}}
     }
 });
 //Static

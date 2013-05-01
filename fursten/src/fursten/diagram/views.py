@@ -73,13 +73,14 @@ def getSvgJson(request):
         f = urllib2.urlopen(req)
         data = json.loads(f.read())
         logger.info('DATA:\n' + str(data))
-        for node in data['nodes']:
-            logger.info(node['r'])
-            resource_style = ResourceStyle.objects.get(resource=node['r'])
-            logger.info(resource_style.icon)
+#         for node in data['nodes']:
+#             logger.info(node['r'])
+#             resource_style = ResourceStyle.objects.get(resource=node['r'])
+#             logger.info(resource_style.icon)
         
         resources_for_area = []
         resources_for_nodes = []
+        resources_for_river = []
         for resource_layer in ResourceLayer.objects.all():
             
             if resource_layer.render == True:
@@ -88,6 +89,9 @@ def getSvgJson(request):
             if resource_layer.display == True:
                 resources_for_nodes.append(resource_layer.resource)
                 logger.info("display:%s"%resource_layer.resource)
+            if resource_layer.river == True:
+                resources_for_river.append(resource_layer.resource)
+                logger.info("river:%s"%resource_layer.resource)
         
         nodes_for_area = {}
         for node in data['nodes']:
@@ -109,8 +113,11 @@ def getSvgJson(request):
         
         colors_for_area = {}
         for key in nodes_for_area.keys():
-            resource_style = ResourceStyle.objects.get(resource=key)
-            colors_for_area[key] = {'color': resource_style.color, 'background_color': resource_style.background_color}
+            if  ResourceStyle.objects.filter(resource=key).exists():
+                resource_style = ResourceStyle.objects.get(resource=key)
+                colors_for_area[key] = {'color': resource_style.color, 'background_color': resource_style.background_color}
+            else:
+                colors_for_area[key] = {'color': '0xffffff', 'background_color': '0x000000'}
         logger.info(colors_for_area)
         
         
@@ -125,18 +132,38 @@ def getSvgJson(request):
                     nodes_for_map[node['r']] = [[int(node['x']), int(node['y'])]]
         colors_for_nodes = {}
         for key in resources_for_nodes:
-            resource_style = ResourceStyle.objects.get(resource=key)
-            colors_for_nodes[key] = {'color': resource_style.color, 'background_color': resource_style.background_color}
+            if  ResourceStyle.objects.filter(resource=key).exists():
+                resource_style = ResourceStyle.objects.get(resource=key)
+                colors_for_nodes[key] = {'color': resource_style.color, 'background_color': resource_style.background_color}
+            else:
+                colors_for_nodes[key] = {'color': '0xffffff', 'background_color': '0x000000'}
+        logger.info(colors_for_nodes)
+
+        nodes_for_river = {}
+        for node in data['nodes']:
+            if node['r'] in resources_for_river:
+                if node['r'] in nodes_for_river:
+                    nodes_for_river[node['r']].append([int(node['x']), int(node['y'])])
+                else:
+                    nodes_for_river[node['r']] = [[int(node['x']), int(node['y'])]]        
+        colors_for_river = {}
+        for key in resources_for_river:
+            if  ResourceStyle.objects.filter(resource=key).exists():
+                resource_style = ResourceStyle.objects.get(resource=key)
+                colors_for_river[key] = {'color': resource_style.color, 'background_color': resource_style.background_color}
+            else:
+                colors_for_river[key] = {'color': '0xffffff', 'background_color': '0x000000'}
         logger.info(colors_for_nodes)
         
         
-        
-        data =  json.dumps({'nodes': nodes_for_map, 
+        data =  json.dumps({'nodes': nodes_for_map,
+                            'river': nodes_for_river, 
                             'paths': paths,
                             'world_width': world_width,
                             'world_height': world_height,
                             'colors_for_area': colors_for_area,
                             'colors_for_nodes': colors_for_nodes,
+                            'colors_for_river': colors_for_river,
                             'resource_names': resource_names,
                             })
         logger.info(data)

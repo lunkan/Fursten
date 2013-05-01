@@ -134,6 +134,7 @@ var DiagramModule = (function () {
 				svgmap.selectAll('#mapnode').remove();
 				svgmap.selectAll('.map_collector').remove();
 				svgmap.selectAll('#background').remove();
+				svgmap.selectAll('.map_river').remove();
 				svgmap.append('rect')
 					  .attr('id', 'background')
 				      .attr('x', -data.world_width/2)
@@ -144,6 +145,64 @@ var DiagramModule = (function () {
 				      .attr("transform", 
 				    		  translate_map());
 				draw_map(data.paths);
+				console.log(data.river);
+				_.each(data.river, function(list,key) {
+					var resource_name = data.resource_names[key];
+					var river_paths = diagram.path_river(list);
+					console.log(river_paths);
+				    river_paths.forEach(function(river_path) {
+				        var path_string = diagram.calc_bezier_path(river_path);
+				        svgmap.append('path')
+				                .attr('class', 'map_river')
+				                .attr('d', path_string)
+				                .attr('fill', 'none')
+				                .attr('stroke', data.colors_for_river[key].background_color)
+				                .attr('stroke-width', 6/0.025)
+				                .attr('stroke-opacity', 1)
+				                .attr("transform", 
+				    		            translate_map());
+				        svgmap.append('path')
+				                .attr('class', 'map_river')
+				                .attr('d', path_string)
+				                .attr('fill', 'none')
+				                .attr('stroke', 'maroon')
+				                .attr('stroke-width', 4/0.025)
+				                .attr('stroke-opacity', data.colors_for_river[key].color)
+				                .attr("transform", 
+				    		            translate_map());
+				    });
+//					_.each(list, function(xy){
+//						svgmap.append("circle")
+//						   .attr("class", "node_" + key + ' map_node')
+//						   .attr('id', 'mapnode_' + key)
+//						   .attr("cx", xy[0])
+//					       .attr("cy", xy[1])
+//						   .attr("r", 3/0.025)
+//						   .attr("stroke-width", 10/0.025)
+//						   .attr('fill', data.colors_for_river[key].color)
+//						   .attr('stroke', data.colors_for_river[key].background_color)
+//						   .attr("transform", 
+//				    		  translate_map());
+//					});
+//					if (that.showingDiagram) {
+//						$.getJSON('/world/status', function(worldData) {
+//							console.log(worldData.worldStatus[0].tick);
+//							console.log("" + key + ":" + list.length);
+//							if (key in that.nodeCount) {
+//								if (that.nodeCount[key][that.nodeCount[key].length - 1].x !== worldData.worldStatus[0].tick) {
+//									that.nodeCount[key].push({y: list.length, x: worldData.worldStatus[0].tick});
+//								}
+//							} else {
+//								that.nodeCount[key] = [{y: list.length, x: worldData.worldStatus[0].tick}];
+//							}
+//							that.drawDiagram(data.colors_for_river, worldData.worldStatus[0].tick);
+//						}); 
+//						
+//					}
+//					$(".node_" + key).mouseover(function() {
+//						mouse.mouse_over_node(resource_name);
+//					});
+				});
 				_.each(data.nodes, function(list,key) {
 					var resource_name = data.resource_names[key];
 					_.each(list, function(xy){
@@ -179,6 +238,9 @@ var DiagramModule = (function () {
 					});
 				});
 
+
+				
+				
 				var text = svgmap.selectAll('#show_node_name');
 				var node_name = '';
 				if (!text.empty()) {
