@@ -146,6 +146,7 @@ var DiagramModule = (function () {
 				    		  translate_map());
 				draw_map(data.paths);
 				console.log(data.river);
+				console.log(data.colors_for_river);
 				_.each(data.river, function(list,key) {
 					var resource_name = data.resource_names[key];
 					var river_paths = diagram.path_river(list);
@@ -165,9 +166,8 @@ var DiagramModule = (function () {
 				                .attr('class', 'map_river')
 				                .attr('d', path_string)
 				                .attr('fill', 'none')
-				                .attr('stroke', 'maroon')
 				                .attr('stroke-width', 4/0.025)
-				                .attr('stroke-opacity', data.colors_for_river[key].color)
+				                .attr('stroke', data.colors_for_river[key].color)
 				                .attr("transform", 
 				    		            translate_map());
 				    });

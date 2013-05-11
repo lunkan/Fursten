@@ -147,13 +147,14 @@ def getSvgJson(request):
                 else:
                     nodes_for_river[node['r']] = [[int(node['x']), int(node['y'])]]        
         colors_for_river = {}
+        logger.info(resources_for_river)
         for key in resources_for_river:
             if  ResourceStyle.objects.filter(resource=key).exists():
                 resource_style = ResourceStyle.objects.get(resource=key)
                 colors_for_river[key] = {'color': resource_style.color, 'background_color': resource_style.background_color}
             else:
                 colors_for_river[key] = {'color': '0xffffff', 'background_color': '0x000000'}
-        logger.info(colors_for_nodes)
+        logger.info(colors_for_river)
         
         
         data =  json.dumps({'nodes': nodes_for_map,
