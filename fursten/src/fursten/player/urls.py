@@ -7,4 +7,5 @@ from django.conf.urls import patterns, include, url
 urlpatterns = patterns('',
 #    url(r'^$', 'fursten.resources.views.index', name='index'),
     url(r'^new', 'fursten.player.views.new', name='new'),
+    url(r'^getplayers', 'fursten.player.views.getPlayers', name='getplayers'),
 )

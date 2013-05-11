@@ -10,7 +10,9 @@ def handle_post_viewed(sender, **kwargs):
     if user.groups.filter(name="admin").count():
         print "nodes in group!: "
     
+    page['header'].addMainMenuItem('player/select_player/None', 'onClick', '')
     page['header'].addMainMenuItem('player/general/new_player', 'onClick', 'fu.msg.newPlayer.dispatch()')
+    
 #     page['header'].addMainMenuItem('node/general/add_nodes', 'onClick', 'fu.msg.newNodes.dispatch()')
 #     page['header'].addMainMenuItem('node/general/delete_nodes', 'onClick', 'fu.msg.deleteNodes.dispatch()')
 #     page['header'].addMainMenuItem('node/general/clear_nodes', 'onClick', 'fu.msg.clearNodes.dispatch()')
