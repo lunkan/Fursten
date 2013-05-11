@@ -176,7 +176,6 @@ diagram.calc_bezier_path = function(river_path) {
             .attr('stroke', 'purple')
             .attr('stroke-width', 1)
             .attr('stroke-opacity', 1);*/
-    	console.log(p);
         if (start) {
             path_string += p[0] + " " + p[1];
             debug_string += p[0] + " " + p[1];

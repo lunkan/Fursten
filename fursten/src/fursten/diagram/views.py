@@ -48,6 +48,7 @@ logger = logging.getLogger('console')
     
 def getSvgJson(request):
     try:
+        logger.info(request.user.get_profile())
         resources = ResourceProxy().getResources()
         resource_names = {}
         for resource_id, resource in zip(resources[1]['keySet'], resources[1]['resources']):
