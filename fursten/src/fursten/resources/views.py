@@ -39,10 +39,12 @@ def index(request):
                     resource_layer = ResourceLayer.objects.get(resource=resource['key'])
                     resource['isDisplayed'] = resource_layer.display
                     resource['isRendered'] = resource_layer.render
+                    resource['isRiver'] = resource_layer.river
                     resource_layers.append(resource_layer);
                 except :
                     resource['isDisplayed'] = False
                     resource['isRendered'] = False
+                    resource['isRiver'] = False
                     pass
         except:
             response = {
@@ -53,7 +55,10 @@ def index(request):
         #todo: improve!
         ResourceLayer.objects.all().delete()
         for updatedResourceLayer in resource_layers:
-            resource_layer = ResourceLayer(resource=updatedResourceLayer.resource, render=updatedResourceLayer.render, display=updatedResourceLayer.display)
+            resource_layer = ResourceLayer(resource=updatedResourceLayer.resource, 
+                                           render=updatedResourceLayer.render, 
+                                           display=updatedResourceLayer.display,
+                                           river=updatedResourceLayer.river)
             resource_layer.save()
         
         response = HttpResponse(simplejson.dumps(response), mimetype='application/json')
@@ -70,9 +75,13 @@ def index(request):
                 resource_layer = ResourceLayer.objects.get(resource=resource['key'])
                 resource_layer.render = resource['isRendered']
                 resource_layer.display = resource['isDisplayed']
+                resource_layer.river = resource['isRiver']
                 resource_layer.save()
             except :
-                resource_layer = ResourceLayer(resource=resource['key'], render=resource['isRendered'], display=resource['isDisplayed'])
+                resource_layer = ResourceLayer(resource=resource['key'], 
+                                               render=resource['isRendered'], 
+                                               display=resource['isDisplayed'],
+                                               river=resource['isRiver'])
                 resource_layer.save()
                 pass
         

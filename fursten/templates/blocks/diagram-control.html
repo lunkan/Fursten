@@ -6,6 +6,10 @@
 	<div>
 		Map Controls
 	</div>
-	<button type="submit" class="btn btn-primary" onclick="fu.msg.drawMap.dispatch('false');">DRAW MAP</button>
+	<button type="submit" class="btn btn-primary" onclick="fu.msg.updateResourceFilters.dispatch();">DRAW MAP</button>
+	<button type="submit" class="btn btn-primary" onclick="fu.msg.showDiagram.dispatch();">SHOW DIAGRAM</button>
+	<button type="submit" class="btn btn-primary" onclick="fu.msg.removeDiagram.dispatch();">REMOVE DIAGRAM</button>
+	<button type="submit" class="btn btn-primary" onclick="fu.msg.startRunning.dispatch();">RUN CONT</button>
+	<button type="submit" class="btn btn-primary" onclick="fu.msg.stopRunning.dispatch();">STOP CONT</button>
 </div>
 {% endblock  %}
