@@ -72,6 +72,9 @@ var ResourceModule = (function () {
 			resourceList.on('error', function() {
 				alert("resourceList save error");
 			});
+			resourceList.on('change', function() {
+				//alert("resourceList is changed");
+			});
 			
 			resourceList.fetch();
 		};

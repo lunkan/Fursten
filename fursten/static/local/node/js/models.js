@@ -2,7 +2,8 @@ var Node = Backbone.Model.extend({
 	defaults: {
 		r : 0,
 		x : 0,
-		y : 0
+		y : 0,
+		v : 1
     },
     schema: {
     	r: {
@@ -17,6 +18,10 @@ var Node = Backbone.Model.extend({
         	editorClass: 'input-mini'
         },
         y: {
+        	type: 'Number',
+        	editorClass: 'input-mini'
+        },
+        v: {
         	type: 'Number',
         	editorClass: 'input-mini'
         }
