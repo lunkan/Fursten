@@ -34,8 +34,8 @@ var ResourceWeightGroup = Backbone.Model.extend({
 
 var ResourceOffspring = Backbone.Model.extend({
 	defaults: {
-		resource : 0,
-		value : 1
+		multiplier: 1,
+		ratio: 0.1
     },
     schema: {
     	ratio: { type: 'Number', editorClass: 'input-mini' },
@@ -47,8 +47,8 @@ var ResourceOffspring = Backbone.Model.extend({
 
 var ResourceMutation = Backbone.Model.extend({
 	defaults: {
-		resource : 0,
-		value : 1
+		multiplier: 1,
+		ratio: 0.1
     },
     schema: {
     	resource: { type: 'AutocompleteResource', options: {url:'/resource/search'}, editorClass: 'input-medium' },

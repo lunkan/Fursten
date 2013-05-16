@@ -13,7 +13,7 @@ from google.protobuf import descriptor_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='node.proto',
   package='messages',
-  serialized_pb='\n\nnode.proto\x12\x08messages\"\'\n\x04Node\x12\t\n\x01x\x18\x01 \x02(\x11\x12\t\n\x01y\x18\x02 \x02(\x11\x12\t\n\x01r\x18\x03 \x02(\x11\"/\n\x0eNodeCollection\x12\x1d\n\x05nodes\x18\x01 \x03(\x0b\x32\x0e.messages.Node\"]\n\x0fNodeTransaction\x12$\n\x0c\x64\x65lete_nodes\x18\x01 \x03(\x0b\x32\x0e.messages.Node\x12$\n\x0cinject_nodes\x18\x02 \x03(\x0b\x32\x0e.messages.NodeB&\n\x19org.fursten.message.protoB\tNodeProto')
+  serialized_pb='\n\nnode.proto\x12\x08messages\"2\n\x04Node\x12\t\n\x01x\x18\x01 \x02(\x11\x12\t\n\x01y\x18\x02 \x02(\x11\x12\t\n\x01r\x18\x03 \x02(\x11\x12\t\n\x01v\x18\x04 \x02(\x02\"/\n\x0eNodeCollection\x12\x1d\n\x05nodes\x18\x01 \x03(\x0b\x32\x0e.messages.Node\"]\n\x0fNodeTransaction\x12$\n\x0c\x64\x65lete_nodes\x18\x01 \x03(\x0b\x32\x0e.messages.Node\x12$\n\x0cinject_nodes\x18\x02 \x03(\x0b\x32\x0e.messages.NodeB&\n\x19org.fursten.message.protoB\tNodeProto')
 
 
 
@@ -46,6 +46,13 @@ _NODE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='v', full_name='messages.Node.v', index=3,
+      number=4, type=2, cpp_type=6, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -56,7 +63,7 @@ _NODE = _descriptor.Descriptor(
   is_extendable=False,
   extension_ranges=[],
   serialized_start=24,
-  serialized_end=63,
+  serialized_end=74,
 )
 
 
@@ -83,8 +90,8 @@ _NODECOLLECTION = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=65,
-  serialized_end=112,
+  serialized_start=76,
+  serialized_end=123,
 )
 
 
@@ -118,8 +125,8 @@ _NODETRANSACTION = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=114,
-  serialized_end=207,
+  serialized_start=125,
+  serialized_end=218,
 )
 
 _NODECOLLECTION.fields_by_name['nodes'].message_type = _NODE
