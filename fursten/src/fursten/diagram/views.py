@@ -74,7 +74,7 @@ def getSvgJson(request):
                     })
             logger.info(data)
        
-        return HttpResponse(data)
+            return HttpResponse(data)
         for resource_id, resource in zip(resources[1]['keySet'], resources[1]['resources']):
             resource_names[resource_id] = resource['name']
         logger.info(resource_names)

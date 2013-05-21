@@ -88,7 +88,7 @@ mouseclick.init = function() {
 					var mouse_coords = mouse.get_mouse_position(event);
 					var x_map = mouse_coords.x;
 					var y_map = mouse_coords.y;
-					var data = JSON.stringify({"nodes":[{r :fu.models['resource'].getSelectedResource(), x: x_map, y: y_map}]});
+					var data = JSON.stringify({"nodes":[{r :fu.models['resource'].getSelectedResource(), x: x_map, y: y_map, v: 1}]});
 					$.ajax ({
 					    url: '/node/set',
 					    type: "POST",
