@@ -51,6 +51,30 @@ def getSvgJson(request):
         logger.info(request.user.get_profile())
         resources = ResourceProxy().getResources()
         resource_names = {}
+        logger.info(resources)
+        if resources[1]['resources'] is None:
+            status, response = WorldProxy().getWorld()
+            logger.info( "status: %i"%status)
+            if status != 200:
+                logger.info("No answer from world")
+            else:
+                world_width = response['width']
+                world_height = response['height']
+                logger.info("world width %i"%world_width)
+                logger.info("world height %i"%world_height)
+            data =  json.dumps({'nodes': {},
+                    'river': {}, 
+                    'paths': [],
+                    'world_width': world_width,
+                    'world_height': world_height,
+                    'colors_for_area': {},
+                    'colors_for_nodes': {},
+                    'colors_for_river': {},
+                    'resource_names': resource_names,
+                    })
+            logger.info(data)
+       
+        return HttpResponse(data)
         for resource_id, resource in zip(resources[1]['keySet'], resources[1]['resources']):
             resource_names[resource_id] = resource['name']
         logger.info(resource_names)
