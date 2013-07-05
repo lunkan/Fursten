@@ -146,6 +146,7 @@ var DiagramModule = (function () {
 				    		  translate_map());
 				draw_map(data.paths);
 				console.log(data.river);
+				console.log(data.colors_for_river);
 				_.each(data.river, function(list,key) {
 					var resource_name = data.resource_names[key];
 					var river_paths = diagram.path_river(list);
@@ -165,43 +166,12 @@ var DiagramModule = (function () {
 				                .attr('class', 'map_river')
 				                .attr('d', path_string)
 				                .attr('fill', 'none')
-				                .attr('stroke', 'maroon')
 				                .attr('stroke-width', 4/0.025)
-				                .attr('stroke-opacity', data.colors_for_river[key].color)
+				                .attr('stroke', data.colors_for_river[key].color)
 				                .attr("transform", 
 				    		            translate_map());
 				    });
-//					_.each(list, function(xy){
-//						svgmap.append("circle")
-//						   .attr("class", "node_" + key + ' map_node')
-//						   .attr('id', 'mapnode_' + key)
-//						   .attr("cx", xy[0])
-//					       .attr("cy", xy[1])
-//						   .attr("r", 3/0.025)
-//						   .attr("stroke-width", 10/0.025)
-//						   .attr('fill', data.colors_for_river[key].color)
-//						   .attr('stroke', data.colors_for_river[key].background_color)
-//						   .attr("transform", 
-//				    		  translate_map());
-//					});
-//					if (that.showingDiagram) {
-//						$.getJSON('/world/status', function(worldData) {
-//							console.log(worldData.worldStatus[0].tick);
-//							console.log("" + key + ":" + list.length);
-//							if (key in that.nodeCount) {
-//								if (that.nodeCount[key][that.nodeCount[key].length - 1].x !== worldData.worldStatus[0].tick) {
-//									that.nodeCount[key].push({y: list.length, x: worldData.worldStatus[0].tick});
-//								}
-//							} else {
-//								that.nodeCount[key] = [{y: list.length, x: worldData.worldStatus[0].tick}];
-//							}
-//							that.drawDiagram(data.colors_for_river, worldData.worldStatus[0].tick);
-//						}); 
-//						
-//					}
-//					$(".node_" + key).mouseover(function() {
-//						mouse.mouse_over_node(resource_name);
-//					});
+
 				});
 				_.each(data.nodes, function(list,key) {
 					var resource_name = data.resource_names[key];
@@ -277,27 +247,27 @@ var DiagramModule = (function () {
 			
 		};
 				
-		this.onInitiateConnection = function() {
-			var errors = currentConnectFormView.commit();
-			if(!errors) {
-				currentConnectForm.on('sync', function() {
-					fu.models['diagram'].onInitiateConnectionComplete();
-				});
-				currentConnectForm.save();	
-			}
-		}
-		
-		this.onInitiateConnectionComplete = function() {
-			currentConnectForm = null;
-			currentConnectFormView = null;
-			fu.closeModal();
-			$.getJSON("/diagram/getcss", 
-					function(data) {
-					$("#node_style").html(data.css);
-			});
-			fu.msg.drawMap.dispatch('false');
-			this.addSimulatorControl();
-		}
+//		this.onInitiateConnection = function() {
+//			var errors = currentConnectFormView.commit();
+//			if(!errors) {
+//				currentConnectForm.on('sync', function() {
+//					fu.models['diagram'].onInitiateConnectionComplete();
+//				});
+//				currentConnectForm.save();	
+//			}
+//		}
+//		
+//		this.onInitiateConnectionComplete = function() {
+//			currentConnectForm = null;
+//			currentConnectFormView = null;
+//			fu.closeModal();
+//			$.getJSON("/diagram/getcss", 
+//					function(data) {
+//					$("#node_style").html(data.css);
+//			});
+//			fu.msg.drawMap.dispatch('false');
+//			this.addSimulatorControl();
+//		}
 		
 		this.addSimulatorControl = function() {
 			var template = _.template($('#tpl-diagram-simulator-control-buttons').html());
