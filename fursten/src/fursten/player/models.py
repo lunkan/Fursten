@@ -8,7 +8,6 @@ from django.db.models.signals import post_save
 class UserProfile(models.Model):  
     user = models.OneToOneField(User)  
     #other fields here
-
     def __str__(self):  
         return "%s's profile" % self.user  
 
@@ -21,6 +20,6 @@ post_save.connect(create_user_profile, sender=User)
 class Player(models.Model):
     user = models.ForeignKey(User)
     name = models.TextField()
-    
+    active = models.BooleanField()
     def __str__(self):  
-        return "player %s, owned by %s" %(self.name, self.user)  
+        return "player %s, owned by %s, active? %s" %(self.name, self.user, self.active)  
