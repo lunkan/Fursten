@@ -86,3 +86,8 @@ body, html {
 	float:right;
 	margin-bottom:10px;
 }
+
+.modal.large {
+	margin-left: -400px;
+    width: 800px;
+}

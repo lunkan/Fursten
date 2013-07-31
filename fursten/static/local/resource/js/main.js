@@ -104,7 +104,7 @@ var ResourceModule = (function () {
 			
 			currentResourceFormView.render();
 			var controls = [{callback:fu.models['resource'].onSaveResource, label:"Save"}];
-			fu.openModal("New resource", currentResourceFormView.el, controls);
+			fu.openModal("New resource", currentResourceFormView.el, controls, {large:true});
 		};
 		
 		this.onExtendResource = function() {
@@ -122,7 +122,7 @@ var ResourceModule = (function () {
 				$(currentResourceFormView.el).html("");
 				currentResourceFormView.render();
 				var controls = [{callback:fu.models['resource'].onSaveResource, label:"Save"}];
-				fu.openModal("Extend resource", currentResourceFormView.el, controls);
+				fu.openModal("Extend resource", currentResourceFormView.el, controls, {large:true});
 			}, this);
 			currentResourceForm.fetch();
 		};
@@ -145,7 +145,7 @@ var ResourceModule = (function () {
 				$(currentResourceFormView.el).html("");
 				currentResourceFormView.render();
 				var controls = [{callback:fu.models['resource'].onSaveResource, label:"Save"}];
-				fu.openModal('<img src="/resource/'+currResourceId+'/thumbnail/"/> Edit resource', currentResourceFormView.el, controls);
+				fu.openModal('<img src="/resource/'+currResourceId+'/thumbnail/"/> Edit resource', currentResourceFormView.el, controls, {large:true});
 			}, this);
 			currentResourceForm.fetch();
 		};

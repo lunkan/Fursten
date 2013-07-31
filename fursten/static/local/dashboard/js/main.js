@@ -21,7 +21,7 @@ var Fursten = (function () {
 				return window.location.protocol + "//" + document.domain;
 		};
 		
-		this.openModal = function(title, bodyElement, controls) {
+		this.openModal = function(title, bodyElement, controls, options) {
 			
 			$('#myModal .modal-body').empty();
 			$('#myModal .modal-footer').empty();
@@ -38,11 +38,18 @@ var Fursten = (function () {
 				$('#myModal .modal-footer').append(btnElm);
 			});
 			
+			if(options) {
+				if(options.large) {
+					$('#myModal').addClass('large');
+				}
+			}
+			
 			$('#myModal').modal('show');
 		};
 		
 		this.closeModal = function() {
 			$('#myModal').modal('hide');
+			$('#myModal').removeClass('large');
 		}
 	}
 	

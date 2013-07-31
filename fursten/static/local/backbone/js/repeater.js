@@ -10,17 +10,42 @@
 			  	<div class="bbf-actions"><button type="button" data-action="add" data-cid="{{cid}}">Add</div>\
 			  </div>\
 		',
+		repeaterRows: '\
+			<div class="bbf-list" data-spec="alpha">\
+		  	<table class="table table-striped table-condensed">\
+				<colgroup>\
+					<col/>\
+					<col/>\
+					<col/>\
+	  			</colgroup>\
+				<thead>\
+					<tr/>\
+					<tr/>\
+					<tr/>\
+				</thead>\
+				<% if(dynamic !== false){ %>\
+				<tfoot>\
+					<tr>\
+						<td colspan="3"><div class="bbf-actions"><button type="button" data-action="add" data-cid="{{cid}}">Add</div></td>\
+					</tr>\
+				</tfoot>\
+				<% } %>\
+				<tbody>{{items}}</tbody\
+			</table>\
+		  </div>\
+		',
 		repeaterTable: '\
 			  <div class="bbf-list" data-spec="alpha">\
 			  	<table class="table table-striped table-condensed">\
 					<colgroup>\
-					<% _.each(headers, function(header) { %>\
-						<% if(header.css !== undefined){ %>\
-						<col class="{{header.css}}"/>\
-						<% } else { %>\
-		    			<col/>\
-						<% } %>\
-					<% }); %>\
+						<% _.each(headers, function(header) { %>\
+							<% if(header.css !== undefined){ %>\
+							<col class="{{header.css}}"/>\
+							<% } else { %>\
+			    			<col/>\
+							<% } %>\
+						<% }); %>\
+						<col/>\
 		  			</colgroup>\
 					<thead>\
 						<tr>\
@@ -43,7 +68,7 @@
 				</table>\
 			  </div>\
 		',
-		  repeaterRow: '\
+		repeaterRow: '\
 			  <td>{{editor}}</td>\
 		',
 		nestedForm: '<div class="bbf-nested-form">{{fieldsets}}</div>',
@@ -97,6 +122,12 @@
 					listTemplate : 'repeaterTable',
 					listItemTemplate : 'repeaterRow'
 				}, schema);
+			}
+			else if (this.schema.layout == 'rows') {
+				this.schema = _.extend({
+					listTemplate : 'repeaterRows',
+					listItemTemplate : 'repeaterRowsItem'
+				}, schema);
 			} else {
 				this.schema = _.extend({
 					listTemplate : 'repeaterList',
@@ -142,6 +173,8 @@
 			// Create main element
 			var emptyEl;
 			if (this.schema.layout == 'table')
+				emptyEl = '<tr class="bbf-tmp"></tr>';
+			else if (this.schema.layout == 'rows')
 				emptyEl = '<tr class="bbf-tmp"></tr>';
 			else
 				emptyEl = '<b class="bbf-tmp"></b>';
@@ -548,6 +581,9 @@
 		        
 		        if(this.schema.layout == "table" && this.schema.dynamic !== false) {
 		      	  $(formEl).append('<td><button type="button" data-action="remove" class="bbf-remove">&times;</button></td>');
+		        }
+		        else if(this.schema.layout == "rows" && this.schema.dynamic !== false) {
+		      	  	$(formEl).append('<td><button type="button" data-action="remove" class="bbf-remove">&times;</button></td>');
 		        }
 		        
 		        return formEl;

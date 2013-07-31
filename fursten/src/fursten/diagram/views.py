@@ -48,7 +48,7 @@ logger = logging.getLogger('console')
     
 def getSvgJson(request):
     try:
-        logger.info(request.user.get_profile())
+        #logger.info(request.user.get_profile())
         resources = ResourceProxy().getResources()
         resource_names = {}
         logger.info(resources)
@@ -145,10 +145,9 @@ def getSvgJson(request):
                 colors_for_area[key] = {'color': '0xffffff', 'background_color': '0x000000'}
         logger.info(colors_for_area)
         
-        
-        
         paths, debug_dummy = contour.getPaths(SCALE, nodes_for_area, colors_for_area, X, Y)
         nodes_for_map = {}
+        
         for node in data['nodes']:
             if node['r'] in resources_for_nodes:
                 if node['r'] in nodes_for_map:
@@ -163,7 +162,6 @@ def getSvgJson(request):
             else:
                 colors_for_nodes[key] = {'color': '0xffffff', 'background_color': '0x000000'}
         logger.info(colors_for_nodes)
-
         nodes_for_river = {}
         for node in data['nodes']:
             if node['r'] in resources_for_river:

@@ -35,7 +35,7 @@ var ResourceWeightGroup = Backbone.Model.extend({
 var ResourceOffspring = Backbone.Model.extend({
 	defaults: {
 		multiplier: 1,
-		ratio: 0.1
+		ratio: 0.01
     },
     schema: {
     	ratio: { type: 'Number', editorClass: 'input-mini' },
@@ -48,7 +48,7 @@ var ResourceOffspring = Backbone.Model.extend({
 var ResourceMutation = Backbone.Model.extend({
 	defaults: {
 		multiplier: 1,
-		ratio: 0.1
+		ratio: 0.01
     },
     schema: {
     	resource: { type: 'AutocompleteResource', options: {url:'/resource/search'}, editorClass: 'input-medium' },
@@ -64,7 +64,7 @@ var ResourceForm = Backbone.Model.extend({
 	defaults: {
 		key : 0,
     	name : '',
-    	threshold : 0.9
+    	threshold : 0.1
     },
     schema: {
     	key: 'Hidden',
@@ -75,7 +75,7 @@ var ResourceForm = Backbone.Model.extend({
         weightGroups: {
         	type: 'Repeater',
         	itemType: 'NestedModel',
-        	model: ResourceWeightGroup
+        	model: ResourceWeightGroup,
         },
         offsprings: {
         	type: 'Repeater',
