@@ -143,13 +143,18 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'fursten.simulatorproxy',
     'fursten.dashboard',
-    'fursten.resources',
-    'fursten.world',
+    'fursten.project',
+    'fursten.resourceforms',
+    'fursten.resourcelist',
+    'fursten.resourcestyles',
+    #'fursten.resources',
+    #'fursten.world',
+    'fursten.simulator',
     'fursten',
     'fursten.diagram',
     'fursten.player',
-    'fursten.simulator',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin'
     # Uncomment the next line to enable admin documentation:
