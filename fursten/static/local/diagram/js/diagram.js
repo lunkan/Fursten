@@ -55,7 +55,7 @@ diagram.line = d3.svg.line()
 
 diagram.runWorld = function() {
 	$.ajax({
-		url: '/world/run/',
+		url: '/simulator/run/',
 		type: 'POST',
 		success: function() {
 			fu.msg.runProcessComplete.dispatch();
