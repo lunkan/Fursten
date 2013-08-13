@@ -11,9 +11,10 @@ from django.contrib.auth import logout
 from django.conf import settings
 from fursten.diagram.models import SimulatorData
 from fursten.utils.requests import RequestWithMethod
-from fursten.resources.models import ResourceLayer, ResourceStyle
-from fursten.simulator.world_proxy import WorldProxy
-from fursten.simulator.resource_proxy import ResourceProxy
+from fursten.resourcelist.models import ResourceLayer
+from fursten.resourcestyles.models import ResourceStyle
+from fursten.simulatorproxy.world_proxy import WorldProxy
+from fursten.simulatorproxy.resource_proxy import ResourceProxy
 
 import json
 import logging
@@ -48,7 +49,7 @@ logger = logging.getLogger('console')
     
 def getSvgJson(request):
     try:
-        #logger.info(request.user.get_profile())
+        logger.info(request.user.get_profile())
         resources = ResourceProxy().getResources()
         resource_names = {}
         logger.info(resources)
@@ -140,9 +141,9 @@ def getSvgJson(request):
         for key in nodes_for_area.keys():
             if  ResourceStyle.objects.filter(resource=key).exists():
                 resource_style = ResourceStyle.objects.get(resource=key)
-                colors_for_area[key] = {'color': resource_style.color, 'background_color': resource_style.background_color}
+                colors_for_area[key] = {'color': resource_style.color, 'border_color': resource_style.border_color}
             else:
-                colors_for_area[key] = {'color': '0xffffff', 'background_color': '0x000000'}
+                colors_for_area[key] = {'color': '0xffffff', 'border_color': '0x000000'}
         logger.info(colors_for_area)
         
         paths, debug_dummy = contour.getPaths(SCALE, nodes_for_area, colors_for_area, X, Y)
@@ -158,9 +159,9 @@ def getSvgJson(request):
         for key in resources_for_nodes:
             if  ResourceStyle.objects.filter(resource=key).exists():
                 resource_style = ResourceStyle.objects.get(resource=key)
-                colors_for_nodes[key] = {'color': resource_style.color, 'background_color': resource_style.background_color}
+                colors_for_nodes[key] = {'color': resource_style.color, 'border_color': resource_style.border_color}
             else:
-                colors_for_nodes[key] = {'color': '0xffffff', 'background_color': '0x000000'}
+                colors_for_nodes[key] = {'color': '0xffffff', 'border_color': '0x000000'}
         logger.info(colors_for_nodes)
         nodes_for_river = {}
         for node in data['nodes']:
@@ -174,9 +175,9 @@ def getSvgJson(request):
         for key in resources_for_river:
             if  ResourceStyle.objects.filter(resource=key).exists():
                 resource_style = ResourceStyle.objects.get(resource=key)
-                colors_for_river[key] = {'color': resource_style.color, 'background_color': resource_style.background_color}
+                colors_for_river[key] = {'color': resource_style.color, 'border_color': resource_style.border_color}
             else:
-                colors_for_river[key] = {'color': '0xffffff', 'background_color': '0x000000'}
+                colors_for_river[key] = {'color': '0xffffff', 'border_color': '0x000000'}
         logger.info(colors_for_river)
         
         

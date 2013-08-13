@@ -1,0 +1,40 @@
+/*#resource-list-block .col5,
+#resource-list-block td:last-child,
+#resource-list-block th:last-child,
+#resource-list-block tfoot,
+#resource-list-block .help-block {
+	display:none;
+}
+
+#resource-list-block .col0,
+#resource-list-block .col2,
+#resource-list-block .col3,
+#resource-list-block .col4,
+#resource-list-block .col5 {
+	width:1px;
+}
+#resource-list-block .col1 {
+	width:100%;
+}*/
+
+#resource-list-block .resource-item .resource-item__label {
+	cursor:pointer;
+}
+
+#resource-list-block [class^="indent-"] {
+	display:inline-block;
+	background: url('../images/resource-tree.png') top right;
+    height: 32px;
+    margin: -12px 0;
+    opacity: 0.3;
+}
+#resource-list-block .indent-1 { width:10px; }
+#resource-list-block .indent-2 { width:20px; }
+#resource-list-block .indent-3 { width:30px; }
+#resource-list-block .indent-4 { width:40px; }
+#resource-list-block .indent-5 { width:50px; }
+#resource-list-block .indent-6 { width:60px; }
+#resource-list-block .indent-7 { width:70px; }
+#resource-list-block .indent-8 { width:80px; }
+#resource-list-block .indent-9 { width:90px; }
+#resource-list-block .indent-10 { width:100px; }

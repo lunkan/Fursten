@@ -83,12 +83,12 @@ mouseclick.init = function() {
 		console.log(event);
 		if (event.button == 0) {
 			if (event.ctrlKey) {
-				if (fu.models['resource'].hasSelectedResource()) {
-					console.log(fu.models['resource'].getSelectedResource());
+				if (fu.models['resourceList'].hasSelectedResource()) {
+					console.log(fu.models['resourceList'].getSelectedResource());
 					var mouse_coords = mouse.get_mouse_position(event);
 					var x_map = mouse_coords.x;
 					var y_map = mouse_coords.y;
-					var data = JSON.stringify({"nodes":[{r :fu.models['resource'].getSelectedResource(), x: x_map, y: y_map, v: 1}]});
+					var data = JSON.stringify({"nodes":[{r :fu.models['resourceList'].getSelectedResource(), x: x_map, y: y_map, v: 1}]});
 					$.ajax ({
 					    url: '/node/set',
 					    type: "POST",

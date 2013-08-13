@@ -10,8 +10,11 @@ from django.contrib.auth.decorators import login_required
 
 from fursten.dashboard import signals, receivers
 from fursten.dashboard.blocks import *
-from fursten.resources import receivers
-from fursten.world import receivers
+from fursten.project import receivers
+from fursten.resourceforms import receivers
+from fursten.resourcelist import receivers
+from fursten.resourcestyles import receivers
+from fursten.simulator import receivers
 from fursten.diagram import receivers
 from fursten.nodes import receivers
 from fursten.player import receivers

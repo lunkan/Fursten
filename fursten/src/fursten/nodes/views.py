@@ -6,16 +6,16 @@ import httplib
 from fursten.utils.requests import RequestWithMethod
 from django.conf import settings
 import types
-from fursten.simulator.node_proxy import NodeProxy
-from fursten.simulator.proxy import Proxy
-from fursten.simulator.sample_proxy import SampleProxy
+from fursten.simulatorproxy.node_proxy import NodeProxy
+from fursten.simulatorproxy.proxy import Proxy
+from fursten.simulatorproxy.sample_proxy import SampleProxy
 
 def index(request):
     
     #clear nodes
-    if request.method == 'DELETE':
+    """if request.method == 'DELETE':
         status, response = NodeProxy().deleteNodes()
-        return HttpResponse(status=status)
+        return HttpResponse(status=status)"""
 
 def set(request):
     
@@ -44,7 +44,7 @@ def remove(request):
         status, response = NodeProxy().sendTransaction(transaction_data);
         return HttpResponse(status=status)
     
-@csrf_protect
+"""@csrf_protect
 def import_export(request):
 
     if request.method == 'GET':
@@ -57,7 +57,7 @@ def import_export(request):
     if request.method == 'POST':
         data = request.FILES['nodes-file'].read()
         status, response = NodeProxy(Proxy.MimeType.PROTOBUF).replaceNodes(data=data)
-        return HttpResponse(status=status)
+        return HttpResponse(status=status)"""
     
 def samples(request):
     

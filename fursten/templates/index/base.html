@@ -8,28 +8,31 @@
   </head>
   <body>
   	
-	<div class="navbar navbar-static-top">
- 		<div class="navbar-inner">
- 			<div class="container-fluid">
- 				<a class="brand" href="/">Fursten</a>
- 				<div class="nav-collapse collapse navbar-responsive-collapse">
- 					<ul class="nav">
- 					</ul>
-            	</div>
- 			</div>
+	<div class="navbar navbar-fixed-top">
+		<div class="container">
+			<a class="navbar-brand" href="/">Fursten</a>
 		</div>
 	</div>
     <header class="header-block">
     	<div class="container">
   			<div class="row top-view">
-  				<div class="span8">
+  				<div class="col-lg-8">
   					<h1>Fursten is awesome and will kick ass for generations to come!</h1>
 				</div>
-				<div class="span4">
+				<div class="col-lg-4">
 					<form method="post" action="/login" class="login-form">
-						{% csrf_token %}
-						{{ login_form }}
-						<input type="submit" value="Login" />
+					{% csrf_token %}
+						<fieldset>
+					    	<div class="form-group">
+    							<label for="id_username">Username</label>
+      							<input type="text" class="form-control" id="id_username" maxlength="32" name="username">
+							</div>
+							<div class="form-group">
+    							<label for="id_password">Password</label>
+      							<input type="text" class="form-control" id="id_password" maxlength="32" name="password">
+							</div>
+							<input class="btn btn-primary pull-right" type="submit" value="Login" />
+						</fieldset>
 					</form>
 				</div>
 			</div>
@@ -38,19 +41,19 @@
   	<div class="container ">
   		
   		<div class="row body">
-			<div class="span3 content">
+			<div class="col-lg-3 content">
 				<h4>Lorem ipsum dolor</h4>
 				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed in libero enim, a interdum dolor. Vivamus porttitor interdum nisi, nec iaculis augue cursus et. Donec dapibus dapibus nibh sed sollicitudin.</p>
 	  		</div>
-	  		<div class="span3 content">
+	  		<div class="col-lg-3 content">
 	  			<h4>Lorem ipsum dolor</h4>
 	  			<p>Maecenas facilisis nulla quis dolor vestibulum dictum. Nullam vestibulum risus eget metus imperdiet posuere. Praesent lobortis mi nec odio iaculis ac pulvinar diam consequat. Sed pulvinar tellus vitae ipsum condimentum non molestie est suscipit. Etiam nec augue id augue rhoncus viverra id vel nisl</p>
 	  		</div>
-	  		<div class="span3 content">
+	  		<div class="col-lg-3 content">
 	  			<h4>Lorem ipsum dolor</h4>
 	  			<p>Praesent vehicula cursus mattis. In at massa non erat sollicitudin sodales. Nulla non erat mi. Ut euismod erat non lorem hendrerit porttitor. Pellentesque dui purus, dictum in iaculis ac,</p>
 	  		</div>
-	  		<div class="span3 content">
+	  		<div class="col-lg-3 content">
 	  			<h4>Lorem ipsum dolor</h4>
 	  			<p>Nunc blandit ornare arcu sed malesuada. Nulla facilisi. Integer ac dui lectus, quis hendrerit ipsum. Nunc blandit, tortor non iaculis tincidunt, turpis tortor laoreet mi, non blandit tellus ante a lectus.</p>
 	  		</div>

@@ -8,7 +8,7 @@
 	background: linear-gradient(to bottom, #a90329 0%,#6d0019 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a90329', endColorstr='#6d0019',GradientType=0 ); /* IE6-9 */
 	
-	padding:50px 0 70px
+	padding:100px 0 70px
 }
 
 .header-block h1 {

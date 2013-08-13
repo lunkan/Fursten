@@ -1,0 +1,53 @@
+{% load corefilters %}
+<div class="navbar navbar-static-top">
+ 	<div class="navbar-inner">
+ 		<div class="container-fluid">
+ 			<a class="brand" href="/">Fursten</a>
+ 			<div class="nav-collapse collapse navbar-responsive-collapse">
+ 				<ul class="nav">
+ 				
+ 				{% for main_menu_item_name, main_menu_item in main_menu.items %}
+ 					
+ 					<li class="dropdown">
+ 						<a data-toggle="dropdown" class="dropdown-toggle" href="#">{{ main_menu_item_name|label }} <b class="caret"></b></a>
+ 						<ul class="dropdown-menu">
+ 						{% for menu_group_name, menu_group in main_menu_item.items %}
+ 							<li class="nav-header">{{ menu_group_name|label }}</li>
+ 							{% for menu_item_name, menu_item in menu_group.items %}
+ 							<li id="main_menu_item_{{ menu_item_name }}"><a {{ menu_item.action|safe }}>{{ menu_item_name|label }}</a></li>
+                      		{% endfor %}
+                      		{% if forloop.last|is_false %}
+                        	<li class="divider"></li>
+                      		{% endif %}
+ 						{% endfor %}
+						</ul>
+ 					</li>
+ 					
+ 				{% endfor %}
+                </ul>
+                <ul class="nav pull-right">
+                
+                {% for user_menu_item_name, user_menu_item in user_menu.items %}
+                
+                	<li class="dropdown">
+ 						<a data-toggle="dropdown" class="dropdown-toggle" href="#">{{ user_menu_item_name|label }} <b class="caret"></b></a>
+ 						<ul class="dropdown-menu">
+ 						{% for menu_group_name, menu_group in user_menu_item.items %}
+ 							<li class="nav-header">{{ menu_group_name|label }}</li>
+                      		{% for menu_item_name, menu_item in menu_group.items %}
+ 							<li><a {{ menu_item.action|safe }}>{{ menu_item_name|label }}</a></li>
+                      		{% endfor %}
+                      		{% if forloop.last|is_false %}
+                        	<li class="divider"></li>
+                      		{% endif %}
+ 						{% endfor %}
+						</ul>
+ 					</li>
+ 					
+ 				{% endfor %}
+ 				
+ 				</ul>
+            </div>
+ 		</div>
+	</div>
+</div>

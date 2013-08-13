@@ -1,0 +1,45 @@
+.bootstrap-form label {
+    margin-bottom: 0;
+}
+.bootstrap-form .help-block {
+   margin-top: 0;
+}
+.bootstrap-form .table thead,
+.bootstrap-form .table tfoot {
+	background-color:#333;
+}
+.bootstrap-form .table thead > tr > th,
+.bootstrap-form .table tfoot > tr > th {
+    vertical-align: top;
+    color:#ddd;
+    border: 1px solid #000 !important;
+}
+.bootstrap-form .table thead small,
+.bootstrap-form .table tfoot small {
+    font-weight:normal;
+    line-height:1.2 !important; 
+}
+
+.bootstrap-fieldset {
+	margin-top:20px;
+}
+
+td.v-layout {
+	padding:0 !important;
+}
+
+.bootstrap-repeater .table {
+	margin-bottom:0;
+}
+
+.bootstrap-repeater .form-control {
+	border: 1px solid #CCCCCC !important;
+}
+
+.bootstrap-repeater .has-error > .repeater-field > .form-control {
+	border: 1px solid #B94A48 !important;
+}
+
+.bootstrap-repeater .help-block {
+	margin-bottom:0;
+}

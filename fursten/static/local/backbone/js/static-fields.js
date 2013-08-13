@@ -3,7 +3,7 @@
 	var Form = root.Backbone.Form,
     	editors = Form.editors;
 	
-	Form.setTemplates({
+	/*Form.setTemplates({
 		field: '\
 		      <li class="bbf-field field-{{key}}">\
 				<% if(title !== false){ %>\
@@ -23,7 +23,7 @@
 	        <div class="bbf-error">{{error}}</div>\
 	      </li>\
 	    '
-	});
+	});*/
 	
 	editors.StaticBase = Backbone.View.extend({
 

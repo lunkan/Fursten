@@ -18,7 +18,7 @@ function draw_map(paths) {
 		    .attr("fill-rule", "evenodd")
 		    .attr("class", "node_" + path[1])
 		    .attr('fill', path[2]['color'])
-		    .attr('stroke', path[2]['background_color'])
+		    .attr('stroke', path[2]['border_color'])
 		    .attr("d", path[0]);
     });
 }
@@ -157,7 +157,7 @@ var DiagramModule = (function () {
 				                .attr('class', 'map_river')
 				                .attr('d', path_string)
 				                .attr('fill', 'none')
-				                .attr('stroke', data.colors_for_river[key].background_color)
+				                .attr('stroke', data.colors_for_river[key].border_color)
 				                .attr('stroke-width', 6/0.025)
 				                .attr('stroke-opacity', 1)
 				                .attr("transform", 
@@ -184,12 +184,12 @@ var DiagramModule = (function () {
 						   .attr("r", 3/0.025)
 						   .attr("stroke-width", 1/0.025)
 						   .attr('fill', data.colors_for_nodes[key].color)
-						   .attr('stroke', data.colors_for_nodes[key].background_color)
+						   .attr('stroke', data.colors_for_nodes[key].border_color)
 						   .attr("transform", 
 				    		  translate_map());
 					});
 					if (that.showingDiagram) {
-						$.getJSON('/world/status', function(worldData) {
+						$.getJSON('/simulator/status', function(worldData) {
 							console.log(worldData.worldStatus[0].tick);
 							console.log("" + key + ":" + list.length);
 							if (key in that.nodeCount) {
@@ -286,13 +286,19 @@ var DiagramModule = (function () {
 		
 		//SUBSCRIBE TO MESSAGES
 		//fu.msg.drawMap.add(this.ondrawMap);
-		fu.msg.updateResourceFiltersComplete.add(this.ondrawMap);
+		//fu.msg.updateResourceFiltersComplete.add(this.ondrawMap);
+		
+		//Changed by Jonas - new signal name
+		fu.msg.resourceFilterChanged.add(this.ondrawMap);
 		
 		fu.msg.runProcessComplete.add(this.ondrawMap);
 		fu.msg.startRunning.add(this.onStartRunning);
 		fu.msg.stopRunning.add(this.onStopRunning);
 		fu.msg.showDiagram.add(this.onShowDiagram);
 		fu.msg.removeDiagram.add(this.onRemoveDiagram);
+		
+		//Changed by Jonas - draw default from start
+		this.ondrawMap();
 	};
 	
 	

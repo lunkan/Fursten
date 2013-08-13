@@ -21,6 +21,7 @@ def new(request):
         player.name = data[u'name']
         player.user = request.user
         logger.info(player)
+        player.active = True
         player.save()
         logger.info(request.user.player_set.all())
         return HttpResponse(status=200)

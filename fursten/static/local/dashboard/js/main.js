@@ -25,8 +25,10 @@ var Fursten = (function () {
 			
 			$('#myModal .modal-body').empty();
 			$('#myModal .modal-footer').empty();
-			$('#myModal .modal-header h3').html(title);
+			$('#myModal .modal-header h4').html(title);
 			$('#myModal .modal-body').append(bodyElement);
+			$('#myModal').removeClass('large');
+			$('#myModal').removeClass('small');
 			
 			$.each(controls, function(index, control) {
 				var classes = "btn";
@@ -41,6 +43,8 @@ var Fursten = (function () {
 			if(options) {
 				if(options.large) {
 					$('#myModal').addClass('large');
+				} else if(options.small) {
+					$('#myModal').addClass('small');
 				}
 			}
 			

@@ -1,0 +1,17 @@
+{% load corefilters %}
+<div class="tabbable strech12">
+	<ul class="nav nav-tabs">
+	{% for tab_name, tab_content in blocks.items %}
+		<li class="{% if forloop.first %}active{% endif %}"><a href="#tab{{ forloop.counter	}}" data-toggle="tab">{{ tab_name|label }}</a></li>
+	{% endfor %}
+	</ul>
+	<div class="tab-content bb">
+		{% for tab_name, tab_content in blocks.items %}
+		<div class="tab-pane {% if forloop.first %}active{% endif %}" id="tab{{ forloop.counter	}}">
+			{% for block_key, block_content in tab_content.items %}
+				{{ block_content.blocks.toHtml }}
+			{% endfor %}
+		</div>
+		{% endfor %}
+	</div>
+</div>
