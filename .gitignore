@@ -2,6 +2,5 @@
 *.pyo
 *.log
 *.pot
-settings.py
 fursten/media/temp/
 fursten/media/resource/images/
