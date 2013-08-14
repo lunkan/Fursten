@@ -25,7 +25,8 @@ var ResourceFormModule = (function () {
 			},
 			defaults: {
 				mortality:0.0,
-				threshold:0.5
+				threshold:0.5,
+				speed:2.0
 			}
 		});
 		
@@ -107,7 +108,7 @@ var ResourceFormModule = (function () {
 					model: model,
 				    schema: formSchema,
 				    fieldsets: [
-				        ['name','isLocked','mortality','threshold'],
+				        ['name','isLocked','mortality','threshold','speed'],
 						{ legend: 'Weights', fields: ['weightGroups'] },
 				        { legend: 'Offsprings', fields: ['offsprings', 'mutations'] }
 				    ]
@@ -187,7 +188,7 @@ var ResourceFormModule = (function () {
 	                var floatVal = parseFloat(value);
 	                if(floatVal < 0 || floatVal > 1) return err;
 	            }],
-				help: 'Chance of sudden extinction (per tick). Value between 0-1 where 0.5 equals 50%.'
+				help: 'Chance of sudden decline (per tick). Value between 0-1 where 0.5 equals 50%. If the event is triggered the effected node will have a reduced value of 1. Value lower than 1 will lead to extinction.'
 			},
 			threshold: {
 				type:'BootstrapText',
@@ -203,7 +204,23 @@ var ResourceFormModule = (function () {
 	                var floatVal = parseFloat(value);
 	                if(floatVal < 0.1) return err;
 	            }],
-				help: 'Dwell penalty. A resource must have an impact value higher than threshold in order to settle. The threshold value does not effect the resource tendency to extinction by negativ impact, which triggers at impact values <= 0. The simulator runs more stable with higher thresholds. Threshold scales with value so value 10 gives a threshold value x10 higher. '
+				help: 'Dwell penalty. A resource must have an impact value higher than threshold in order to settle. The threshold value does not effect the resource tendency to extinction by negativ impact, which triggers at impact values <= 0. The simulator runs more stable with higher thresholds. Threshold scales with value so value 10 gives a threshold value x10 higher.'
+			},
+			speed: {
+				type:'BootstrapText',
+				validators: [function validateSpeed(value, formValues) {
+	                var err = {
+	                	type: 'speed',
+	                    message: 'Must be a decimal number greater or equal to 0.0.'
+	                };
+	                
+	                if(value === null) return err;
+	                else if(!value.toString().match(/^-*[0-9\.]+$/)) return err;
+	                
+	                var floatVal = parseFloat(value);
+	                if(floatVal < 0.0) return err;
+	            }],
+				help: 'The speed in which the resource is traveling as a spore, where a value of 1.0 equals 1 base distance (node radius). Higher value allows the resource to settle down futher away from its source.'
 			},
 			weightGroups: {
 				type: 'BootstrapRepeater',

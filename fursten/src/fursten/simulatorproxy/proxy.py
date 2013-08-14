@@ -92,7 +92,6 @@ class Proxy(object):
                 req.add_header(header, headers[header])
         
         try:
-            print url
             f = urllib2.urlopen(req)
         except urllib2.HTTPError, e:
             print 'HTTPError: status(' + str(e.code) + ') ' + str(e.reason)
