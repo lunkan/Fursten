@@ -10,6 +10,8 @@ urlpatterns = patterns('',
     url(r'^remove', 'fursten.nodes.views.remove', name='remove'),
     url(r'^set', 'fursten.nodes.views.set', name='set'),
     url(r'^samples', 'fursten.nodes.views.samples', name='samples'),
+    
+    
     #url(r'^import-export', 'fursten.nodes.views.import_export', name='import_export'),
     
 )

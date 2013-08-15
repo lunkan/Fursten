@@ -44,27 +44,13 @@ def remove(request):
         status, response = NodeProxy().sendTransaction(transaction_data);
         return HttpResponse(status=status)
     
-"""@csrf_protect
-def import_export(request):
-
-    if request.method == 'GET':
-        print "GET nodes export"
-        
-        status, response = NodeProxy(Proxy.MimeType.PROTOBUF).getNodes()
-        file = response.SerializeToString()
-        return HttpResponse(file, mimetype=Proxy.MimeType.PROTOBUF)
-    
-    if request.method == 'POST':
-        data = request.FILES['nodes-file'].read()
-        status, response = NodeProxy(Proxy.MimeType.PROTOBUF).replaceNodes(data=data)
-        return HttpResponse(status=status)"""
-    
 def samples(request):
     
     if request.method == 'POST':
         
+        snap = request.GET['snap']
         json_data = simplejson.loads(request.raw_post_data)
-        status, response = SampleProxy().getSamples(data=json_data, prospecting=json_data['prospecting'])
+        status, response = SampleProxy().getSamples(data=json_data, snap=snap)
         if status != 200:
             return HttpResponse(status=status)
         else:

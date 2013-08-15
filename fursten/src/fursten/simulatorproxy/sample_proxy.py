@@ -26,23 +26,10 @@ class SampleProxy(Proxy):
     def __init__(self, mime_type=None):
         super(SampleProxy, self).__init__(mime_type)
     
-    def getSamples(self, data=None, prospecting=False):
+    def getSamples(self, data=None, snap=1):
         path = self.REST_PATH
         params = {}
-        params['prospecting'] = prospecting
+        params['snap'] = snap
         
         return super(SampleProxy, self).post(path=path, params=params, data=data)
-    
-    '''def parseProtobufData(self, send_data):
-        
-        #Add data as protobuf class or raw encoded string
-        if isinstance(send_data, node_pb2.NodeCollection):
-            return send_data.SerializeToString()
-        else:
-            return send_data
-    
-    def parseProtobufResponse(self, respons_data):
-        nodeCollection = node_pb2.NodeCollection()
-        nodeCollection.ParseFromString(respons_data)
-        return nodeCollection'''
 

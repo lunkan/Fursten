@@ -82,7 +82,34 @@ mouseclick.init = function() {
 	map.mousedown(function(event){
 		console.log(event);
 		if (event.button == 0) {
-			if (event.ctrlKey) {
+			
+			//Sample exampel by Jonas
+			if(event.altKey){
+				if (fu.models['resourceList'].hasSelectedResource()) {
+					var resourceKey = fu.models['resourceList'].getSelectedResource()
+					var mouse_coords = mouse.get_mouse_position(event);
+					var x_map = mouse_coords.x;
+					var y_map = mouse_coords.y;
+					var data = JSON.stringify({"samples":[{r :fu.models['resourceList'].getSelectedResource(), x: x_map, y: y_map}]});
+					var snap = 100;
+					$.ajax ({
+					    url: '/node/samples?snap='+snap,
+					    type: "POST",
+					    data: data,
+					    dataType: "json",
+					    contentType: "application/json",
+					    success: function(data){
+					    	//{"samples":[{"y":47,"x":-55,"r":536870912,"stability":33.969654,"v":1}]}
+					    	var sample = data.samples.shift();
+					    	var output = "(" + sample.x + ":"+ sample.y + ") value:"+ sample.v + " stability:" + sample.stability;
+					    	$('#mapInfo').html(output);
+						}
+					});
+				}
+				else {
+					$('#mapInfo').html("No resource selected!");
+				}
+			} else if (event.ctrlKey) {
 				if (fu.models['resourceList'].hasSelectedResource()) {
 					console.log(fu.models['resourceList'].getSelectedResource());
 					var mouse_coords = mouse.get_mouse_position(event);
