@@ -8,13 +8,16 @@ var PlayerModule = (function () {
 
 		//MESSAGES
 		fu.msg.newPlayer = new signals.Signal();
-		fu.msg.getPlayers = new signals.Signal;
+		fu.msg.getPlayers = new signals.Signal();
+		fu.msg.selectPlayer = new signals.Signal();
+		fu.msg.setActivePlayer = new signals.Signal();
 		
 		this.onGetPlayers = function() {
 			$('.players_select').remove();
 			$.getJSON('/player/getplayers', function(data) {
 				data.forEach(function(player) {
-					$('#main_menu_item_None').after('<li class="players_select"><a onclick="">' + player.name + '</a></li>');
+					$('#main_menu_item_None').after(
+							'<li class="players_select"><a onclick="fu.msg.selectPlayer.dispatch(' + player.id + ')">' + player.name + '</a></li>');
 				});
 			});
 		};
@@ -52,18 +55,36 @@ var PlayerModule = (function () {
 			}
 		};
 		
+		this.onSelectPlayer = function(playerId) {
+			console.log(playerId);
+			$.post('/player/selectplayer', {'id': playerId}, function(data) {
+				console.log(data);
+				fu.msg.setActivePlayer.dispatch(data);
+			});
+		};
+		
 		this.onCreatePlayerComplete = function() {
 			currentCreatePlayerForm = null;
 			currentCreatePlayerFormView = null;
 			fu.closeModal();
 			fu.msg.getPlayers.dispatch();
-//			fu.msg.resourceChange.dispatch();
+		}
+		
+		this.onSetActivePlayer = function(player) {
+			var text;
+			if (player.name === false) {
+				 text = 'No player selected';
+			} else {
+				text = 'Active player: ' + player.name;
+			}
+			$('#player_info').text(text);
 		}
 	
 		//SUBSCRIBE TO MESSAGES
-		//fu.msg.drawMap.add(this.ondrawMap);
 		fu.msg.newPlayer.add(this.onNewPlayer);
 		fu.msg.getPlayers.add(this.onGetPlayers);
+		fu.msg.selectPlayer.add(this.onSelectPlayer);
+		fu.msg.setActivePlayer.add(this.onSetActivePlayer);
 		
 	};
 	

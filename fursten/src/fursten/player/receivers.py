@@ -10,15 +10,11 @@ def handle_post_viewed(sender, **kwargs):
     if user.groups.filter(name="admin").count():
         print "nodes in group!: "
     
-    page['header'].addMainMenuItem('player/select_player/None', 'onClick', '')
+    page['header'].addMainMenuItem('player/select_player/None', 'onClick', 'fu.msg.selectPlayer.dispatch(\'None\')')
     page['header'].addMainMenuItem('player/general/new_player', 'onClick', 'fu.msg.newPlayer.dispatch()')
+    page['left_sidebar'].addBlock('player/player_control', 
+                                  'blocks/player-control.html', { 'id':'player-control-block', 'title':'Player Control'})
     
-#     page['header'].addMainMenuItem('node/general/add_nodes', 'onClick', 'fu.msg.newNodes.dispatch()')
-#     page['header'].addMainMenuItem('node/general/delete_nodes', 'onClick', 'fu.msg.deleteNodes.dispatch()')
-#     page['header'].addMainMenuItem('node/general/clear_nodes', 'onClick', 'fu.msg.clearNodes.dispatch()')
-#     page['header'].addMainMenuItem('node/samples/get_samples', 'onClick', 'fu.msg.getSamples.dispatch()')
-#     page['header'].addMainMenuItem('node/export_import/import_nodes', 'onClick', 'fu.msg.importNodes.dispatch()')
-#     page['header'].addMainMenuItem('node/export_import/export_nodes', 'onClick', 'fu.msg.exportNodes.dispatch()')
-#     
+    page['head'].addJs('fursten-diagram', 'local/player/js/views.js')
     page['head'].addJs('fursten-player', 'local/player/js/models.js')
     page['head'].addJs('fursten-player', 'local/player/js/main.js')
