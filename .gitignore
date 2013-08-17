@@ -4,3 +4,4 @@
 *.pot
 fursten/media/temp/
 fursten/media/resource/images/
+fursten/src/sqlite.db
