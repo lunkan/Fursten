@@ -61,6 +61,9 @@ def selectPlayer(request):
             player.active = True
             player.save()
             logger.info(player)
+            collectors = player.collector_set.all()
+            logger.info(collectors)
+            playerdata['collectorcount'] = collectors.count()
             playerdata['name'] = player.name
         response = HttpResponse(json.dumps(playerdata), mimetype='application/json')
         return response
@@ -74,6 +77,7 @@ def getActivePlayer(request):
         else:
             playerdata['name'] = player.name
             collectors = player.collector_set.all()
+            logger.info(collectors)
             playerdata['collectorcount'] = collectors.count()
         response = HttpResponse(json.dumps(playerdata), mimetype='application/json')
         return response
@@ -96,6 +100,7 @@ def putCollector(request):
             collector = models.Collector()
             collector.x = int(round(float(request.POST['x'])))
             collector.y = int(round(float(request.POST['y'])))
+            collector.collects = 'Gran'
             collector.player = activePlayer
             logger.info(collector)
             collector.save()

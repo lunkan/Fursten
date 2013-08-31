@@ -69,9 +69,9 @@ var ResourceListModule = (function () {
 				this.model.set("isRendered", isChecked);
 			},
 			toggleRiver: function() {
-				var $checkbox = this.$el.find('[name="toggleRiver"]').first();
+				var $checkbox = this.$el.find('[name="isRiver"]').first();
 				var isChecked = $checkbox.prop('checked');
-				this.model.set("toggleRiver", isChecked);
+				this.model.set("isRiver", isChecked);
 			},
 			autoSave: function() {
 				var resourceKey = this.model.get("key");

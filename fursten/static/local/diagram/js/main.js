@@ -60,6 +60,7 @@ var DiagramModule = (function () {
 		fu.msg.stopRunning = new signals.Signal();
 		fu.msg.showDiagram = new signals.Signal();
 		fu.msg.removeDiagram = new signals.Signal();
+		fu.msg.runGameTurn = new signals.Signal();
 		
 		
 		this.onShowDiagram = function() {
@@ -316,6 +317,12 @@ var DiagramModule = (function () {
 			that.running = false;
 		};
 		
+		this.onRunGameTurn = function() {
+			$.post('/diagram/rungameturn', function (data) {
+				
+			});
+		}
+		
 		//SUBSCRIBE TO MESSAGES
 		//fu.msg.drawMap.add(this.ondrawMap);
 		//fu.msg.updateResourceFiltersComplete.add(this.ondrawMap);
@@ -328,6 +335,7 @@ var DiagramModule = (function () {
 		fu.msg.stopRunning.add(this.onStopRunning);
 		fu.msg.showDiagram.add(this.onShowDiagram);
 		fu.msg.removeDiagram.add(this.onRemoveDiagram);
+		fu.msg.runGameTurn.add(this.onRunGameTurn)
 		
 		//Changed by Jonas - draw default from start
 		this.ondrawMap();

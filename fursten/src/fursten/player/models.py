@@ -29,3 +29,4 @@ class Collector(models.Model):
     player = models.ForeignKey(Player)
     x = models.IntegerField()
     y = models.IntegerField()
+    collects = models.TextField()

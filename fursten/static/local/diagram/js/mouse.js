@@ -182,7 +182,6 @@ mouseclick.init = function() {
 				      .attr('stroke-width', 40)
 				      .attr("transform", 
 			   		   translate_map());
-					console.log(data);
 					fu.msg.setActivePlayer.dispatch(data);
 				    }
 				});

@@ -16,7 +16,7 @@ from fursten.resourcestyles.models import ResourceStyle
 from fursten.simulatorproxy.world_proxy import WorldProxy
 from fursten.simulatorproxy.resource_proxy import ResourceProxy
 
-from fursten.player.models import Collector
+from fursten.player.models import Collector, Player
 
 import json
 import logging
@@ -26,6 +26,9 @@ import urllib2
 
 import requests
 import contour
+from fursten.simulatorproxy.node_proxy import NodeProxy
+from fursten.simulatorproxy.proxy import Proxy
+import math
 
 
 RESOURCES_AREA_MAP = ['recap_agric_field',
@@ -70,6 +73,7 @@ def getSvgJson(request):
                     'paths': [],
                     'world_width': world_width,
                     'world_height': world_height,
+                    'collectors': [],
                     'colors_for_area': {},
                     'colors_for_nodes': {},
                     'colors_for_river': {},
@@ -101,10 +105,6 @@ def getSvgJson(request):
         f = urllib2.urlopen(req)
         data = json.loads(f.read())
         logger.info('DATA:\n' + str(data))
-#         for node in data['nodes']:
-#             logger.info(node['r'])
-#             resource_style = ResourceStyle.objects.get(resource=node['r'])
-#             logger.info(resource_style.icon)
         
         resources_for_area = []
         resources_for_nodes = []
@@ -133,10 +133,6 @@ def getSvgJson(request):
         
 
         logger.info(data)
-#         resources_with_nodes = [resource_name 
-#                                 for resource_name 
-#                                 in nodes_for_area.keys()]
-#         logger.info(resources_with_nodes)
         logger.info(nodes_for_area)
         
         colors_for_area = {}
@@ -205,3 +201,32 @@ def getSvgJson(request):
         return HttpResponse(data)
     except Exception, e:
         logger.error(e)
+        
+        
+def runGameTurn(request):
+    if request.method == 'POST':
+        resources = ResourceProxy().getResources()
+        resource_ids = {}
+        for resource_id, resource in zip(resources[1]['keySet'], resources[1]['resources']):
+            resource_ids[resource['name']] = resource_id
+        status, response = NodeProxy().getNodes()
+        if status != 200:
+            logger.info("No answer from getNodes")
+        else:
+            logger.info(status)
+            logger.info(response)
+            # Naive implementation
+            # Feel free to optimize
+            playerset = Player.objects.all()
+            for player in playerset:
+                collectorset = player.collector_set.all()
+                for collector in collectorset:
+                    for node in response['nodes']:
+                        if node['r'] == resource_ids[collector.collects]:
+                            if math.sqrt((node['x'] - collector.x)**2 + (node['y'] -  collector.y)**2) < 1000:
+                                logger.info('%s has node at %i, %i', player.name, node['x'], node['y'])
+            
+        return HttpResponse("")
+    
+    
+    
