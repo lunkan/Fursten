@@ -95,9 +95,9 @@ def getSvgJson(request):
             logger.info("world width %i"%world_width)
             logger.info("world height %i"%world_height)
         
-        SCALE = 200
-        X=range(-50,50)
-        Y=range(-50,50)
+        SCALE = 100
+        X=range(-100,100)
+        Y=range(-100,100)
         url = settings.SIMULATOR_URL + "rest/nodes"
         req = RequestWithMethod(url, 'GET')
         req.add_header('Content-Type', 'application/json')
