@@ -22,6 +22,7 @@ def set(request):
     if request.method == 'POST':
         
         json_data = simplejson.loads(request.raw_post_data)
+        print json_data
         status, response = NodeProxy().addNodes(json_data)
         return HttpResponse(status=status)
     

@@ -218,14 +218,23 @@ def runGameTurn(request):
             # Naive implementation
             # Feel free to optimize
             playerset = Player.objects.all()
+            
+            logger.info(playerset)
             for player in playerset:
+                logger.info(player)
+                savedResources = json.loads(player.savedResources)
                 collectorset = player.collector_set.all()
                 for collector in collectorset:
                     for node in response['nodes']:
                         if node['r'] == resource_ids[collector.collects]:
                             if math.sqrt((node['x'] - collector.x)**2 + (node['y'] -  collector.y)**2) < 1000:
-                                logger.info('%s has node at %i, %i', player.name, node['x'], node['y'])
-            
+                                logger.info('%s has %s at %i, %i', player.name, collector.collects, node['x'], node['y'])
+                                if savedResources.has_key(collector.collects):
+                                    savedResources[collector.collects] += 1
+                                else:
+                                    savedResources[collector.collects] = 1
+                player.savedResources = json.dumps(savedResources)
+                player.save()
         return HttpResponse("")
     
     

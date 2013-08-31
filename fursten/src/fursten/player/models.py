@@ -21,6 +21,7 @@ class Player(models.Model):
     user = models.ForeignKey(User)
     name = models.TextField()
     active = models.BooleanField()
+    savedResources = models.TextField()
     def __str__(self):  
         return "player %s, owned by %s, active? %s" %(self.name, self.user, self.active)
     

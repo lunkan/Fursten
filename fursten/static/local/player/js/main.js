@@ -12,6 +12,7 @@ var PlayerModule = (function () {
 		fu.msg.getPlayers = new signals.Signal();
 		fu.msg.selectPlayer = new signals.Signal();
 		fu.msg.setActivePlayer = new signals.Signal();
+		fu.msg.updateActivePlayer = new signals.Signal();
 		fu.msg.putCollector = new signals.Signal();
 		
 		this.onGetPlayers = function() {
@@ -79,19 +80,30 @@ var PlayerModule = (function () {
 				 activePlayer = false;
 			} else {
 				html = 'Active player: ' + player.name + '<br>';
-				html += 'Number of collectors: ' + player.collectorcount;
+				html += 'Number of collectors: ' + player.collectorcount + '<br>';
+				html += 'Saved resources:<br>';
+				for (resource in player.savedResources) {
+					html += resource + ': ' + player.savedResources[resource] + '<br>';
+				}
 				activePlayer = player;
 				$('#player_info').html(html);
-				$('#player_controls').html('<button type="submit" class="btn btn-primary" onclick="fu.msg.putCollector.dispatch();">PLACE COLLECTOR</button>');
+				$('#player_controls').html('<button type="submit" class="btn btn-primary" onclick="fu.msg.putCollector.dispatch(\'Granhuggare\');">PLACE GRANHUGGARE</button>');
 			}
 		}
 		
-		this.onPutCollector = function() {
+		this.onPutCollector = function(collectorType) {
 			if (mouseclick.mode != mouseclick.modes.PUT_COLLECTOR) {
 				mouseclick.mode = mouseclick.modes.PUT_COLLECTOR;
+				mouseclick.type = collectorType;
 			} else {
 				mouseclick.mode = mouseclick.modes.UP;
 			}
+		}
+		
+		this.onUpdateActivePlayer = function() {
+			$.getJSON('/player/getactiveplayer', function(data) {
+				fu.msg.setActivePlayer.dispatch(data);
+			});
 		}
 	
 		//SUBSCRIBE TO MESSAGES
@@ -99,6 +111,7 @@ var PlayerModule = (function () {
 		fu.msg.getPlayers.add(this.onGetPlayers);
 		fu.msg.selectPlayer.add(this.onSelectPlayer);
 		fu.msg.setActivePlayer.add(this.onSetActivePlayer);
+		fu.msg.updateActivePlayer.add(this.onUpdateActivePlayer);
 		fu.msg.putCollector.add(this.onPutCollector);
 		
 	};

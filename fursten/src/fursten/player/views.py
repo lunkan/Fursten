@@ -5,6 +5,11 @@ import json
 import logging
 
 import models
+from fursten.simulatorproxy.node_proxy import NodeProxy
+from fursten.simulatorproxy.resource_proxy import ResourceProxy
+
+import collectorTypes
+
 
 logger = logging.getLogger('console')
 @csrf_protect
@@ -20,6 +25,7 @@ def new(request):
         player = models.Player()
         player.name = data[u'name']
         player.user = request.user
+        player.savedResources = json.dumps({})
         logger.info(player)
         player.active = False
         player.save()
@@ -64,6 +70,7 @@ def selectPlayer(request):
             collectors = player.collector_set.all()
             logger.info(collectors)
             playerdata['collectorcount'] = collectors.count()
+            playerdata['savedResources'] = json.loads(player.savedResources)
             playerdata['name'] = player.name
         response = HttpResponse(json.dumps(playerdata), mimetype='application/json')
         return response
@@ -79,6 +86,7 @@ def getActivePlayer(request):
             collectors = player.collector_set.all()
             logger.info(collectors)
             playerdata['collectorcount'] = collectors.count()
+            playerdata['savedResources'] = json.loads(player.savedResources)
         response = HttpResponse(json.dumps(playerdata), mimetype='application/json')
         return response
     
@@ -97,16 +105,25 @@ def putCollector(request):
         activePlayer = queryActivePlayer(request)
         if activePlayer != False:
             
+            collectorname = request.POST['type']
+            
             collector = models.Collector()
             collector.x = int(round(float(request.POST['x'])))
             collector.y = int(round(float(request.POST['y'])))
-            collector.collects = 'Gran'
+            collector.collects = collectorTypes.collectors[collectorname]['name']
             collector.player = activePlayer
             logger.info(collector)
             collector.save()
             playerdata['name'] = activePlayer.name
             collectors = activePlayer.collector_set.all()
             playerdata['collectorcount'] = collectors.count()
+            playerdata['savedResources'] = json.loads(activePlayer.savedResources)
+            
+            status, resources = ResourceProxy().getResources()
+            for resource in resources['resources']:
+                if resource['name'] == collectorname:
+                    json_data = json.dumps({u'nodes': [{u'x': collector.x, u'y': collector.y, u'r': resource['key'], u'v': 1}]})
+                    status, response = NodeProxy().addNodes(json_data)
 
         else:
             playerdata['name'] = False

@@ -319,12 +319,12 @@ var DiagramModule = (function () {
 		
 		this.onRunGameTurn = function() {
 			$.post('/diagram/rungameturn', function (data) {
-				
+				fu.msg.updateActivePlayer.dispatch();
 			});
 		}
 		
 		//SUBSCRIBE TO MESSAGES
-		//fu.msg.drawMap.add(this.ondrawMap);
+		fu.msg.drawMap.add(this.ondrawMap);
 		//fu.msg.updateResourceFiltersComplete.add(this.ondrawMap);
 		
 		//Changed by Jonas - new signal name
