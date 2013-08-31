@@ -68,11 +68,45 @@ def selectPlayer(request):
 def getActivePlayer(request):
     if request.method == 'GET':
         playerdata = {}
-        playerset = request.user.player_set.filter(active = True)
-    
-        if len(playerset) == 0:
+        player = queryActivePlayer(request)
+        if player == False:
             playerdata['name'] = False
         else:
-            playerdata['name'] = playerset[0].name
+            playerdata['name'] = player.name
+            collectors = player.collector_set.all()
+            playerdata['collectorcount'] = collectors.count()
         response = HttpResponse(json.dumps(playerdata), mimetype='application/json')
         return response
+    
+def queryActivePlayer(request):
+    retval = None
+    playerset = request.user.player_set.filter(active = True)
+    if len(playerset) == 0:
+        retval = False
+    else:
+        retval = playerset[0]
+    return retval
+
+def putCollector(request):
+    if request.method == 'POST':
+        playerdata = {}
+        activePlayer = queryActivePlayer(request)
+        if activePlayer != False:
+            
+            collector = models.Collector()
+            collector.x = int(round(float(request.POST['x'])))
+            collector.y = int(round(float(request.POST['y'])))
+            collector.player = activePlayer
+            logger.info(collector)
+            collector.save()
+            playerdata['name'] = activePlayer.name
+            collectors = activePlayer.collector_set.all()
+            playerdata['collectorcount'] = collectors.count()
+
+        else:
+            playerdata['name'] = False
+            logger.info('Some kind of problem. No active player when putting collector.')
+        response = HttpResponse(json.dumps(playerdata), mimetype='application/json')
+        logger.info(response)
+        return HttpResponse(response)
+    

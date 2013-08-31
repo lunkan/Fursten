@@ -5,12 +5,14 @@ var PlayerModule = (function () {
 		var currentNewPlayerForm = null;
 		var currentNewPlayerFormView = null;
 		var that = this;
+		var activePlayer = false;
 
 		//MESSAGES
 		fu.msg.newPlayer = new signals.Signal();
 		fu.msg.getPlayers = new signals.Signal();
 		fu.msg.selectPlayer = new signals.Signal();
 		fu.msg.setActivePlayer = new signals.Signal();
+		fu.msg.putCollector = new signals.Signal();
 		
 		this.onGetPlayers = function() {
 			$('.players_select').remove();
@@ -74,10 +76,22 @@ var PlayerModule = (function () {
 			var text;
 			if (player.name === false) {
 				 text = 'No player selected';
+				 activePlayer = false;
 			} else {
-				text = 'Active player: ' + player.name;
+				html = 'Active player: ' + player.name + '<br>';
+				html += 'Number of collectors: ' + player.collectorcount;
+				activePlayer = player;
+				$('#player_info').html(html);
+				$('#player_controls').html('<button type="submit" class="btn btn-primary" onclick="fu.msg.putCollector.dispatch();">PLACE COLLECTOR</button>');
 			}
-			$('#player_info').text(text);
+		}
+		
+		this.onPutCollector = function() {
+			if (mouseclick.mode != mouseclick.modes.PUT_COLLECTOR) {
+				mouseclick.mode = mouseclick.modes.PUT_COLLECTOR;
+			} else {
+				mouseclick.mode = mouseclick.modes.UP;
+			}
 		}
 	
 		//SUBSCRIBE TO MESSAGES
@@ -85,6 +99,7 @@ var PlayerModule = (function () {
 		fu.msg.getPlayers.add(this.onGetPlayers);
 		fu.msg.selectPlayer.add(this.onSelectPlayer);
 		fu.msg.setActivePlayer.add(this.onSetActivePlayer);
+		fu.msg.putCollector.add(this.onPutCollector);
 		
 	};
 	
@@ -93,3 +108,4 @@ var PlayerModule = (function () {
 })();
 fu.models['player'] = new PlayerModule();
 fu.msg.getPlayers.dispatch();
+

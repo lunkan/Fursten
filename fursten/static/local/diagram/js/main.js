@@ -207,6 +207,38 @@ var DiagramModule = (function () {
 						mouse.mouse_over_node(resource_name);
 					});
 				});
+				console.log(data.collectors);
+				data.collectors.forEach(function(collector){
+					svgmap.append("circle")
+					   .attr("class", 'map_collector')
+					   .attr("cx", collector.x)
+				       .attr("cy", collector.y)
+					   .attr("r", 1000)
+					   .attr("stroke-width", 1/0.025)
+					   .attr('fill', 'gray')
+					   .attr('fill-opacity', 0.3)
+					   .attr('stroke', 'red')
+					   .attr("transform", 
+			    		  translate_map());
+					var collector_name_element = 
+						svgmap.append('text')
+						.text(collector.playername)
+						.attr('class', 'map_collector')
+
+						.attr('font-size', 300)
+						.attr('fill', 'white')
+						.attr('visibility', 'hidden');
+					
+					
+					var bb = collector_name_element.node().getBBox();
+					console.log(bb);
+					collector_name_element
+					.attr('visibility', 'visible')
+					.attr('x', collector.x - bb.width/2)
+					.attr('y', collector.y - 150)					
+						.attr("transform", 
+					    		  translate_map());
+				});
 
 
 				

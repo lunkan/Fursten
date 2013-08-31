@@ -22,4 +22,10 @@ class Player(models.Model):
     name = models.TextField()
     active = models.BooleanField()
     def __str__(self):  
-        return "player %s, owned by %s, active? %s" %(self.name, self.user, self.active)  
+        return "player %s, owned by %s, active? %s" %(self.name, self.user, self.active)
+    
+
+class Collector(models.Model):
+    player = models.ForeignKey(Player)
+    x = models.IntegerField()
+    y = models.IntegerField()

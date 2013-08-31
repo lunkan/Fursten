@@ -10,4 +10,5 @@ urlpatterns = patterns('',
     url(r'^getplayers', 'fursten.player.views.getPlayers', name='getplayers'),
     url(r'^selectplayer', 'fursten.player.views.selectPlayer', name='selectplayer'),
     url(r'^getactiveplayer', 'fursten.player.views.getActivePlayer', name='getactiveplayer'),
+    url(r'^putcollector', 'fursten.player.views.putCollector', name='putcollector'),
 )

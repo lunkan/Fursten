@@ -3,6 +3,4 @@ jQuery(document).ready(function($) {
 		console.log(data);
 		fu.msg.setActivePlayer.dispatch(data);
 	});
-
-
 });

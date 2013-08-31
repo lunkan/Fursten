@@ -164,7 +164,13 @@ mouseclick.init = function() {
 				var mouse_coords = mouse.get_mouse_position(event);
 				var x_map = mouse_coords.x;
 				var y_map = mouse_coords.y;
-				$.post('/postcollector/', {'x': x_map, 'y': y_map}, function(data){
+				$.ajax ({
+				    url: '/player/putcollector/',
+				    type: "POST",
+				    data: {'x': x_map, 'y': y_map},
+				    dataType: "json",
+				    contentType: "application/json",
+				    success: function(data) {
 					svgmap.append('rect')
 					  .attr('class', 'map_collector')
 				      .attr('x', x_map - 120)
@@ -176,6 +182,9 @@ mouseclick.init = function() {
 				      .attr('stroke-width', 40)
 				      .attr("transform", 
 			   		   translate_map());
+					console.log(data);
+					fu.msg.setActivePlayer.dispatch(data);
+				    }
 				});
 			}
 		}

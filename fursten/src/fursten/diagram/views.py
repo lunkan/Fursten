@@ -16,6 +16,8 @@ from fursten.resourcestyles.models import ResourceStyle
 from fursten.simulatorproxy.world_proxy import WorldProxy
 from fursten.simulatorproxy.resource_proxy import ResourceProxy
 
+from fursten.player.models import Collector
+
 import json
 import logging
 import re
@@ -180,10 +182,17 @@ def getSvgJson(request):
                 colors_for_river[key] = {'color': '0xffffff', 'border_color': '0x000000'}
         logger.info(colors_for_river)
         
+        collectorset = Collector.objects.all()
+        
+        collectors_for_map =[]
+        
+        for collector in collectorset:
+            collectors_for_map.append({'x': collector.x, 'y': collector.y, 'playername': collector.player.name})
         
         data =  json.dumps({'nodes': nodes_for_map,
                             'river': nodes_for_river, 
                             'paths': paths,
+                            'collectors': collectors_for_map,
                             'world_width': world_width,
                             'world_height': world_height,
                             'colors_for_area': colors_for_area,
