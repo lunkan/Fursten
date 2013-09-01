@@ -101,7 +101,6 @@ def queryActivePlayer(request):
 
 def putCollector(request):
     if request.method == 'POST':
-        playerdata = {}
         activePlayer = queryActivePlayer(request)
         if activePlayer != False:
             
@@ -112,13 +111,11 @@ def putCollector(request):
             collector.y = int(round(float(request.POST['y'])))
             collector.collects = collectorTypes.collectors[collectorname]['name']
             collector.player = activePlayer
-            logger.info(collector)
+            collector.name = collectorTypes.getName()
+            collector.active = True
+            logger.info(collector.name)
             collector.save()
-            playerdata['name'] = activePlayer.name
-            collectors = activePlayer.collector_set.all()
-            playerdata['collectorcount'] = collectors.count()
-            playerdata['savedResources'] = json.loads(activePlayer.savedResources)
-            
+
             status, resources = ResourceProxy().getResources()
             for resource in resources['resources']:
                 if resource['name'] == collectorname:
@@ -126,9 +123,8 @@ def putCollector(request):
                     status, response = NodeProxy().addNodes(json_data)
 
         else:
-            playerdata['name'] = False
             logger.info('Some kind of problem. No active player when putting collector.')
-        response = HttpResponse(json.dumps(playerdata), mimetype='application/json')
+        response = HttpResponse("", mimetype='application/json')
         logger.info(response)
         return HttpResponse(response)
     

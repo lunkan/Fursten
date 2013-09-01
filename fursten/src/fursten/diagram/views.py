@@ -183,7 +183,7 @@ def getSvgJson(request):
         collectors_for_map =[]
         
         for collector in collectorset:
-            collectors_for_map.append({'x': collector.x, 'y': collector.y, 'playername': collector.player.name})
+            collectors_for_map.append({'x': collector.x, 'y': collector.y, 'playername': collector.name})
         
         data =  json.dumps({'nodes': nodes_for_map,
                             'river': nodes_for_river, 

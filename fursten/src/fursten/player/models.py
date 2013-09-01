@@ -31,3 +31,5 @@ class Collector(models.Model):
     x = models.IntegerField()
     y = models.IntegerField()
     collects = models.TextField()
+    name = models.TextField()
+    active = models.BooleanField()
