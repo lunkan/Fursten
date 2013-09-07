@@ -105,6 +105,10 @@ var PlayerModule = (function () {
 				fu.msg.setActivePlayer.dispatch(data);
 			});
 		}
+		
+		this.getActivePlayer = function() {
+			return activePlayer;
+		}
 	
 		//SUBSCRIBE TO MESSAGES
 		fu.msg.newPlayer.add(this.onNewPlayer);

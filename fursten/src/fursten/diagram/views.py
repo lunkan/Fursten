@@ -30,6 +30,8 @@ from fursten.simulatorproxy.node_proxy import NodeProxy
 from fursten.simulatorproxy.proxy import Proxy
 import math
 
+from fursten.player.views import queryActivePlayer
+
 
 RESOURCES_AREA_MAP = ['recap_agric_field',
                       'vegetation_trees_leaf',
@@ -49,6 +51,9 @@ RESOURCES_NODE_MAP = ['recap_resa_manor',
 
 logger = logging.getLogger('console')
 
+SHOW_AS_NODE = ['Granhuggare', 'Village']
+SHOW_AS_AREA = ['Gran']
+SHOW_AS_RIVER = ['Road']
 
 
     
@@ -82,6 +87,10 @@ def getSvgJson(request):
             logger.info(data)
        
             return HttpResponse(data)
+        resource_ids = {}
+        for resource_id, resource in zip(resources[1]['keySet'], resources[1]['resources']):
+            resource_ids[resource['name']] = resource_id
+        
         for resource_id, resource in zip(resources[1]['keySet'], resources[1]['resources']):
             resource_names[resource_id] = resource['name']
         logger.info(resource_names)
@@ -96,8 +105,8 @@ def getSvgJson(request):
             logger.info("world height %i"%world_height)
         
         SCALE = 100
-        X=range(-100,100)
-        Y=range(-100,100)
+
+        logger.info('world_height/SCALE:%i'%(world_height/SCALE))
         url = settings.SIMULATOR_URL + "rest/nodes"
         req = RequestWithMethod(url, 'GET')
         req.add_header('Content-Type', 'application/json')
@@ -106,20 +115,29 @@ def getSvgJson(request):
         data = json.loads(f.read())
         logger.info('DATA:\n' + str(data))
         
+        active_player = queryActivePlayer(request)
+        
         resources_for_area = []
         resources_for_nodes = []
         resources_for_river = []
-        for resource_layer in ResourceLayer.objects.all():
-            
-            if resource_layer.render == True:
-                resources_for_area.append(resource_layer.resource)
-                logger.info("render:%s"%resource_layer.resource)
-            if resource_layer.display == True:
-                resources_for_nodes.append(resource_layer.resource)
-                logger.info("display:%s"%resource_layer.resource)
-            if resource_layer.river == True:
-                resources_for_river.append(resource_layer.resource)
-                logger.info("river:%s"%resource_layer.resource)
+        if active_player is False:
+            for resource_layer in ResourceLayer.objects.all():
+                
+                if resource_layer.render == True:
+                    resources_for_area.append(resource_layer.resource)
+                    logger.info("render:%s"%resource_layer.resource)
+                if resource_layer.display == True:
+                    resources_for_nodes.append(resource_layer.resource)
+                    logger.info("display:%s"%resource_layer.resource)
+                if resource_layer.river == True:
+                    resources_for_river.append(resource_layer.resource)
+                    logger.info("river:%s"%resource_layer.resource)
+        else:
+            resources_for_nodes = [resource_ids[name] for name in SHOW_AS_NODE]
+            resources_for_area = [resource_ids[name] for name in SHOW_AS_AREA]
+            resources_for_river = [resource_ids[name] for name in SHOW_AS_RIVER]
+        
+        logger.info("resources_for_nodes:" + str(resources_for_nodes))
         
         nodes_for_area = {}
         for node in data['nodes']:
@@ -133,7 +151,7 @@ def getSvgJson(request):
         
 
         logger.info(data)
-        logger.info(nodes_for_area)
+        logger.info("NODES_FOR_AREA:" + str(nodes_for_area))
         
         colors_for_area = {}
         for key in nodes_for_area.keys():
@@ -144,7 +162,7 @@ def getSvgJson(request):
                 colors_for_area[key] = {'color': '0xffffff', 'border_color': '0x000000'}
         logger.info(colors_for_area)
         
-        paths, debug_dummy = contour.getPaths(SCALE, nodes_for_area, colors_for_area, X, Y)
+        paths, debug_dummy = contour.getPaths(SCALE, nodes_for_area, colors_for_area, world_width, world_height)
         nodes_for_map = {}
         
         for node in data['nodes']:
@@ -184,6 +202,8 @@ def getSvgJson(request):
         
         for collector in collectorset:
             collectors_for_map.append({'x': collector.x, 'y': collector.y, 'playername': collector.name})
+        
+        logger.info('nodes_for_map:' + str(nodes_for_map))
         
         data =  json.dumps({'nodes': nodes_for_map,
                             'river': nodes_for_river, 
