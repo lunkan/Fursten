@@ -132,7 +132,7 @@ var DiagramModule = (function () {
 				
 				var svgmap = d3.select("#svgmap");
 
-				svgmap.selectAll('#mapnode').remove();
+				svgmap.selectAll('.map_node').remove();
 				svgmap.selectAll('.map_collector').remove();
 				svgmap.selectAll('#background').remove();
 				svgmap.selectAll('.map_river').remove();
@@ -270,9 +270,9 @@ var DiagramModule = (function () {
 
 				console.log(that.running);
 				console.log(that);
-				if (that.running) {
-					fu.msg.drawMap.dispatch('true');
-				}
+//				if (that.running) {
+//					fu.msg.drawMap.dispatch('true');
+//				}
 				if (that.running) {
 					diagram.runWorld();
 				}
