@@ -51,9 +51,9 @@ RESOURCES_NODE_MAP = ['recap_resa_manor',
 
 logger = logging.getLogger('console')
 
-SHOW_AS_NODE = ['Granhuggare', 'Village']
-SHOW_AS_AREA = ['Gran']
-SHOW_AS_RIVER = ['Road']
+SHOW_AS_NODE = ['Infrastructure_1b_mannor']
+SHOW_AS_AREA = []
+SHOW_AS_RIVER = {'Infrastructure_1a_communication': ['Infrastructure_1a_communication', 'Infrastructure_1b_mannor']}
 
 
     
@@ -133,9 +133,20 @@ def getSvgJson(request):
                     resources_for_river.append(resource_layer.resource)
                     logger.info("river:%s"%resource_layer.resource)
         else:
-            resources_for_nodes = [resource_ids[name] for name in SHOW_AS_NODE]
-            resources_for_area = [resource_ids[name] for name in SHOW_AS_AREA]
-            resources_for_river = [resource_ids[name] for name in SHOW_AS_RIVER]
+            resources_for_nodes = []
+            for name in SHOW_AS_NODE:
+                if resource_ids.has_key(name):
+                    resources_for_nodes.append(resource_ids[name])
+            
+            resources_for_area = []
+            for name in SHOW_AS_AREA:
+                if resource_ids.has_key(name):
+                    resources_for_area.append(resource_ids[name])
+            
+            resources_for_river = []
+            for name in SHOW_AS_RIVER.keys():
+                if resource_ids.has_key(name):
+                    resources_for_river.append(resource_ids[name])
         
         logger.info("resources_for_nodes:" + str(resources_for_nodes))
         
@@ -181,11 +192,18 @@ def getSvgJson(request):
         logger.info(colors_for_nodes)
         nodes_for_river = {}
         for node in data['nodes']:
-            if node['r'] in resources_for_river:
-                if node['r'] in nodes_for_river:
-                    nodes_for_river[node['r']].append([int(node['x']), int(node['y'])])
-                else:
-                    nodes_for_river[node['r']] = [[int(node['x']), int(node['y'])]]        
+            for resources_for_river_key in resources_for_river:
+                resources_in_this_river = SHOW_AS_RIVER[resource_names[resources_for_river_key]]
+                if resource_names[resources_for_river_key] == 'Infrastructure_1a_communication':
+                    logger.info(resource_names[node['r']])
+                    logger.info(resource_names[node['r']] in resources_in_this_river)
+
+                
+                if resource_names[node['r']] in resources_in_this_river:
+                    if resources_for_river_key in nodes_for_river:
+                        nodes_for_river[resources_for_river_key].append([int(node['x']), int(node['y'])])
+                    else:
+                        nodes_for_river[resources_for_river_key] = [[int(node['x']), int(node['y'])]]        
         colors_for_river = {}
         logger.info(resources_for_river)
         for key in resources_for_river:
