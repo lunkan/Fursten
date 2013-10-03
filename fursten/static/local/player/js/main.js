@@ -87,7 +87,7 @@ var PlayerModule = (function () {
 				}
 				activePlayer = player;
 				$('#player_info').html(html);
-				$('#player_controls').html('<button type="submit" class="btn btn-primary" onclick="fu.msg.putCollector.dispatch(\'Granhuggare\');">PLACE GRANHUGGARE</button>');
+				$('#player_controls').html('<button type="submit" class="btn btn-primary" onclick="fu.msg.putCollector.dispatch(\'Activities_1b2a_Reevetax\');">PLACE REEVE</button>');
 			}
 		}
 		

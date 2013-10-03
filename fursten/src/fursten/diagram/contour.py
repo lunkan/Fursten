@@ -163,7 +163,7 @@ def getPaths(scale, nodes_dict, colors_for_map, world_width, world_height):
     real_data = []
     
     boxes = [ [ [[] for dummy in split_y[:-1]] for dummy in split_x[:-1]]  for dummy in nodes]
-    for box_n,node_list in enumerate(nodes):
+    for box_n, node_list in enumerate(nodes):
         for node in node_list:
             for n in xrange(len(split_x) - 1):
                 if split_x[n] < node[0]/scale <= split_x[n + 1]:

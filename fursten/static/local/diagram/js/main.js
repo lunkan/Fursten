@@ -23,6 +23,24 @@ function draw_map(paths) {
     });
 }
 
+function draw_borders(paths) {
+	var svgmap = d3.select("#svgmap");
+	svgmap.selectAll('#mappath').remove();
+	_.each(paths, function(path) {
+		svgmap.append("path")
+		    .attr("stroke-width", 10)
+		    .attr("id", "mappath")
+		    .attr("transform", 
+		    		translate_map())
+		    .attr("fill-rule", "evenodd")
+		    .attr("class", "node_" + path[1])
+		    .attr('fill', path[2]['color'])
+		    .attr('fill-opacity', 0.3)
+		    .attr('stroke', path[2]['border_color'])
+		    .attr("d", path[0]);
+    });
+}
+
 var map_view = {
 		X: 250, 
 		Y: 250, 
@@ -214,13 +232,15 @@ var DiagramModule = (function () {
 					   .attr("class", 'map_collector')
 					   .attr("cx", collector.x)
 				       .attr("cy", collector.y)
-					   .attr("r", 1000)
+					   .attr("r", 3/0.025)
 					   .attr("stroke-width", 1/0.025)
 					   .attr('fill', 'gray')
-					   .attr('fill-opacity', 0.3)
+					   .attr('fill-opacity', 1)
 					   .attr('stroke', 'red')
 					   .attr("transform", 
 			    		  translate_map());
+					
+					
 					var collector_name_element = 
 						svgmap.append('text')
 						.text(collector.playername)
@@ -241,7 +261,7 @@ var DiagramModule = (function () {
 					    		  translate_map());
 				});
 
-
+				draw_borders(data.border_paths);
 				
 				
 				var text = svgmap.selectAll('#show_node_name');

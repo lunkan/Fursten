@@ -6,7 +6,7 @@ Created on 31 aug 2013
 import random
 
 collectors = {
-              'Granhuggare': {'name': 'Gran'}
+              'Activities_1b2a_Reevetax': {'name': 'Animals_1a_Humans'}
               }
 
 

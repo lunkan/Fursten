@@ -51,7 +51,7 @@ RESOURCES_NODE_MAP = ['recap_resa_manor',
 
 logger = logging.getLogger('console')
 
-SHOW_AS_NODE = ['Infrastructure_1b_mannor']
+SHOW_AS_NODE = ['Infrastructure_1b_mannor', 'Animals_1a_Humans']
 SHOW_AS_AREA = []
 SHOW_AS_RIVER = {'Infrastructure_1a_communication': ['Infrastructure_1a_communication', 'Infrastructure_1b_mannor']}
 
@@ -221,12 +221,25 @@ def getSvgJson(request):
         for collector in collectorset:
             collectors_for_map.append({'x': collector.x, 'y': collector.y, 'playername': collector.name})
         
+        
+        nodes_for_borders = {}
+        colors_for_borders = {}
+        playerset = Player.objects.all()
+        for player in playerset:
+            collectorset = player.collector_set.all()
+            nodes_for_borders[player.name] = []
+            colors_for_borders[player.name] = {'color': u'#0000ff', 'border_color': u'#ff0000'}
+            for collector in collectorset:
+                nodes_for_borders[player.name].append([collector.x, collector.y])
+        border_paths, debug_dummy = contour.getPaths(SCALE, nodes_for_borders, colors_for_borders, world_width, world_height)
+        logger.info(border_paths)
         logger.info('nodes_for_map:' + str(nodes_for_map))
         
         data =  json.dumps({'nodes': nodes_for_map,
                             'river': nodes_for_river, 
                             'paths': paths,
                             'collectors': collectors_for_map,
+                            'border_paths': border_paths,
                             'world_width': world_width,
                             'world_height': world_height,
                             'colors_for_area': colors_for_area,
