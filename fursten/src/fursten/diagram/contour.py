@@ -213,8 +213,28 @@ def getPaths(scale, nodes_dict, colors_for_map, world_width, world_height):
             full_lines = lineify(line_list)
             d = ""
             for line in full_lines:
-                x = [l*scale for l in line[0]]
-                y = [l*scale for l in line[1]]
+                x = []
+                y = []
+                NX = len(line[0])
+                NY = len(line[1])
+                for nx in range(NX):
+                    nx_0 = (nx - 4)%NX
+                    nx_1 = (nx + 2)%NX
+                    nx_3 = (nx - 2)%NX
+                    nx_4 = (nx + 4)%NX
+                    x.append((line[0][nx_0] + line[0][nx_1] + line[0][nx] + line[0][nx_3] + line[0][nx_4])*scale/5)
+                for ny in range(NY):
+                    ny_0 = (ny - 4)%NY
+                    ny_1 = (ny + 2)%NY
+                    ny_3 = (ny - 2)%NY
+                    ny_4 = (ny + 4)%NY
+                    y.append((line[1][ny_0] + line[1][ny_1] + line[1][ny] + line[1][ny_3] + line[1][ny_4])*scale/5)
+                
+#                 x = [l*scale for l in line[0]]
+#                 y = [l*scale for l in line[1]]
+                logger.info('LOBSTER')
+                logger.info(x)
+                logger.info(y)
                 d += createPath.d(x,y)
             paths.append([d, node_name, colors_for_map[node_name]])
     return paths, real_data
