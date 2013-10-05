@@ -6,7 +6,9 @@ Created on 31 aug 2013
 import random
 
 collectors = {
-              'Activities_1b2a_Reevetax': {'name': 'Animals_1a_Humans'}
+              'Activities_1b2a_Reevetax': {'collects': 'Animals_1a_Humans', 'game_name': 'REEVE', 'max_items': 10},
+              'Infrastructure_1b_mannor': {'collects': 'NONE', 'game_name': 'MANNOR', 'max_items': 1},
+              'Infrastructure_1a_communication': {'collects': 'NONE', 'game_name': 'ROAD', 'max_items': 100},
               }
 
 

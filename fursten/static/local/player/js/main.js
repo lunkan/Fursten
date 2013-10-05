@@ -61,6 +61,7 @@ var PlayerModule = (function () {
 		this.onSelectPlayer = function(playerId) {
 			console.log(playerId);
 			$.post('/player/selectplayer', {'id': playerId}, function(data) {
+				console.log('onSelectPlayer');
 				console.log(data);
 				fu.msg.setActivePlayer.dispatch(data);
 			});
@@ -73,11 +74,13 @@ var PlayerModule = (function () {
 			fu.msg.getPlayers.dispatch();
 		}
 		
-		this.onSetActivePlayer = function(player) {
-			var text;
+		this.onSetActivePlayer = function(data) {
+			var player = data.player;
 			if (player.name === false) {
-				 text = 'No player selected';
+				 var text = 'No player selected';
 				 activePlayer = false;
+				 $('#player_info').html(text);
+				 $('#player_controls').html('');
 			} else {
 				html = 'Active player: ' + player.name + '<br>';
 				html += 'Number of collectors: ' + player.collectorcount + '<br>';
@@ -87,7 +90,18 @@ var PlayerModule = (function () {
 				}
 				activePlayer = player;
 				$('#player_info').html(html);
-				$('#player_controls').html('<button type="submit" class="btn btn-primary" onclick="fu.msg.putCollector.dispatch(\'Activities_1b2a_Reevetax\');">PLACE REEVE</button>');
+				var player_controls = '';
+				data.collectorinfo.forEach(function(info) {
+					player_controls += '<button type="submit" class="btn btn-primary ' +
+									   info.classes + 
+						                '" onclick="fu.msg.putCollector.dispatch(\'' +
+										info.simulator_name +
+										'\');">PLACE ' +
+										info.game_name +
+										'</button><br>';
+										
+				});
+				$('#player_controls').html(player_controls);
 			}
 		}
 		

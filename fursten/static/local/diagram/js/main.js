@@ -232,10 +232,10 @@ var DiagramModule = (function () {
 					   .attr("class", 'map_collector')
 					   .attr("cx", collector.x)
 				       .attr("cy", collector.y)
-					   .attr("r", 3/0.025)
+					   .attr("r", 4/0.025)
 					   .attr("stroke-width", 1/0.025)
 					   .attr('fill', 'gray')
-					   .attr('fill-opacity', 1)
+					   .attr('fill-opacity', 0)
 					   .attr('stroke', 'red')
 					   .attr("transform", 
 			    		  translate_map());
@@ -290,9 +290,6 @@ var DiagramModule = (function () {
 
 				console.log(that.running);
 				console.log(that);
-//				if (that.running) {
-//					fu.msg.drawMap.dispatch('true');
-//				}
 				if (that.running) {
 					diagram.runWorld();
 				}
@@ -300,28 +297,6 @@ var DiagramModule = (function () {
 			
 		};
 				
-//		this.onInitiateConnection = function() {
-//			var errors = currentConnectFormView.commit();
-//			if(!errors) {
-//				currentConnectForm.on('sync', function() {
-//					fu.models['diagram'].onInitiateConnectionComplete();
-//				});
-//				currentConnectForm.save();	
-//			}
-//		}
-//		
-//		this.onInitiateConnectionComplete = function() {
-//			currentConnectForm = null;
-//			currentConnectFormView = null;
-//			fu.closeModal();
-//			$.getJSON("/diagram/getcss", 
-//					function(data) {
-//					$("#node_style").html(data.css);
-//			});
-//			fu.msg.drawMap.dispatch('false');
-//			this.addSimulatorControl();
-//		}
-		
 		this.addSimulatorControl = function() {
 			var template = _.template($('#tpl-diagram-simulator-control-buttons').html());
 			var steamRoller = $(template());

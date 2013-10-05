@@ -51,7 +51,7 @@ RESOURCES_NODE_MAP = ['recap_resa_manor',
 
 logger = logging.getLogger('console')
 
-SHOW_AS_NODE = ['Infrastructure_1b_mannor', 'Animals_1a_Humans']
+SHOW_AS_NODE = ['Infrastructure_1b_mannor', 'Animals_1a_Humans', 'Infrastructure_1a_communication', 'Activities_1b2a_Reevetax']
 SHOW_AS_AREA = []
 SHOW_AS_RIVER = {'Infrastructure_1a_communication': ['Infrastructure_1a_communication', 'Infrastructure_1b_mannor']}
 
@@ -214,25 +214,29 @@ def getSvgJson(request):
                 colors_for_river[key] = {'color': '0xffffff', 'border_color': '0x000000'}
         logger.info(colors_for_river)
         
-        collectorset = Collector.objects.all()
-        
-        collectors_for_map =[]
-        
-        for collector in collectorset:
-            collectors_for_map.append({'x': collector.x, 'y': collector.y, 'playername': collector.name})
-        
-        
-        nodes_for_borders = {}
-        colors_for_borders = {}
-        playerset = Player.objects.all()
-        for player in playerset:
-            collectorset = player.collector_set.all()
-            nodes_for_borders[player.name] = []
-            colors_for_borders[player.name] = {'color': u'#0000ff', 'border_color': u'#ff0000'}
+        if active_player is False:
+            collectors_for_map =[]
+            border_paths = []
+        else:
+            collectorset = Collector.objects.all()
+            
+            collectors_for_map =[]
+            
             for collector in collectorset:
-                nodes_for_borders[player.name].append([collector.x, collector.y])
-        border_paths, debug_dummy = contour.getPaths(SCALE, nodes_for_borders, colors_for_borders, world_width, world_height)
-        logger.info(border_paths)
+                collectors_for_map.append({'x': collector.x, 'y': collector.y, 'playername': collector.name})
+            
+            
+            nodes_for_borders = {}
+            colors_for_borders = {}
+            playerset = Player.objects.all()
+            for player in playerset:
+                collectorset = player.collector_set.all()
+                nodes_for_borders[player.name] = []
+                colors_for_borders[player.name] = {'color': u'#0000ff', 'border_color': u'#ff0000'}
+                for collector in collectorset:
+                    nodes_for_borders[player.name].append([collector.x, collector.y])
+            border_paths, debug_dummy = contour.getPaths(SCALE, nodes_for_borders, colors_for_borders, world_width, world_height)
+            logger.info(border_paths)
         logger.info('nodes_for_map:' + str(nodes_for_map))
         
         data =  json.dumps({'nodes': nodes_for_map,
@@ -276,14 +280,15 @@ def runGameTurn(request):
                 savedResources = json.loads(player.savedResources)
                 collectorset = player.collector_set.all()
                 for collector in collectorset:
-                    for node in response['nodes']:
-                        if node['r'] == resource_ids[collector.collects]:
-                            if math.sqrt((node['x'] - collector.x)**2 + (node['y'] -  collector.y)**2) < 1000:
-                                logger.info('%s has %s at %i, %i', player.name, collector.collects, node['x'], node['y'])
-                                if savedResources.has_key(collector.collects):
-                                    savedResources[collector.collects] += 1
-                                else:
-                                    savedResources[collector.collects] = 1
+                    if collector.collects != 'NONE':
+                        for node in response['nodes']:
+                            if node['r'] == resource_ids[collector.collects]:
+                                if math.sqrt((node['x'] - collector.x)**2 + (node['y'] -  collector.y)**2) < 1000:
+                                    logger.info('%s has %s at %i, %i', player.name, collector.collects, node['x'], node['y'])
+                                    if savedResources.has_key(collector.collects):
+                                        savedResources[collector.collects] += 1
+                                    else:
+                                        savedResources[collector.collects] = 1
                 player.savedResources = json.dumps(savedResources)
                 player.save()
         return HttpResponse("")

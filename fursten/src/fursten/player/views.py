@@ -66,30 +66,42 @@ def selectPlayer(request):
             player = request.user.player_set.get(id = playerId)
             player.active = True
             player.save()
-            logger.info(player)
-            collectors = player.collector_set.all()
-            logger.info(collectors)
-            playerdata['collectorcount'] = collectors.count()
-            playerdata['savedResources'] = json.loads(player.savedResources)
-            playerdata['name'] = player.name
-        response = HttpResponse(json.dumps(playerdata), mimetype='application/json')
+            playerdata = createPlayerData(player)
+        collectorinfo = createCollectorInfo(player)
+        data = {'player': playerdata, 'collectorinfo': collectorinfo}
+        response = HttpResponse(json.dumps(data), mimetype='application/json')
         return response
     
 def getActivePlayer(request):
     if request.method == 'GET':
-        playerdata = {}
         player = queryActivePlayer(request)
-        if player == False:
-            playerdata['name'] = False
-        else:
-            playerdata['name'] = player.name
-            collectors = player.collector_set.all()
-            logger.info(collectors)
-            playerdata['collectorcount'] = collectors.count()
-            playerdata['savedResources'] = json.loads(player.savedResources)
-        response = HttpResponse(json.dumps(playerdata), mimetype='application/json')
+        playerdata = createPlayerData(player)
+        collectorinfo = createCollectorInfo(player)
+        data = {'player': playerdata, 'collectorinfo': collectorinfo}
+        response = HttpResponse(json.dumps(data), mimetype='application/json')
         return response
-    
+
+def createPlayerData(player):
+    playerdata = {}
+    if player == False:
+        playerdata['name'] = False
+    else:
+        logger.info(player)
+        collectors = player.collector_set.all()
+        logger.info(collectors)
+        playerdata['collectorcount'] = collectors.count()
+        playerdata['savedResources'] = json.loads(player.savedResources)
+        playerdata['name'] = player.name
+    return playerdata
+
+def createCollectorInfo(player):
+    collectorinfo = []
+    for key, value in collectorTypes.collectors.iteritems():
+        collectors = player.collector_set.filter(name__exact = key)
+        logger.info("COLLECTORS " + str(collectors))
+        collectorinfo.append({'simulator_name': key, 'game_name': value['game_name'], 'classes': 'disabled'})
+    return collectorinfo
+
 def queryActivePlayer(request):
     retval = None
     playerset = request.user.player_set.filter(active = True)
@@ -109,9 +121,9 @@ def putCollector(request):
             collector = models.Collector()
             collector.x = int(round(float(request.POST['x'])))
             collector.y = int(round(float(request.POST['y'])))
-            collector.collects = collectorTypes.collectors[collectorname]['name']
+            collector.collects = collectorTypes.collectors[collectorname]['collects']
             collector.player = activePlayer
-            collector.name = collectorTypes.getName()
+            collector.name = collectorTypes.collectors[collectorname]['game_name']
             collector.active = True
             logger.info(collector.name)
             collector.save()
