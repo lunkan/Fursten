@@ -53,43 +53,7 @@ function draw_rivers(data) {
 	});
 }
 
-function draw_nodes(data, showingDiagram) {
-	var svgmap = d3.select("#svgmap");
-	_.each(data.nodes, function(list,key) {
-		var resource_name = data.resource_names[key];
-		_.each(list, function(xy){
-			svgmap.append("circle")
-			   .attr("class", "node_" + key + ' map_node')
-			   .attr('id', 'mapnode_' + key)
-			   .attr("cx", xy[0])
-		       .attr("cy", xy[1])
-			   .attr("r", 3/0.025)
-			   .attr("stroke-width", 1/0.025)
-			   .attr('fill', data.colors_for_nodes[key].color)
-			   .attr('stroke', data.colors_for_nodes[key].border_color)
-			   .attr("transform", 
-	    		  translate_map());
-		});
-		if (showingDiagram) {
-			$.getJSON('/simulator/status', function(worldData) {
-				console.log(worldData.worldStatus[0].tick);
-				console.log("" + key + ":" + list.length);
-				if (key in that.nodeCount) {
-					if (that.nodeCount[key][that.nodeCount[key].length - 1].x !== worldData.worldStatus[0].tick) {
-						that.nodeCount[key].push({y: list.length, x: worldData.worldStatus[0].tick});
-					}
-				} else {
-					that.nodeCount[key] = [{y: list.length, x: worldData.worldStatus[0].tick}];
-				}
-				that.drawDiagram(data.colors_for_nodes, worldData.worldStatus[0].tick);
-			}); 
-			
-		}
-		$(".node_" + key).mouseover(function() {
-			mouse.mouse_over_node(resource_name);
-		});
-	});
-}
+
 
 function draw_borders(paths) {
 	var svgmap = d3.select("#svgmap");
@@ -242,6 +206,44 @@ var DiagramModule = (function () {
 			}
 		}
 		
+		this.draw_nodes = function(data) {
+			var svgmap = d3.select("#svgmap");
+			_.each(data.nodes, function(list,key) {
+				var resource_name = data.resource_names[key];
+				_.each(list, function(xy){
+					svgmap.append("circle")
+					   .attr("class", "node_" + key + ' map_node')
+					   .attr('id', 'mapnode_' + key)
+					   .attr("cx", xy[0])
+				       .attr("cy", xy[1])
+					   .attr("r", 3/0.025)
+					   .attr("stroke-width", 1/0.025)
+					   .attr('fill', data.colors_for_nodes[key].color)
+					   .attr('stroke', data.colors_for_nodes[key].border_color)
+					   .attr("transform", 
+			    		  translate_map());
+				});
+				if (that.showingDiagram) {
+					$.getJSON('/simulator/status', function(worldData) {
+						console.log(worldData.worldStatus[0].tick);
+						console.log("" + key + ":" + list.length);
+						if (key in that.nodeCount) {
+							if (that.nodeCount[key][that.nodeCount[key].length - 1].x !== worldData.worldStatus[0].tick) {
+								that.nodeCount[key].push({y: list.length, x: worldData.worldStatus[0].tick});
+							}
+						} else {
+							that.nodeCount[key] = [{y: list.length, x: worldData.worldStatus[0].tick}];
+						}
+						that.drawDiagram(data.colors_for_nodes, worldData.worldStatus[0].tick);
+					}); 
+					
+				}
+				$(".node_" + key).mouseover(function() {
+					mouse.mouse_over_node(resource_name);
+				});
+			});
+		}
+		
 		
 		this.onRemoveDiagram = function() {
 			that.showingDiagram = false;
@@ -270,7 +272,7 @@ var DiagramModule = (function () {
 				    		  translate_map());
 				draw_map(data.paths);
 				draw_rivers(data);
-				draw_nodes(data, that.showingDiagram);
+				that.draw_nodes(data);
 				draw_borders(data.border_paths);
 				console.log(data.collectors);
 				draw_collectors(data.collectors);
