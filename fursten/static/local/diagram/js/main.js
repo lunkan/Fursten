@@ -23,6 +23,74 @@ function draw_map(paths) {
     });
 }
 
+function draw_rivers(data) {
+	var svgmap = d3.select("#svgmap");
+	_.each(data.river, function(list,key) {
+		var resource_name = data.resource_names[key];
+		var river_paths = diagram.path_river(list);
+		console.log(river_paths);
+	    river_paths.forEach(function(river_path) {
+	        var path_string = diagram.calc_bezier_path(river_path);
+	        svgmap.append('path')
+	                .attr('class', 'map_river')
+	                .attr('d', path_string)
+	                .attr('fill', 'none')
+	                .attr('stroke', data.colors_for_river[key].border_color)
+	                .attr('stroke-width', 6/0.025)
+	                .attr('stroke-opacity', 1)
+	                .attr("transform", 
+	    		            translate_map());
+	        svgmap.append('path')
+	                .attr('class', 'map_river')
+	                .attr('d', path_string)
+	                .attr('fill', 'none')
+	                .attr('stroke-width', 4/0.025)
+	                .attr('stroke', data.colors_for_river[key].color)
+	                .attr("transform", 
+	    		            translate_map());
+	    });
+	
+	});
+}
+
+function draw_nodes(data, showingDiagram) {
+	var svgmap = d3.select("#svgmap");
+	_.each(data.nodes, function(list,key) {
+		var resource_name = data.resource_names[key];
+		_.each(list, function(xy){
+			svgmap.append("circle")
+			   .attr("class", "node_" + key + ' map_node')
+			   .attr('id', 'mapnode_' + key)
+			   .attr("cx", xy[0])
+		       .attr("cy", xy[1])
+			   .attr("r", 3/0.025)
+			   .attr("stroke-width", 1/0.025)
+			   .attr('fill', data.colors_for_nodes[key].color)
+			   .attr('stroke', data.colors_for_nodes[key].border_color)
+			   .attr("transform", 
+	    		  translate_map());
+		});
+		if (showingDiagram) {
+			$.getJSON('/simulator/status', function(worldData) {
+				console.log(worldData.worldStatus[0].tick);
+				console.log("" + key + ":" + list.length);
+				if (key in that.nodeCount) {
+					if (that.nodeCount[key][that.nodeCount[key].length - 1].x !== worldData.worldStatus[0].tick) {
+						that.nodeCount[key].push({y: list.length, x: worldData.worldStatus[0].tick});
+					}
+				} else {
+					that.nodeCount[key] = [{y: list.length, x: worldData.worldStatus[0].tick}];
+				}
+				that.drawDiagram(data.colors_for_nodes, worldData.worldStatus[0].tick);
+			}); 
+			
+		}
+		$(".node_" + key).mouseover(function() {
+			mouse.mouse_over_node(resource_name);
+		});
+	});
+}
+
 function draw_borders(paths) {
 	var svgmap = d3.select("#svgmap");
 	svgmap.selectAll('#mappath').remove();
@@ -39,6 +107,43 @@ function draw_borders(paths) {
 		    .attr('stroke', path[2]['border_color'])
 		    .attr("d", path[0]);
     });
+}
+
+
+function draw_collectors(collectors) {
+	var svgmap = d3.select("#svgmap");
+	collectors.forEach(function(collector){
+		svgmap.append("circle")
+		   .attr("class", 'map_collector')
+		   .attr("cx", collector.x)
+	       .attr("cy", collector.y)
+		   .attr("r", 4/0.025)
+		   .attr("stroke-width", 1/0.025)
+		   .attr('fill', 'gray')
+		   .attr('fill-opacity', 0)
+		   .attr('stroke', 'red')
+		   .attr("transform", 
+			  translate_map());
+		
+		
+		var collector_name_element = 
+			svgmap.append('text')
+			.text(collector.playername)
+			.attr('class', 'map_collector')
+			.attr('font-size', 300)
+			.attr('fill', 'white')
+			.attr('visibility', 'hidden');
+		
+		
+		var bb = collector_name_element.node().getBBox();
+		console.log(bb);
+		collector_name_element
+		.attr('visibility', 'visible')
+		.attr('x', collector.x - bb.width/2)
+		.attr('y', collector.y - 150)					
+			.attr("transform", 
+		    		  translate_map());
+	});
 }
 
 var map_view = {
@@ -164,104 +269,12 @@ var DiagramModule = (function () {
 				      .attr("transform", 
 				    		  translate_map());
 				draw_map(data.paths);
-				console.log(data.river);
-				console.log(data.colors_for_river);
-				_.each(data.river, function(list,key) {
-					var resource_name = data.resource_names[key];
-					var river_paths = diagram.path_river(list);
-					console.log(river_paths);
-				    river_paths.forEach(function(river_path) {
-				        var path_string = diagram.calc_bezier_path(river_path);
-				        svgmap.append('path')
-				                .attr('class', 'map_river')
-				                .attr('d', path_string)
-				                .attr('fill', 'none')
-				                .attr('stroke', data.colors_for_river[key].border_color)
-				                .attr('stroke-width', 6/0.025)
-				                .attr('stroke-opacity', 1)
-				                .attr("transform", 
-				    		            translate_map());
-				        svgmap.append('path')
-				                .attr('class', 'map_river')
-				                .attr('d', path_string)
-				                .attr('fill', 'none')
-				                .attr('stroke-width', 4/0.025)
-				                .attr('stroke', data.colors_for_river[key].color)
-				                .attr("transform", 
-				    		            translate_map());
-				    });
-
-				});
-				_.each(data.nodes, function(list,key) {
-					var resource_name = data.resource_names[key];
-					_.each(list, function(xy){
-						svgmap.append("circle")
-						   .attr("class", "node_" + key + ' map_node')
-						   .attr('id', 'mapnode_' + key)
-						   .attr("cx", xy[0])
-					       .attr("cy", xy[1])
-						   .attr("r", 3/0.025)
-						   .attr("stroke-width", 1/0.025)
-						   .attr('fill', data.colors_for_nodes[key].color)
-						   .attr('stroke', data.colors_for_nodes[key].border_color)
-						   .attr("transform", 
-				    		  translate_map());
-					});
-					if (that.showingDiagram) {
-						$.getJSON('/simulator/status', function(worldData) {
-							console.log(worldData.worldStatus[0].tick);
-							console.log("" + key + ":" + list.length);
-							if (key in that.nodeCount) {
-								if (that.nodeCount[key][that.nodeCount[key].length - 1].x !== worldData.worldStatus[0].tick) {
-									that.nodeCount[key].push({y: list.length, x: worldData.worldStatus[0].tick});
-								}
-							} else {
-								that.nodeCount[key] = [{y: list.length, x: worldData.worldStatus[0].tick}];
-							}
-							that.drawDiagram(data.colors_for_nodes, worldData.worldStatus[0].tick);
-						}); 
-						
-					}
-					$(".node_" + key).mouseover(function() {
-						mouse.mouse_over_node(resource_name);
-					});
-				});
-				console.log(data.collectors);
-				data.collectors.forEach(function(collector){
-					svgmap.append("circle")
-					   .attr("class", 'map_collector')
-					   .attr("cx", collector.x)
-				       .attr("cy", collector.y)
-					   .attr("r", 4/0.025)
-					   .attr("stroke-width", 1/0.025)
-					   .attr('fill', 'gray')
-					   .attr('fill-opacity', 0)
-					   .attr('stroke', 'red')
-					   .attr("transform", 
-			    		  translate_map());
-					
-					
-					var collector_name_element = 
-						svgmap.append('text')
-						.text(collector.playername)
-						.attr('class', 'map_collector')
-
-						.attr('font-size', 300)
-						.attr('fill', 'white')
-						.attr('visibility', 'hidden');
-					
-					
-					var bb = collector_name_element.node().getBBox();
-					console.log(bb);
-					collector_name_element
-					.attr('visibility', 'visible')
-					.attr('x', collector.x - bb.width/2)
-					.attr('y', collector.y - 150)					
-						.attr("transform", 
-					    		  translate_map());
-				});
-
+				draw_rivers(data);
+				draw_nodes(data, that.showingDiagram);
 				draw_borders(data.border_paths);
+				console.log(data.collectors);
+				draw_collectors(data.collectors);
+				
 				
 				
 				var text = svgmap.selectAll('#show_node_name');
