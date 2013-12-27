@@ -147,11 +147,6 @@ def symbol(request, id, size):
     mask.set('width', '64')
     mask.set('height', '64')
     
-    '''shape_files = glob.glob(os.path.join(settings.MEDIA_ROOT, 'resource/shapes/*'))
-    for shape_file in shape_files:
-        if fnmatch.fnmatch(shape_file, '*.svg'):
-            print ntpath.basename(shape_file)'''
-    
     
     #os.path.join(settings.MEDIA_ROOT, 'resource/shapes/heart.svg')
     if style_data['shape'] == 'default':

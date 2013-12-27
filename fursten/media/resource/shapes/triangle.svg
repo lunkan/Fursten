@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 15.0.0, SVG Export Plug-In  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" [
+	<!ENTITY ns_flows "http://ns.adobe.com/Flows/1.0/">
+]>
+<svg version="1.1"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/"
+	 x="0px" y="0px" width="64px" height="64px" viewBox="0.354 0.354 64 64" enable-background="new 0.354 0.354 64 64"
+	 xml:space="preserve">
+<defs>
+</defs>
+<circle opacity="0.52" fill="none" stroke="#000000" stroke-width="0.25" stroke-miterlimit="10" cx="32.354" cy="32.354" r="32"/>
+<line opacity="0.5" fill="none" stroke="#000000" stroke-miterlimit="10" x1="0.354" y1="32.854" x2="64.354" y2="32.854"/>
+<line opacity="0.5" fill="none" stroke="#000000" stroke-miterlimit="10" x1="31.854" y1="0.354" x2="31.854" y2="64.354"/>
+<circle opacity="0.5" fill="none" stroke="#000000" stroke-width="0.25" stroke-miterlimit="10" cx="31.854" cy="32.854" r="24.5"/>
+<line fill="none" stroke="#000000" stroke-miterlimit="10" x1="64.354" y1="0.354" x2="0.354" y2="64.354"/>
+<line fill="none" stroke="#000000" stroke-miterlimit="10" x1="0.354" y1="0.354" x2="64.354" y2="64.354"/>
+<path d="M52.628,29.57C46.354,16.687,32.27,1.021,32.27,1.021S18.104,16.604,11.912,29.57C5.865,42.235,0.354,60.104,0.354,60.104
+	s15.786-1.001,31.917-1.001s31.917,1.001,31.917,1.001S58.772,42.188,52.628,29.57z"/>
+</svg>

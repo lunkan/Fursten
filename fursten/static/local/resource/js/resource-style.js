@@ -130,7 +130,7 @@ var ResourceStyleModule = (function () {
 			},
 			shape: {
 				type: 'BootstrapSelect',
-				options: ['default', 'circle', 'rectangle', 'diamond', 'triangle', 'heart', 'shield']
+				options: ['default', 'circle', 'rectangle', 'diamond', 'triangle', 'heart', 'shield', 'star']
 			},
 			symbol: {
 				type: 'BootstrapSelect',
@@ -138,7 +138,7 @@ var ResourceStyleModule = (function () {
 			},
 			background: {
 				type: 'BootstrapSelect',
-				options: ['none', 'wave', 'fire']
+				options: ['none', 'backgammon', 'checker', 'split', 'horizon', 'cross', 'striped', 'cone']
 			},
 			firstColor: {
 				type:'BootstrapColorpicker',

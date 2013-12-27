@@ -52,12 +52,7 @@ def index(request):
                 
                 
                 resource['indent'] = get_indent_by_key(key_int)
-                
-                #Merge with icon
-                #try:
-                #resource_style = ResourceStyle.objects.get(resource=resource['key'])
-                
-                resource['icon'] = 'http://127.0.0.1:8000/resourcestyle/'+ str(key_int) +'/symbol/24/?v=' + str(randint(1,9999))
+                resource['icon'] = '/resourcestyle/'+ str(key_int) +'/symbol/26/?v=' + str(randint(1,9999))
                 
                 #merge with render-filter
                 try :

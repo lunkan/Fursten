@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 15.0.0, SVG Export Plug-In  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" [
+	<!ENTITY ns_flows "http://ns.adobe.com/Flows/1.0/">
+]>
+<svg version="1.1"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/"
+	 x="0px" y="0px" width="64px" height="64px" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">
+<defs>
+</defs>
+<circle display="none" opacity="0.52" fill="none" stroke="#000000" stroke-width="0.25" stroke-miterlimit="10" enable-background="new    " cx="32.354" cy="32.353" r="32"/>
+<line display="none" opacity="0.5" fill="none" stroke="#000000" stroke-miterlimit="10" enable-background="new    " x1="0.354" y1="32.853" x2="64.353" y2="32.853"/>
+<line display="none" opacity="0.5" fill="none" stroke="#000000" stroke-miterlimit="10" enable-background="new    " x1="31.854" y1="0.354" x2="31.854" y2="64.353"/>
+<circle display="none" opacity="0.5" fill="none" stroke="#000000" stroke-width="0.25" stroke-miterlimit="10" enable-background="new    " cx="31.854" cy="32.853" r="24.5"/>
+<line display="none" fill="none" stroke="#000000" stroke-miterlimit="10" x1="64.353" y1="0.354" x2="0.354" y2="64.353"/>
+<line display="none" fill="none" stroke="#000000" stroke-miterlimit="10" x1="0.354" y1="0.354" x2="64.353" y2="64.353"/>
+<path d="M47.148,24.16c-6.365,0.089-6.603,0-6.603,0s0.086-0.24,0-4.627c-0.086-4.387-1.032-19.179-1.032-19.179h-7.161h-7.161
+	c0,0-0.947,14.792-1.032,19.179c-0.086,4.387,0,4.627,0,4.627s-0.236,0.089-6.602,0c-6.366-0.09-17.205,1.032-17.205,1.032v7.161
+	v7.161c0,0,10.839,1.122,17.205,1.032c6.366-0.09,6.602,0,6.602,0s-0.086,1.24,0,5.627c0.085,4.388,1.032,18.181,1.032,18.181h7.161
+	h7.161c0,0,0.946-13.793,1.032-18.181c0.086-4.387,0-5.627,0-5.627s0.236-0.09,6.603,0c6.365,0.09,17.205-1.032,17.205-1.032v-7.161
+	v-7.161C64.353,25.191,53.515,24.069,47.148,24.16z"/>
+</svg>

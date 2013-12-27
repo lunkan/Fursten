@@ -83,7 +83,7 @@ var ResourceFormModule = (function () {
 	    
 		this.createResourceForm = function(formTitle, resourceKey, extendedResource) {
 			
-			var title = formTitle;
+			var title = '<img src="/resourcestyle/'+ resourceKey +'/symbol/64/"/>&nbsp;&nbsp;&nbsp;' + formTitle;
 			var model;
 			var extend = extendedResource;
 			model = new FormModel({key:resourceKey});
