@@ -14,6 +14,9 @@ from fursten.simulatorproxy.world_proxy import WorldProxy
 from fursten.simulatorproxy.node_proxy import NodeProxy
 from fursten.simulatorproxy.process_proxy import ProcessProxy
 from fursten.resourcestyles.models import ResourceStyle
+from fursten.resourcestyles.helper import resource_styles_to_xml
+from fursten.resourcestyles.helper import xml_to_resource_styles
+from xml.etree import ElementTree as ET
 
 @csrf_protect
 def index(request):
@@ -65,11 +68,22 @@ def exportresource(request):
             
             if str(request.GET["exportformat"]) == 'xml':
                 status, response = ResourceProxy(Proxy.MimeType.XML).getResources(details=True)
-                response = HttpResponse(response, content_type='application/xml; charset=utf-8', mimetype=Proxy.MimeType.XML, )
+                
+                resource_export_root = ET.Element("resourceExport")
+                resource_root = ET.fromstring(response)
+                style_root = resource_styles_to_xml()
+                
+                resource_export_root.append(resource_root)
+                resource_export_root.append(style_root)
+                
+                resource_save_xml_str = ET.tostring(resource_export_root, encoding="utf8", method="xml")
+                #response = HttpResponse(response, content_type='application/xml; charset=utf-8', mimetype=Proxy.MimeType.XML, )
+                response = HttpResponse(resource_save_xml_str, content_type='application/xml; charset=utf-8', mimetype=Proxy.MimeType.XML, )
                 response['Content-Disposition'] = 'attachment; filename="' + str(request.GET["filename"]) + '.xml'
                 return response
             
             elif  str(request.GET["exportformat"]) == 'protobuf':
+                #No style export here
                 status, response = ResourceProxy(Proxy.MimeType.PROTOBUF).getResources(details=True)
                 file = response.SerializeToString()
                 response = HttpResponse(file, content_type='application/protobuf', mimetype=Proxy.MimeType.PROTOBUF, )
@@ -97,7 +111,26 @@ def importresource(request):
         data = request.FILES['resourcefile'].read()
         
         if str(fileExtension) == '.xml':
-            status, response = ResourceProxy(Proxy.MimeType.XML).replaceResources(data)
+            
+            #print "Data"
+            #print data
+            
+            resource_export_root = ET.fromstring(data)
+            resource_collection_root = resource_export_root.find('resourceCollection')
+            resource_styles_root = resource_export_root.find('resourceStyles')
+        
+            if resource_collection_root is not None:
+                resource_collection_data = ET.tostring(resource_collection_root, encoding="utf8", method="xml") 
+                status, response = ResourceProxy(Proxy.MimeType.XML).replaceResources(resource_collection_data)
+                
+            if resource_styles_root is not None:
+                print "styles"
+                xml_to_resource_styles(resource_styles_root)
+
+            #print "import complete!"
+            #return
+            
+            #status, response = ResourceProxy(Proxy.MimeType.XML).replaceResources(data)
             return HttpResponse(status=200)
         elif str(fileExtension) == '.proto':
             status, response = ResourceProxy(Proxy.MimeType.PROTOBUF).replaceResources(data)

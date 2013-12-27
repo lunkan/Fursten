@@ -90,7 +90,7 @@ class Proxy(object):
         if headers is not None:
             for header in headers:
                 req.add_header(header, headers[header])
-        
+                
         try:
             f = urllib2.urlopen(req)
         except urllib2.HTTPError, e:

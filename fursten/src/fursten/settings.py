@@ -3,7 +3,8 @@
 import os
 import django
 
-SIMULATOR_URL = 'http://127.0.0.1:8080/Fursten-simulator/'
+SIMULATOR_URL = 'http://localhost:8989/Fursten-simulator/'
+#'http://127.0.0.1:8080/Fursten-simulator/'
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG

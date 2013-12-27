@@ -65,7 +65,7 @@ var ResourceStyleModule = (function () {
 					model: model,
 				    schema: formSchema,
 				    fieldsets: [
-				        ['form','color','borderColor']
+				        ['form','color','borderColor','symbol','background','shape','firstColor','secondColor','thirdColor','fourthColor']
 				    ]
 				}).render();
 				
@@ -127,7 +127,67 @@ var ResourceStyleModule = (function () {
 	                if(value === null) return err;
 	                else if(!value.toString().match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)) return err;
 	            }]
-			}
+			},
+			shape: {
+				type: 'BootstrapSelect',
+				options: ['default', 'circle', 'rectangle', 'diamond', 'triangle', 'heart', 'shield']
+			},
+			symbol: {
+				type: 'BootstrapSelect',
+				options: ['none', 'crown', 'star', 'hammer', 'tree']
+			},
+			background: {
+				type: 'BootstrapSelect',
+				options: ['none', 'wave', 'fire']
+			},
+			firstColor: {
+				type:'BootstrapColorpicker',
+				validators: [function validateSymbolColor(value, formValues) {
+	                var err = {
+	                	validateRatio: 'firstColor',
+	                    message: 'Not a valid hex color.'
+	                };
+	                
+	                if(value === null) return err;
+	                else if(!value.toString().match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)) return err;
+	            }]
+			},
+			secondColor: {
+				type:'BootstrapColorpicker',
+				validators: [function validateBackgroundColor(value, formValues) {
+	                var err = {
+	                	validateRatio: 'secondColor',
+	                	message: 'Not a valid hex color.'
+	                };
+	                
+	                if(value === null) return err;
+	                else if(!value.toString().match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)) return err;
+	            }]
+			},
+			thirdColor: {
+				type:'BootstrapColorpicker',
+				validators: [function validateSymbolColor(value, formValues) {
+	                var err = {
+	                	validateRatio: 'thirdColor',
+	                    message: 'Not a valid hex color.'
+	                };
+	                
+	                if(value === null) return err;
+	                else if(!value.toString().match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)) return err;
+	            }]
+			},
+			fourthColor: {
+				type:'BootstrapColorpicker',
+				validators: [function validateBackgroundColor(value, formValues) {
+	                var err = {
+	                	validateRatio: 'fourthColor',
+	                	message: 'Not a valid hex color.'
+	                };
+	                
+	                if(value === null) return err;
+	                else if(!value.toString().match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)) return err;
+	            }]
+			},
 		};
 		
 		//SUBSCRIBE TO MESSAGES

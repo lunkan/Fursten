@@ -8,9 +8,79 @@ import StringIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from fursten.utils.graphics import hex_to_rgb
 
+import xml.etree.ElementTree as ET
+import os
+import glob
+import fnmatch
+import ntpath
+from fursten.resourcestyles.models import ResourceStyle
+
 thumb_size = (64,64)
 icon_size = (14, 14)
+
+def resource_styles_to_xml():
     
+    styles = ET.Element("resourceStyles")
+    
+    for style_item in ResourceStyle.objects.all():
+        style = ET.SubElement(styles, "style")
+        style.set('ref', str(style_item.resource))
+        
+        shape = ET.SubElement(style, "shape")
+        shape.text = str(style_item.shape)
+        
+        symbol = ET.SubElement(style, "symbol")
+        symbol.text = str(style_item.symbol)
+        
+        background = ET.SubElement(style, "background")
+        background.text = str(style_item.background)
+        
+        #COLORS
+        first_color = ET.SubElement(style, "color")
+        first_color.text = str(style_item.first_color)
+        
+        second_color = ET.SubElement(style, "color")
+        second_color.text = str(style_item.second_color)
+        
+        third_color = ET.SubElement(style, "color")
+        third_color.text = str(style_item.third_color)
+        
+        fourth_color = ET.SubElement(style, "color")
+        fourth_color.text = str(style_item.fourth_color)
+        
+    #style_xml = ET.tostring(svg, encoding="utf-8")
+    
+    return styles
+
+def xml_to_resource_styles(resource_styles_root):
+    
+    #We replace all styles
+    ResourceStyle.objects.all().delete()
+    
+    for style in resource_styles_root:
+        
+        #Not working with findAll()
+        #for style in resource_styles_root.findAll('.//style'):
+       
+        resource_reference = int(style.attrib['ref'])
+        resource_style = ResourceStyle(resource=resource_reference)
+        
+        style_params = {
+          'form': 'circle',
+          'color': '#000000',
+          'border_color': '#000000',
+          'shape': style.findtext('shape'),
+          'symbol' : style.findtext('symbol'),
+          'background' : style.findtext('background'),
+          'first_color' : style.findtext('.//color[1]'),
+          'second_color' : style.findtext('.//color[2]'),
+          'third_color' : style.findtext('.//color[3]'),
+          'fourth_color' : style.findtext('.//color[4]')
+        }
+        
+        apply_styles(resource_style, style_params)
+    
+
 def apply_styles(resource_style, params):
     
     #Create resource style icon
@@ -56,6 +126,16 @@ def apply_styles(resource_style, params):
     resource_style.form = params['form']
     resource_style.color = params['color']
     resource_style.border_color = params['border_color']
+    
+    resource_style.shape = params['shape']
+    resource_style.symbol = params['symbol']
+    resource_style.background = params['background']
+    
+    resource_style.first_color = params['first_color']
+    resource_style.second_color = params['second_color']
+    resource_style.third_color = params['third_color']
+    resource_style.fourth_color = params['fourth_color']
+    
     resource_style.save()
     
     return resource_style

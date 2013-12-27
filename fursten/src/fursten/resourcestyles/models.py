@@ -10,4 +10,16 @@ class ResourceStyle(models.Model):
     color = models.CharField(max_length=7)
     border_color = models.CharField(max_length=7)
     
+    shape = models.CharField(max_length=64)
+    symbol = models.CharField(max_length=64)
+    background = models.CharField(max_length=64)
+    
+    first_color = models.CharField(max_length=7)
+    second_color = models.CharField(max_length=7)
+    third_color = models.CharField(max_length=7)
+    fourth_color = models.CharField(max_length=7)
+    
+    
+    
+    
     
