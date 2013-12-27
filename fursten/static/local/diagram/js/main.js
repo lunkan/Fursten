@@ -23,6 +23,93 @@ function draw_map(paths) {
     });
 }
 
+function draw_rivers(data) {
+	var svgmap = d3.select("#svgmap");
+	_.each(data.river, function(list,key) {
+		var resource_name = data.resource_names[key];
+		var river_paths = diagram.path_river(list);
+		console.log(river_paths);
+	    river_paths.forEach(function(river_path) {
+	        var path_string = diagram.calc_bezier_path(river_path);
+	        svgmap.append('path')
+	                .attr('class', 'map_river')
+	                .attr('d', path_string)
+	                .attr('fill', 'none')
+	                .attr('stroke', data.colors_for_river[key].border_color)
+	                .attr('stroke-width', 6/0.025)
+	                .attr('stroke-opacity', 1)
+	                .attr("transform", 
+	    		            translate_map());
+	        svgmap.append('path')
+	                .attr('class', 'map_river')
+	                .attr('d', path_string)
+	                .attr('fill', 'none')
+	                .attr('stroke-width', 4/0.025)
+	                .attr('stroke', data.colors_for_river[key].color)
+	                .attr("transform", 
+	    		            translate_map());
+	    });
+	
+	});
+}
+
+
+
+function draw_borders(paths) {
+	var svgmap = d3.select("#svgmap");
+	svgmap.selectAll('#mappath').remove();
+	_.each(paths, function(path) {
+		svgmap.append("path")
+		    .attr("stroke-width", 10)
+		    .attr("id", "mappath")
+		    .attr("transform", 
+		    		translate_map())
+		    .attr("fill-rule", "evenodd")
+		    .attr("class", "node_" + path[1])
+		    .attr('fill', path[2]['color'])
+		    .attr('fill-opacity', 0.3)
+		    .attr('stroke', path[2]['border_color'])
+		    .attr("d", path[0]);
+    });
+}
+
+
+function draw_collectors(collectors) {
+	var svgmap = d3.select("#svgmap");
+	collectors.forEach(function(collector){
+		svgmap.append("circle")
+		   .attr("class", 'map_collector')
+		   .attr("cx", collector.x)
+	       .attr("cy", collector.y)
+		   .attr("r", 4/0.025)
+		   .attr("stroke-width", 1/0.025)
+		   .attr('fill', 'gray')
+		   .attr('fill-opacity', 0)
+		   .attr('stroke', 'red')
+		   .attr("transform", 
+			  translate_map());
+		
+		
+		var collector_name_element = 
+			svgmap.append('text')
+			.text(collector.playername)
+			.attr('class', 'map_collector')
+			.attr('font-size', 300)
+			.attr('fill', 'white')
+			.attr('visibility', 'hidden');
+		
+		
+		var bb = collector_name_element.node().getBBox();
+		console.log(bb);
+		collector_name_element
+		.attr('visibility', 'visible')
+		.attr('x', collector.x - bb.width/2)
+		.attr('y', collector.y - 150)					
+			.attr("transform", 
+		    		  translate_map());
+	});
+}
+
 var map_view = {
 		X: 250, 
 		Y: 250, 
@@ -60,6 +147,7 @@ var DiagramModule = (function () {
 		fu.msg.stopRunning = new signals.Signal();
 		fu.msg.showDiagram = new signals.Signal();
 		fu.msg.removeDiagram = new signals.Signal();
+		fu.msg.runGameTurn = new signals.Signal();
 		
 		
 		this.onShowDiagram = function() {
@@ -118,6 +206,44 @@ var DiagramModule = (function () {
 			}
 		}
 		
+		this.draw_nodes = function(data) {
+			var svgmap = d3.select("#svgmap");
+			_.each(data.nodes, function(list,key) {
+				var resource_name = data.resource_names[key];
+				_.each(list, function(xy){
+					svgmap.append("circle")
+					   .attr("class", "node_" + key + ' map_node')
+					   .attr('id', 'mapnode_' + key)
+					   .attr("cx", xy[0])
+				       .attr("cy", xy[1])
+					   .attr("r", 3/0.025)
+					   .attr("stroke-width", 1/0.025)
+					   .attr('fill', data.colors_for_nodes[key].color)
+					   .attr('stroke', data.colors_for_nodes[key].border_color)
+					   .attr("transform", 
+			    		  translate_map());
+				});
+				if (that.showingDiagram) {
+					$.getJSON('/simulator/status', function(worldData) {
+						console.log(worldData.worldStatus[0].tick);
+						console.log("" + key + ":" + list.length);
+						if (key in that.nodeCount) {
+							if (that.nodeCount[key][that.nodeCount[key].length - 1].x !== worldData.worldStatus[0].tick) {
+								that.nodeCount[key].push({y: list.length, x: worldData.worldStatus[0].tick});
+							}
+						} else {
+							that.nodeCount[key] = [{y: list.length, x: worldData.worldStatus[0].tick}];
+						}
+						that.drawDiagram(data.colors_for_nodes, worldData.worldStatus[0].tick);
+					}); 
+					
+				}
+				$(".node_" + key).mouseover(function() {
+					mouse.mouse_over_node(resource_name);
+				});
+			});
+		}
+		
 		
 		this.onRemoveDiagram = function() {
 			that.showingDiagram = false;
@@ -131,7 +257,7 @@ var DiagramModule = (function () {
 				
 				var svgmap = d3.select("#svgmap");
 
-				svgmap.selectAll('#mapnode').remove();
+				svgmap.selectAll('.map_node').remove();
 				svgmap.selectAll('.map_collector').remove();
 				svgmap.selectAll('#background').remove();
 				svgmap.selectAll('.map_river').remove();
@@ -145,70 +271,12 @@ var DiagramModule = (function () {
 				      .attr("transform", 
 				    		  translate_map());
 				draw_map(data.paths);
-				console.log(data.river);
-				console.log(data.colors_for_river);
-				_.each(data.river, function(list,key) {
-					var resource_name = data.resource_names[key];
-					var river_paths = diagram.path_river(list);
-					console.log(river_paths);
-				    river_paths.forEach(function(river_path) {
-				        var path_string = diagram.calc_bezier_path(river_path);
-				        svgmap.append('path')
-				                .attr('class', 'map_river')
-				                .attr('d', path_string)
-				                .attr('fill', 'none')
-				                .attr('stroke', data.colors_for_river[key].border_color)
-				                .attr('stroke-width', 6/0.025)
-				                .attr('stroke-opacity', 1)
-				                .attr("transform", 
-				    		            translate_map());
-				        svgmap.append('path')
-				                .attr('class', 'map_river')
-				                .attr('d', path_string)
-				                .attr('fill', 'none')
-				                .attr('stroke-width', 4/0.025)
-				                .attr('stroke', data.colors_for_river[key].color)
-				                .attr("transform", 
-				    		            translate_map());
-				    });
-
-				});
-				_.each(data.nodes, function(list,key) {
-					var resource_name = data.resource_names[key];
-					_.each(list, function(xy){
-						svgmap.append("circle")
-						   .attr("class", "node_" + key + ' map_node')
-						   .attr('id', 'mapnode_' + key)
-						   .attr("cx", xy[0])
-					       .attr("cy", xy[1])
-						   .attr("r", 3/0.025)
-						   .attr("stroke-width", 1/0.025)
-						   .attr('fill', data.colors_for_nodes[key].color)
-						   .attr('stroke', data.colors_for_nodes[key].border_color)
-						   .attr("transform", 
-				    		  translate_map());
-					});
-					if (that.showingDiagram) {
-						$.getJSON('/simulator/status', function(worldData) {
-							console.log(worldData.worldStatus[0].tick);
-							console.log("" + key + ":" + list.length);
-							if (key in that.nodeCount) {
-								if (that.nodeCount[key][that.nodeCount[key].length - 1].x !== worldData.worldStatus[0].tick) {
-									that.nodeCount[key].push({y: list.length, x: worldData.worldStatus[0].tick});
-								}
-							} else {
-								that.nodeCount[key] = [{y: list.length, x: worldData.worldStatus[0].tick}];
-							}
-							that.drawDiagram(data.colors_for_nodes, worldData.worldStatus[0].tick);
-						}); 
-						
-					}
-					$(".node_" + key).mouseover(function() {
-						mouse.mouse_over_node(resource_name);
-					});
-				});
-
-
+				draw_rivers(data);
+				that.draw_nodes(data);
+				draw_borders(data.border_paths);
+				console.log(data.collectors);
+				draw_collectors(data.collectors);
+				
 				
 				
 				var text = svgmap.selectAll('#show_node_name');
@@ -238,37 +306,12 @@ var DiagramModule = (function () {
 				console.log(that.running);
 				console.log(that);
 				if (that.running) {
-					fu.msg.drawMap.dispatch('true');
-				}
-				if (that.running) {
 					diagram.runWorld();
 				}
 			});
 			
 		};
 				
-//		this.onInitiateConnection = function() {
-//			var errors = currentConnectFormView.commit();
-//			if(!errors) {
-//				currentConnectForm.on('sync', function() {
-//					fu.models['diagram'].onInitiateConnectionComplete();
-//				});
-//				currentConnectForm.save();	
-//			}
-//		}
-//		
-//		this.onInitiateConnectionComplete = function() {
-//			currentConnectForm = null;
-//			currentConnectFormView = null;
-//			fu.closeModal();
-//			$.getJSON("/diagram/getcss", 
-//					function(data) {
-//					$("#node_style").html(data.css);
-//			});
-//			fu.msg.drawMap.dispatch('false');
-//			this.addSimulatorControl();
-//		}
-		
 		this.addSimulatorControl = function() {
 			var template = _.template($('#tpl-diagram-simulator-control-buttons').html());
 			var steamRoller = $(template());
@@ -284,8 +327,14 @@ var DiagramModule = (function () {
 			that.running = false;
 		};
 		
+		this.onRunGameTurn = function() {
+			$.post('/diagram/rungameturn', function (data) {
+				fu.msg.updateActivePlayer.dispatch();
+			});
+		}
+		
 		//SUBSCRIBE TO MESSAGES
-		//fu.msg.drawMap.add(this.ondrawMap);
+		fu.msg.drawMap.add(this.ondrawMap);
 		//fu.msg.updateResourceFiltersComplete.add(this.ondrawMap);
 		
 		//Changed by Jonas - new signal name
@@ -296,6 +345,7 @@ var DiagramModule = (function () {
 		fu.msg.stopRunning.add(this.onStopRunning);
 		fu.msg.showDiagram.add(this.onShowDiagram);
 		fu.msg.removeDiagram.add(this.onRemoveDiagram);
+		fu.msg.runGameTurn.add(this.onRunGameTurn)
 		
 		//Changed by Jonas - draw default from start
 		this.ondrawMap();

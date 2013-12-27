@@ -5,6 +5,11 @@ import json
 import logging
 
 import models
+from fursten.simulatorproxy.node_proxy import NodeProxy
+from fursten.simulatorproxy.resource_proxy import ResourceProxy
+
+import collectorTypes
+
 
 logger = logging.getLogger('console')
 @csrf_protect
@@ -20,8 +25,9 @@ def new(request):
         player = models.Player()
         player.name = data[u'name']
         player.user = request.user
+        player.savedResources = json.dumps({})
         logger.info(player)
-        player.active = True
+        player.active = False
         player.save()
         logger.info(request.user.player_set.all())
         return HttpResponse(status=200)
@@ -32,4 +38,105 @@ def getPlayers(request):
         for player in request.user.player_set.all():
             playerList.append({'name': player.name, 'id': player.id})
         return HttpResponse(json.dumps(playerList), mimetype='application/json')
+
+def selectPlayer(request):
+    if request.method == 'POST':
+        playerdata = {}
+        playerId = request.POST['id']
+        if playerId == 'None':
+            playerset = request.user.player_set.filter(active = True)
+            if len(playerset) == 0:
+                playerdata['name'] = False
+            elif len(playerset) > 1:
+                playerdata['name'] = False
+                logger.error('MORE THAN ONE PLAYER ACTIVE :%s'%playerset)
+            else:
+                player = playerset[0]
+                logger.info(player)
+                player.active = False
+                player.save()
+                logger.info(player)
+                playerdata['name'] = False
+
+        else:
+            old_playerset = request.user.player_set.filter(active = True)
+            for old_player in old_playerset:
+                old_player.active = False
+                old_player.save()
+            player = request.user.player_set.get(id = playerId)
+            player.active = True
+            player.save()
+            playerdata = createPlayerData(player)
+        collectorinfo = createCollectorInfo(player)
+        data = {'player': playerdata, 'collectorinfo': collectorinfo}
+        response = HttpResponse(json.dumps(data), mimetype='application/json')
+        return response
+    
+def getActivePlayer(request):
+    if request.method == 'GET':
+        player = queryActivePlayer(request)
+        playerdata = createPlayerData(player)
+        collectorinfo = createCollectorInfo(player)
+        data = {'player': playerdata, 'collectorinfo': collectorinfo}
+        response = HttpResponse(json.dumps(data), mimetype='application/json')
+        return response
+
+def createPlayerData(player):
+    playerdata = {}
+    if player == False:
+        playerdata['name'] = False
+    else:
+        logger.info(player)
+        collectors = player.collector_set.all()
+        logger.info(collectors)
+        playerdata['collectorcount'] = collectors.count()
+        playerdata['savedResources'] = json.loads(player.savedResources)
+        playerdata['name'] = player.name
+    return playerdata
+
+def createCollectorInfo(player):
+    collectorinfo = []
+    for key, value in collectorTypes.collectors.iteritems():
+        collectors = player.collector_set.filter(name__exact = key)
+        logger.info("COLLECTORS " + str(collectors))
+        collectorinfo.append({'simulator_name': key, 'game_name': value['game_name'], 'classes': 'disabled'})
+    return collectorinfo
+
+def queryActivePlayer(request):
+    retval = None
+    playerset = request.user.player_set.filter(active = True)
+    if len(playerset) == 0:
+        retval = False
+    else:
+        retval = playerset[0]
+    return retval
+
+def putCollector(request):
+    if request.method == 'POST':
+        activePlayer = queryActivePlayer(request)
+        if activePlayer != False:
+            
+            collectorname = request.POST['type']
+            
+            collector = models.Collector()
+            collector.x = int(round(float(request.POST['x'])))
+            collector.y = int(round(float(request.POST['y'])))
+            collector.collects = collectorTypes.collectors[collectorname]['collects']
+            collector.player = activePlayer
+            collector.name = collectorTypes.collectors[collectorname]['game_name']
+            collector.active = True
+            logger.info(collector.name)
+            collector.save()
+
+            status, resources = ResourceProxy().getResources()
+            for resource in resources['resources']:
+                if resource['name'] == collectorname:
+                    json_data = json.dumps({u'nodes': [{u'x': collector.x, u'y': collector.y, u'r': resource['key'], u'v': 1}]})
+                    status, response = NodeProxy().addNodes(json_data)
+
+        else:
+            logger.info('Some kind of problem. No active player when putting collector.')
+        response = HttpResponse("", mimetype='application/json')
+        logger.info(response)
+        return HttpResponse(response)
     

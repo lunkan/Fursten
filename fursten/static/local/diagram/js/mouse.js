@@ -72,6 +72,7 @@ mouseclick.modes = {
 }
 
 mouseclick.mode = mouseclick.modes.UP;
+mouseclick.type = ''
 
 mouseclick.startX = null;
 mouseclick.startY = null;
@@ -164,18 +165,17 @@ mouseclick.init = function() {
 				var mouse_coords = mouse.get_mouse_position(event);
 				var x_map = mouse_coords.x;
 				var y_map = mouse_coords.y;
-				$.post('/postcollector/', {'x': x_map, 'y': y_map}, function(data){
-					svgmap.append('rect')
-					  .attr('class', 'map_collector')
-				      .attr('x', x_map - 120)
-				      .attr('y', y_map - 120)
-				      .attr('width', 240)
-				      .attr('height', 240)
-				      .attr('fill', 'yellow')
-				      .attr('stroke', 'black')
-				      .attr('stroke-width', 40)
-				      .attr("transform", 
-			   		   translate_map());
+				$.ajax ({
+				    url: '/player/putcollector/',
+				    type: "POST",
+				    data: {'x': x_map, 'y': y_map, 'type': mouseclick.type},
+				    dataType: "json",
+				    contentType: "application/json",
+				    success: function(data) {
+				    	console.log('fu.msg.updateActivePlayer.dispatch()');
+					fu.msg.updateActivePlayer.dispatch();
+					fu.msg.drawMap.dispatch();
+				    }
 				});
 			}
 		}
@@ -239,14 +239,14 @@ mouseclick.init = function() {
 	});
 }
 
-mouseclick.put_collector = function() {
-	d3.select('#put_cursor').remove();
-	if (mouseclick.mode == mouseclick.modes.PUT_COLLECTOR) {
-		mouseclick.mode = mouseclick.modes.UP;
-	} else {
-		mouseclick.mode = mouseclick.modes.PUT_COLLECTOR;
-	}
-}
+//mouseclick.put_collector = function() {
+//	d3.select('#put_cursor').remove();
+//	if (mouseclick.mode == mouseclick.modes.PUT_COLLECTOR) {
+//		mouseclick.mode = mouseclick.modes.UP;
+//	} else {
+//		mouseclick.mode = mouseclick.modes.PUT_COLLECTOR;
+//	}
+//}
 
 
 

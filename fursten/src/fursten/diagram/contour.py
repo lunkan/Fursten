@@ -143,7 +143,9 @@ def getSvg(scale, nodes, node_names, X, Y):
         retval += createPath.path(d[0], "node_%s\n"%d[1])
     return retval, real_data
     
-def getPaths(scale, nodes_dict, colors_for_map, X, Y):
+def getPaths(scale, nodes_dict, colors_for_map, world_width, world_height):
+    X = range(-world_width/scale/2, world_width/scale/2)
+    Y = range(-world_height/scale/2, world_height/scale/2)
     node_names = nodes_dict.keys()
     nodes = []
     for node_name in node_names:
@@ -155,13 +157,13 @@ def getPaths(scale, nodes_dict, colors_for_map, X, Y):
     
     N = 10
     
-    split_x = [(-10000 + 20000/N*n)/scale for n in xrange(0, N + 2)]
-    split_y = [(-10000 + 20000/N*n)/scale for n in xrange(0, N + 2)]
+    split_x = [(-world_width/2 + world_width/N*n)/scale for n in xrange(0, N + 2)]
+    split_y = [(-world_height/2 + world_height/N*n)/scale for n in xrange(0, N + 2)]
     
     real_data = []
     
     boxes = [ [ [[] for dummy in split_y[:-1]] for dummy in split_x[:-1]]  for dummy in nodes]
-    for box_n,node_list in enumerate(nodes):
+    for box_n, node_list in enumerate(nodes):
         for node in node_list:
             for n in xrange(len(split_x) - 1):
                 if split_x[n] < node[0]/scale <= split_x[n + 1]:
@@ -211,8 +213,22 @@ def getPaths(scale, nodes_dict, colors_for_map, X, Y):
             full_lines = lineify(line_list)
             d = ""
             for line in full_lines:
-                x = [l*scale for l in line[0]]
-                y = [l*scale for l in line[1]]
+                x = []
+                y = []
+                NX = len(line[0])
+                NY = len(line[1])
+                for nx in range(NX):
+                    nx_0 = (nx - 4)%NX
+                    nx_1 = (nx + 2)%NX
+                    nx_3 = (nx - 2)%NX
+                    nx_4 = (nx + 4)%NX
+                    x.append((line[0][nx_0] + line[0][nx_1] + line[0][nx] + line[0][nx_3] + line[0][nx_4])*scale/5)
+                for ny in range(NY):
+                    ny_0 = (ny - 4)%NY
+                    ny_1 = (ny + 2)%NY
+                    ny_3 = (ny - 2)%NY
+                    ny_4 = (ny + 4)%NY
+                    y.append((line[1][ny_0] + line[1][ny_1] + line[1][ny] + line[1][ny_3] + line[1][ny_4])*scale/5)
                 d += createPath.d(x,y)
             paths.append([d, node_name, colors_for_map[node_name]])
     return paths, real_data

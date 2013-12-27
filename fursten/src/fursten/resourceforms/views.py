@@ -43,6 +43,7 @@ def index(request):
     #Create new root resource
     if request.method == 'POST':
         data = simplejson.loads(request.raw_post_data)
+        print data
         status, response = ResourceProxy().addResource(data)
         return HttpResponse(status=status)
         
